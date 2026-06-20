@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Contact | Johanna L{% endblock %}
+
+{% block content %}
+
+<section class="contact-hero">
+    <div class="site-shell contact-grid">
+
+        <div>
+            <div class="eyebrow">Contact</div>
+
+            {% if artwork %}
+            <h1 class="section-title">Ask about this piece.</h1>
+            <p class="section-text">
+                You are asking about <strong>{{ artwork.title }}</strong>.
+                Send a message and Johanna can reply personally.
+            </p>
+            {% else %}
+            <h1 class="section-title">Send a message or commission request.</h1>
+            <p class="section-text">
+                Ask about available artworks, request a custom watercolour memory,
+                or send a general message.
+            </p>
+            {% endif %}
+        </div>
+
+        <form class="contact-form paper-card" method="post" novalidate>
+            {% csrf_token %}
+
+            {% if artwork %}
+            <input type="hidden" name="artwork_id" value="{{ artwork.id }}">
+            {% endif %}
+
+            {% if form.non_field_errors %}
+            <div class="form-errors">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="form-row">
+                <label for="{{ form.inquiry_type.id_for_label }}">Inquiry type</label>
+                {{ form.inquiry_type }}
+                {{ form.inquiry_type.errors }}
+            </div>
+
+            <div class="form-row">
+                <label for="{{ form.name.id_for_label }}">Name</label>
+                {{ form.name }}
+                {{ form.name.errors }}
+            </div>
+
+            <div class="form-row">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
+
+            <div class="form-row">
+                <label for="{{ form.message.id_for_label }}">Message</label>
+                {{ form.message }}
+                {{ form.message.errors }}
+            </div>
+
+            <div class="form-two-col">
+                <div class="form-row">
+                    <label for="{{ form.budget.id_for_label }}">Budget, optional</label>
+                    {{ form.budget }}
+                    {{ form.budget.errors }}
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.deadline.id_for_label }}">Deadline, optional</label>
+                    {{ form.deadline }}
+                    {{ form.deadline.errors }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label for="{{ form.reference_link.id_for_label }}">Reference link, optional</label>
+                {{ form.reference_link }}
+                {{ form.reference_link.errors }}
+            </div>
+
+            <button class="btn btn-primary" type="submit">
+                Send inquiry
+            </button>
+        </form>
+
+    </div>
+</section>
+
+{% endblock %}
