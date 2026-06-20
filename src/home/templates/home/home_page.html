@@ -1,21 +1,128 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static wagtailcore_tags wagtailimages_tags %}
 
-{% block body_class %}template-homepage{% endblock %}
-
-{% block extra_css %}
-
-{% comment %}
-Delete the line below if you're just getting started and want to remove the welcome screen!
-{% endcomment %}
-<link rel="stylesheet" href="{% static 'css/welcome_page.css' %}">
-{% endblock extra_css %}
+{% block title %}Johanna L | Just Keep Layering{% endblock %}
 
 {% block content %}
 
-{% comment %}
-Delete the line below if you're just getting started and want to remove the welcome screen!
-{% endcomment %}
-{% include 'home/welcome_page.html' %}
+<section class="hero">
+    <div class="site-shell hero-grid">
+        <div>
+            <div class="eyebrow">Watercolour painting & sketching</div>
 
-{% endblock content %}
+            <h1 class="hero-title">
+                Places, memories, and imperfect <span>layers.</span>
+            </h1>
+
+            <p class="hero-text">
+                Travel-inspired watercolour sketches by Johanna L — quiet streets,
+                soft landscapes, architecture, and small moments captured through
+                pencil, colour, and practice.
+            </p>
+
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="#gallery">View gallery</a>
+                <a class="btn btn-secondary" href="#commissions">Commission a memory</a>
+            </div>
+        </div>
+
+        <div class="paper-card hero-art-card">
+            <div class="hero-art-inner">
+                <div class="sketch-mark" aria-hidden="true"></div>
+            </div>
+            <div class="caption-note">
+                <span>sketchbook study</span>
+                <span>just keep layering</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="gallery">
+    <div class="site-shell">
+        <div class="section-heading">
+            <div class="eyebrow">Gallery direction</div>
+            <h2 class="section-title">A sketchbook of places.</h2>
+            <p class="section-text">
+                The gallery will grow into collections of travel sketches,
+                architecture, landscapes, and process studies — each artwork with
+                its own place, memory, and story.
+            </p>
+        </div>
+
+        <div class="category-grid">
+            <article class="paper-card category-card">
+                <div>
+                    <div class="small-label">Collection 01</div>
+                    <h3>Travel Sketches</h3>
+                    <p>Watercolour memories from streets, trips, and places worth remembering.</p>
+                </div>
+            </article>
+
+            <article class="paper-card category-card">
+                <div>
+                    <div class="small-label">Collection 02</div>
+                    <h3>Architecture & Facades</h3>
+                    <p>Buildings, doors, churches, corners, and quiet urban details.</p>
+                </div>
+            </article>
+
+            <article class="paper-card category-card">
+                <div>
+                    <div class="small-label">Collection 03</div>
+                    <h3>Sketchbook Studies</h3>
+                    <p>Practice pages, process work, unfinished layers, and learning moments.</p>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="process">
+    <div class="site-shell philosophy">
+        <div class="paper-card philosophy-quote">
+            <p>Just keep layering.</p>
+        </div>
+
+        <div class="paper-card philosophy-text">
+            <div class="small-label">Process</div>
+            <h2 class="section-title">Soft layers, slow looking.</h2>
+            <p>
+                Watercolour is built in layers: light washes, pencil marks,
+                small corrections, and the decision to keep going even when a piece
+                is not perfect. This website follows that same idea — a living
+                portfolio that grows with every sketch.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="commissions">
+    <div class="site-shell">
+        <div class="section-heading">
+            <div class="eyebrow">Commissions</div>
+            <h2 class="section-title">Turn a place into a watercolour memory.</h2>
+            <p class="section-text">
+                Later, visitors will be able to request a custom painting from a travel
+                photo, favourite street, house, facade, landscape, or meaningful place.
+            </p>
+        </div>
+
+        <a class="btn btn-primary" href="#contact">Request a commission</a>
+    </div>
+</section>
+
+<section class="section" id="contact">
+    <div class="site-shell">
+        <div class="section-heading">
+            <div class="eyebrow">Contact</div>
+            <h2 class="section-title">For now, this is our design test page.</h2>
+            <p class="section-text">
+                In the next phases, we will replace these placeholder sections with real
+                Wagtail-managed artworks, contact forms, and commission requests.
+            </p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

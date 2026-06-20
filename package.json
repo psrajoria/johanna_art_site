@@ -1,0 +1,24 @@
+{
+  "name": "johanna_art_site",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/psrajoria/johanna_art_site.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/psrajoria/johanna_art_site/issues"
+  },
+  "homepage": "https://github.com/psrajoria/johanna_art_site#readme",
+  "description": "",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.1",
+    "tailwindcss": "^4.3.1"
+  }
+}

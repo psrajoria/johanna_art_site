@@ -1,0 +1,413 @@
+@import "tailwindcss";
+
+/*
+  Johanna L | Just Keep Layering
+  Custom design system:
+  warm paper, soft watercolour, travel sketchbook, handmade gallery
+*/
+
+@theme {
+  --color-paper: #f7f1e8;
+  --color-paper-soft: #fbf7ef;
+  --color-ink: #2e2e2a;
+  --color-ink-soft: #5d5a52;
+  --color-pencil: #b8b1a4;
+  --color-wash-blue: #8db6c7;
+  --color-wash-green: #9caf88;
+  --color-olive: #6f7d58;
+  --color-terracotta: #b36b4a;
+  --color-warm-shadow: #d8cfc0;
+
+  --font-display: Georgia, "Times New Roman", serif;
+  --font-body: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(141, 182, 199, 0.12), transparent 28%),
+      radial-gradient(circle at 80% 10%, rgba(179, 107, 74, 0.10), transparent 24%),
+      linear-gradient(180deg, #f7f1e8 0%, #fbf7ef 50%, #f3eadc 100%);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    line-height: 1.65;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.18;
+    background-image:
+      linear-gradient(rgba(46, 46, 42, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(46, 46, 42, 0.025) 1px, transparent 1px);
+    background-size: 34px 34px;
+    mask-image: linear-gradient(to bottom, black, transparent 80%);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+@layer components {
+  .site-shell {
+    width: min(1120px, calc(100% - 32px));
+    margin-inline: auto;
+  }
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(18px);
+    background: rgba(247, 241, 232, 0.84);
+    border-bottom: 1px solid rgba(46, 46, 42, 0.10);
+  }
+
+  .site-nav {
+    min-height: 78px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .brand-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2vw, 1.85rem);
+    letter-spacing: -0.04em;
+  }
+
+  .brand-subtitle {
+    font-size: 0.72rem;
+    color: var(--color-ink-soft);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    font-size: 0.94rem;
+    color: var(--color-ink-soft);
+  }
+
+  .nav-links a {
+    position: relative;
+  }
+
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 0;
+    height: 1px;
+    background: var(--color-terracotta);
+    transition: width 180ms ease;
+  }
+
+  .nav-links a:hover::after {
+    width: 100%;
+  }
+
+  .hero {
+    padding: clamp(72px, 10vw, 132px) 0 clamp(56px, 8vw, 96px);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr);
+    gap: clamp(36px, 6vw, 80px);
+    align-items: center;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-olive);
+    font-weight: 650;
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 42px;
+    height: 1px;
+    background: var(--color-olive);
+    opacity: 0.65;
+  }
+
+  .hero-title {
+    margin: 18px 0 22px;
+    max-width: 760px;
+    font-size: clamp(3.1rem, 8vw, 7.4rem);
+  }
+
+  .hero-title span {
+    color: var(--color-terracotta);
+  }
+
+  .hero-text {
+    max-width: 640px;
+    font-size: clamp(1.05rem, 1.7vw, 1.25rem);
+    color: var(--color-ink-soft);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 34px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 22px;
+    border-radius: 999px;
+    border: 1px solid rgba(46, 46, 42, 0.16);
+    font-weight: 650;
+    transition:
+      transform 160ms ease,
+      box-shadow 160ms ease,
+      background 160ms ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px rgba(46, 46, 42, 0.10);
+  }
+
+  .btn-primary {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.42);
+    color: var(--color-ink);
+  }
+
+  .paper-card {
+    position: relative;
+    background:
+      linear-gradient(145deg, rgba(255,255,255,0.70), rgba(255,255,255,0.28)),
+      var(--color-paper-soft);
+    border: 1px solid rgba(46, 46, 42, 0.12);
+    box-shadow:
+      0 20px 60px rgba(46, 46, 42, 0.11),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  }
+
+  .paper-card::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(46, 46, 42, 0.06);
+    pointer-events: none;
+  }
+
+  .hero-art-card {
+    padding: 18px;
+    transform: rotate(1.4deg);
+  }
+
+  .hero-art-inner {
+    aspect-ratio: 4 / 5;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(circle at 25% 24%, rgba(141, 182, 199, 0.52), transparent 25%),
+      radial-gradient(circle at 70% 70%, rgba(156, 175, 136, 0.42), transparent 28%),
+      linear-gradient(145deg, #f5efe4, #e8dccb);
+    overflow: hidden;
+  }
+
+  .sketch-mark {
+    width: 72%;
+    height: 72%;
+    border: 2px solid rgba(46, 46, 42, 0.28);
+    border-radius: 42% 58% 60% 40% / 48% 38% 62% 52%;
+    position: relative;
+  }
+
+  .sketch-mark::before,
+  .sketch-mark::after {
+    content: "";
+    position: absolute;
+    border: 1px solid rgba(46, 46, 42, 0.20);
+  }
+
+  .sketch-mark::before {
+    width: 62%;
+    height: 36%;
+    left: 18%;
+    top: 22%;
+    border-radius: 50%;
+    transform: rotate(-12deg);
+  }
+
+  .sketch-mark::after {
+    width: 44%;
+    height: 52%;
+    right: 16%;
+    bottom: 10%;
+    border-radius: 35% 65% 45% 55%;
+    transform: rotate(16deg);
+  }
+
+  .caption-note {
+    margin-top: 14px;
+    font-size: 0.84rem;
+    color: var(--color-ink-soft);
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .section {
+    padding: clamp(56px, 8vw, 98px) 0;
+  }
+
+  .section-heading {
+    max-width: 760px;
+    margin-bottom: 34px;
+  }
+
+  .section-title {
+    font-size: clamp(2.1rem, 4.5vw, 4.5rem);
+    margin: 0 0 14px;
+  }
+
+  .section-text {
+    color: var(--color-ink-soft);
+    font-size: 1.05rem;
+    max-width: 680px;
+  }
+
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .category-card {
+    padding: 28px;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .category-card h3 {
+    font-size: 1.7rem;
+    margin: 0 0 10px;
+  }
+
+  .category-card p {
+    color: var(--color-ink-soft);
+    margin: 0;
+  }
+
+  .small-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-olive);
+    font-weight: 700;
+  }
+
+  .philosophy {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 28px;
+    align-items: stretch;
+  }
+
+  .philosophy-quote {
+    padding: clamp(28px, 4vw, 48px);
+  }
+
+  .philosophy-quote p {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 4.4rem);
+    line-height: 1.05;
+    margin: 0;
+  }
+
+  .philosophy-text {
+    padding: clamp(28px, 4vw, 48px);
+  }
+
+  .philosophy-text p {
+    color: var(--color-ink-soft);
+    font-size: 1.05rem;
+  }
+
+  .site-footer {
+    margin-top: 70px;
+    padding: 42px 0;
+    border-top: 1px solid rgba(46, 46, 42, 0.10);
+    color: var(--color-ink-soft);
+  }
+
+  @media (max-width: 820px) {
+    .site-nav {
+      align-items: flex-start;
+      flex-direction: column;
+      padding: 18px 0;
+    }
+
+    .nav-links {
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .hero-grid,
+    .philosophy {
+      grid-template-columns: 1fr;
+    }
+
+    .category-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-art-card {
+      transform: none;
+    }
+  }
+}
