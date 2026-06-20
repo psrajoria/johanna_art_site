@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}Gallery | Johanna L{% endblock %}
+
+{% block content %}
+
+<section class="artwork-hero">
+    <div class="site-shell">
+        <div class="eyebrow">Gallery</div>
+        <h1 class="section-title">{{ page.title }}</h1>
+
+        {% if page.intro %}
+        <div class="section-text">
+            {{ page.intro|richtext }}
+        </div>
+        {% else %}
+        <p class="section-text">
+            A growing sketchbook of travel-inspired watercolour paintings,
+            architecture studies, landscapes, and process pieces.
+        </p>
+        {% endif %}
+    </div>
+</section>
+
+<section class="section">
+    <div class="site-shell">
+
+        <div class="filter-row">
+            <a class="filter-chip" href="{% pageurl page %}">All</a>
+
+            {% for key, label in category_choices %}
+            <a class="filter-chip" href="{% pageurl page %}?category={{ key }}">
+                {{ label }}
+            </a>
+            {% endfor %}
+
+            <a class="filter-chip" href="{% pageurl page %}?status=available">Available</a>
+            <a class="filter-chip" href="{% pageurl page %}?status=sold">Sold</a>
+        </div>
+
+        <div class="artwork-grid">
+            {% for artwork in artworks %}
+            <article class="art-card paper-card">
+                <a href="{% pageurl artwork %}">
+                    <div class="art-image-wrap">
+                        {% if artwork.main_image %}
+                        {% image artwork.main_image fill-620x760 as art_img %}
+                        <img src="{{ art_img.url }}" alt="{{ artwork.title }}">
+                        {% else %}
+                        <div class="art-placeholder">
+                            <span>No image yet</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="art-card-body">
+                        <div class="art-card-meta">
+                            <span>{{ artwork.get_category_display }}</span>
+                            <span class="status-pill status-{{ artwork.status }}">
+                                {{ artwork.get_status_display }}
+                            </span>
+                        </div>
+
+                        <h2>{{ artwork.title }}</h2>
+
+                        {% if artwork.location_display %}
+                        <p class="art-location">{{ artwork.location_display }}</p>
+                        {% endif %}
+
+                        {% if artwork.short_description %}
+                        <p>{{ artwork.short_description }}</p>
+                        {% endif %}
+
+                        <div class="art-card-footer">
+                            {% if artwork.medium %}
+                            <span>{{ artwork.medium }}</span>
+                            {% endif %}
+
+                            {% if artwork.price_display %}
+                            <strong>{{ artwork.price_display }}</strong>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+            </article>
+            {% empty %}
+            <div class="empty-gallery paper-card">
+                <h2>No artworks yet.</h2>
+                <p>
+                    Add Artwork pages under this Gallery page in Wagtail admin.
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

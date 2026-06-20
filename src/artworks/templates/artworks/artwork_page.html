@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}{{ page.title }} | Johanna L{% endblock %}
+
+{% block content %}
+
+<section class="art-detail">
+    <div class="site-shell art-detail-grid">
+
+        <div class="art-detail-image paper-card">
+            {% if page.main_image %}
+            {% image page.main_image width-1200 as main_img %}
+            <img src="{{ main_img.url }}" alt="{{ page.title }}">
+            {% else %}
+            <div class="art-placeholder large">
+                <span>No image yet</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <aside class="art-detail-info">
+            <div class="eyebrow">{{ page.get_category_display }}</div>
+
+            <h1 class="section-title">{{ page.title }}</h1>
+
+            {% if page.short_description %}
+            <p class="hero-text">{{ page.short_description }}</p>
+            {% endif %}
+
+            <div class="detail-list paper-card">
+                <div>
+                    <span>Status</span>
+                    <strong>{{ page.get_status_display }}</strong>
+                </div>
+
+                {% if page.location_display %}
+                <div>
+                    <span>Place</span>
+                    <strong>{{ page.location_display }}</strong>
+                </div>
+                {% endif %}
+
+                {% if page.medium %}
+                <div>
+                    <span>Medium</span>
+                    <strong>{{ page.medium }}</strong>
+                </div>
+                {% endif %}
+
+                {% if page.size_display %}
+                <div>
+                    <span>Size</span>
+                    <strong>{{ page.size_display }}</strong>
+                </div>
+                {% endif %}
+
+                {% if page.year %}
+                <div>
+                    <span>Year</span>
+                    <strong>{{ page.year }}</strong>
+                </div>
+                {% endif %}
+
+                {% if page.price_display %}
+                <div>
+                    <span>Price</span>
+                    <strong>{{ page.price_display }}</strong>
+                </div>
+                {% endif %}
+            </div>
+
+            <a class="btn btn-primary" href="/#contact">Ask about this piece</a>
+        </aside>
+    </div>
+</section>
+
+{% if page.story %}
+<section class="section">
+    <div class="site-shell story-block paper-card">
+        <div class="small-label">The memory behind this piece</div>
+        <div class="story-content">
+            {{ page.story|richtext }}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if page.gallery_images.all %}
+<section class="section">
+    <div class="site-shell">
+        <div class="section-heading">
+            <div class="eyebrow">Details & process</div>
+            <h2 class="section-title">Extra layers.</h2>
+        </div>
+
+        <div class="process-grid">
+            {% for item in page.gallery_images.all %}
+            <figure class="process-card paper-card">
+                {% image item.image fill-520x420 as detail_img %}
+                <img src="{{ detail_img.url }}" alt="{{ item.caption|default:page.title }}">
+
+                {% if item.caption %}
+                <figcaption>{{ item.caption }}</figcaption>
+                {% endif %}
+            </figure>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}
