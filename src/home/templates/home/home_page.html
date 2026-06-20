@@ -8,25 +8,37 @@
 <section class="hero">
     <div class="site-shell hero-grid">
         <div>
-            <div class="eyebrow">Watercolour painting & sketching</div>
+            <div class="eyebrow">
+                {{ page.hero_eyebrow }}
+            </div>
 
             <h1 class="hero-title">
-                Places, memories, and imperfect <span>layers.</span>
+                {{ page.hero_title }} <span>{{ page.hero_highlight }}</span>
             </h1>
 
-            <p class="hero-text">
-                Travel-inspired watercolour sketches by Johanna L — quiet streets,
-                soft landscapes, architecture, and small moments captured through
-                pencil, colour, and practice.
-            </p>
+            <div class="hero-text">
+                {{ page.hero_text|richtext }}
+            </div>
 
             <div class="hero-actions">
-                <a class="btn btn-primary" href="#gallery">View gallery</a>
+                <a class="btn btn-primary" href="/gallery/">View gallery</a>
                 <a class="btn btn-secondary" href="#commissions">Commission a memory</a>
             </div>
         </div>
 
         <div class="paper-card hero-art-card">
+            {% if hero_artwork and hero_artwork.main_image %}
+            <a href="{% pageurl hero_artwork %}" class="hero-art-link">
+                <div class="hero-art-inner hero-art-photo">
+                    {% image hero_artwork.main_image fill-720x900 as hero_img %}
+                    <img src="{{ hero_img.url }}" alt="{{ hero_artwork.title }}">
+                </div>
+                <div class="caption-note">
+                    <span>{{ hero_artwork.title }}</span>
+                    <span>{{ hero_artwork.location_display|default:"just keep layering" }}</span>
+                </div>
+            </a>
+            {% else %}
             <div class="hero-art-inner">
                 <div class="sketch-mark" aria-hidden="true"></div>
             </div>
@@ -34,47 +46,62 @@
                 <span>sketchbook study</span>
                 <span>just keep layering</span>
             </div>
+            {% endif %}
         </div>
     </div>
 </section>
 
-<section class="section" id="gallery">
+<section class="section" id="featured">
     <div class="site-shell">
         <div class="section-heading">
-            <div class="eyebrow">Gallery direction</div>
-            <h2 class="section-title">A sketchbook of places.</h2>
-            <p class="section-text">
-                The gallery will grow into collections of travel sketches,
-                architecture, landscapes, and process studies — each artwork with
-                its own place, memory, and story.
+            <div class="eyebrow">Featured works</div>
+            <h2 class="section-title">{{ page.featured_title }}</h2>
+            <div class="section-text">
+                {{ page.featured_text|richtext }}
+            </div>
+        </div>
+
+        {% if featured_artworks %}
+        <div class="home-artwork-grid">
+            {% for artwork in featured_artworks %}
+            <article class="art-card paper-card">
+                <a href="{% pageurl artwork %}">
+                    <div class="art-image-wrap">
+                        {% image artwork.main_image fill-620x760 as art_img %}
+                        <img src="{{ art_img.url }}" alt="{{ artwork.title }}">
+                    </div>
+
+                    <div class="art-card-body">
+                        <div class="art-card-meta">
+                            <span>{{ artwork.get_category_display }}</span>
+                            <span class="status-pill status-{{ artwork.status }}">
+                                {{ artwork.get_status_display }}
+                            </span>
+                        </div>
+
+                        <h2>{{ artwork.title }}</h2>
+
+                        {% if artwork.location_display %}
+                        <p class="art-location">{{ artwork.location_display }}</p>
+                        {% endif %}
+
+                        {% if artwork.short_description %}
+                        <p>{{ artwork.short_description }}</p>
+                        {% endif %}
+                    </div>
+                </a>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="home-empty paper-card">
+            <h3>No featured artworks yet.</h3>
+            <p>
+                In Wagtail admin, open an Artwork page and turn on
+                <strong>Featured</strong>. Then it will appear here.
             </p>
         </div>
-
-        <div class="category-grid">
-            <article class="paper-card category-card">
-                <div>
-                    <div class="small-label">Collection 01</div>
-                    <h3>Travel Sketches</h3>
-                    <p>Watercolour memories from streets, trips, and places worth remembering.</p>
-                </div>
-            </article>
-
-            <article class="paper-card category-card">
-                <div>
-                    <div class="small-label">Collection 02</div>
-                    <h3>Architecture & Facades</h3>
-                    <p>Buildings, doors, churches, corners, and quiet urban details.</p>
-                </div>
-            </article>
-
-            <article class="paper-card category-card">
-                <div>
-                    <div class="small-label">Collection 03</div>
-                    <h3>Sketchbook Studies</h3>
-                    <p>Practice pages, process work, unfinished layers, and learning moments.</p>
-                </div>
-            </article>
-        </div>
+        {% endif %}
     </div>
 </section>
 
@@ -86,29 +113,51 @@
 
         <div class="paper-card philosophy-text">
             <div class="small-label">Process</div>
-            <h2 class="section-title">Soft layers, slow looking.</h2>
-            <p>
-                Watercolour is built in layers: light washes, pencil marks,
-                small corrections, and the decision to keep going even when a piece
-                is not perfect. This website follows that same idea — a living
-                portfolio that grows with every sketch.
-            </p>
+            <h2 class="section-title">{{ page.process_title }}</h2>
+            <div>
+                {{ page.process_text|richtext }}
+            </div>
         </div>
     </div>
 </section>
 
-<section class="section" id="commissions">
+{% if latest_artworks %}
+<section class="section" id="latest">
     <div class="site-shell">
         <div class="section-heading">
-            <div class="eyebrow">Commissions</div>
-            <h2 class="section-title">Turn a place into a watercolour memory.</h2>
+            <div class="eyebrow">Latest from the sketchbook</div>
+            <h2 class="section-title">Recently added layers.</h2>
             <p class="section-text">
-                Later, visitors will be able to request a custom painting from a travel
-                photo, favourite street, house, facade, landscape, or meaningful place.
+                New sketches, finished pieces, and small studies from the growing gallery.
             </p>
         </div>
 
-        <a class="btn btn-primary" href="#contact">Request a commission</a>
+        <div class="latest-strip">
+            {% for artwork in latest_artworks %}
+            <a class="latest-card paper-card" href="{% pageurl artwork %}">
+                {% if artwork.main_image %}
+                {% image artwork.main_image fill-420x420 as latest_img %}
+                <img src="{{ latest_img.url }}" alt="{{ artwork.title }}">
+                {% endif %}
+                <span>{{ artwork.title }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="section" id="commissions">
+    <div class="site-shell commission-panel paper-card">
+        <div>
+            <div class="eyebrow">Commissions</div>
+            <h2 class="section-title">{{ page.commission_title }}</h2>
+            <div class="section-text">
+                {{ page.commission_text|richtext }}
+            </div>
+        </div>
+
+        <a class="btn btn-primary" href="/#contact">Request a commission</a>
     </div>
 </section>
 
@@ -116,10 +165,9 @@
     <div class="site-shell">
         <div class="section-heading">
             <div class="eyebrow">Contact</div>
-            <h2 class="section-title">For now, this is our design test page.</h2>
+            <h2 class="section-title">For now, send a message through Instagram.</h2>
             <p class="section-text">
-                In the next phases, we will replace these placeholder sections with real
-                Wagtail-managed artworks, contact forms, and commission requests.
+                In the next phase, we will add a real contact and commission request form.
             </p>
         </div>
     </div>
