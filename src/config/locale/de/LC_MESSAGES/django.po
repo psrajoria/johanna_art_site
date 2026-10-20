@@ -554,6 +554,9 @@ msgstr "Nicht verkäuflich"
 msgid "Note for Johanna (optional)"
 msgstr "Nachricht an Johanna (optional)"
 
+msgid "Noted! I will email you as soon as it is available again."
+msgstr "Notiert! Ich schreibe dir, sobald es wieder verfügbar ist."
+
 msgid "Notes from the desk."
 msgstr "Notizen vom Schreibtisch."
 
@@ -562,6 +565,9 @@ msgstr "Notizen über Aquarell, Reisen und das Malen."
 
 msgid "Nothing here yet."
 msgstr "Hier ist noch nichts."
+
+msgid "Notify me"
+msgstr "Benachrichtige mich"
 
 msgid "On Instagram"
 msgstr "Auf Instagram"
@@ -884,6 +890,9 @@ msgstr "Zum hellen Modus wechseln"
 msgid "Switzerland"
 msgstr "Schweiz"
 
+msgid "Tell me when it is available again"
+msgstr "Sag mir Bescheid, wenn es wieder verfügbar ist"
+
 msgid "Tell me your idea"
 msgstr "Erzähl mir deine Idee"
 
@@ -949,6 +958,9 @@ msgstr "Diese Ecke des Ateliers ist privat."
 
 msgid "This field is required for delivery."
 msgstr "Dieses Feld wird für die Lieferung benötigt."
+
+msgid "This is available right now, no need to wait."
+msgstr "Das ist gerade verfügbar, du musst nicht warten."
 
 msgid "This is only a test email."
 msgstr "Das ist nur eine Test-E-Mail."

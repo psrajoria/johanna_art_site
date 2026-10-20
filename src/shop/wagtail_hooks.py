@@ -15,7 +15,7 @@ from home.models import StandardPage
 from contact.models import Inquiry
 
 from .cart import shop_settings
-from .models import Order, ShippingRate
+from .models import Order, ShippingRate, WaitlistRequest
 
 
 class NoAddPermissionPolicy(ModelPermissionPolicy):
@@ -50,11 +50,26 @@ class ShippingRateViewSet(SnippetViewSet):
     list_display = ["zone", "shipping_class", "price", "delivery_estimate"]
 
 
+class WaitlistViewSet(SnippetViewSet):
+    model = WaitlistRequest
+    icon = "time"
+    menu_label = "Waiting list"
+    menu_order = 150
+    list_display = ["email", "artwork_title", "status_label", "created_at"]
+    list_filter = ["notified_at"]
+    search_fields = ["email"]
+    list_export = ["email", "language", "created_at", "notified_at"]
+
+    @property
+    def permission_policy(self):
+        return NoAddPermissionPolicy(self.model)
+
+
 class ShopGroup(SnippetViewSetGroup):
     menu_label = "Shop"
     menu_icon = "tag"
     menu_order = 200
-    items = (OrderViewSet, ShippingRateViewSet)
+    items = (OrderViewSet, WaitlistViewSet, ShippingRateViewSet)
 
 
 class InquiryViewSet(SnippetViewSet):

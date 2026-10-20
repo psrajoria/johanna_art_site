@@ -16,7 +16,7 @@ from wagtail.models import Locale
 from artworks.models import ArtworkIndexPage, ArtworkPage, Offer
 
 from .cart import Cart, OrderError, place_order
-from .models import Order, ShippingRate
+from .models import WaitlistRequest, Order, ShippingRate
 from .shipping import ShippingUnavailable, calculate_shipping
 
 PRIVATE_ROOT = tempfile.mkdtemp()
@@ -339,6 +339,40 @@ class ErrorPageTests(ShopTestCase):
         html = render_to_string("500.html")
         self.assertIn("The paint spilled", html)
         self.assertNotIn("{%", html)
+
+
+class WaitlistTests(ShopTestCase):
+    def join(self, offer, email="wait@example.com"):
+        return self.client.post(reverse("shop:waitlist", args=[offer.pk]), {"email": email})
+
+    def test_sold_out_print_notifies_when_restocked(self):
+        Offer.objects.filter(pk=self.print_a4.pk).update(stock=0)
+        offer = Offer.objects.get(pk=self.print_a4.pk)
+        self.assertTrue(offer.waitlistable)
+        self.join(offer)
+        self.join(offer)  # twice is fine
+        self.assertEqual(WaitlistRequest.objects.count(), 1)
+        self.assertEqual(len(mail.outbox), 0)
+
+        offer.stock = 5
+        offer.save()
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Test Artwork", mail.outbox[0].subject)
+        self.assertEqual(mail.outbox[0].to, ["wait@example.com"])
+        offer.save()  # nobody is told twice
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_reserved_original_notifies_when_released(self):
+        self.artwork.set_status("reserved")
+        offer = Offer.objects.get(pk=self.original.pk)
+        self.assertTrue(offer.waitlistable)
+        self.join(offer, "orig@example.com")
+        ArtworkPage.objects.get(pk=self.artwork.pk).set_status("available")
+        self.assertEqual([m.to for m in mail.outbox], [["orig@example.com"]])
+
+    def test_available_offer_cannot_be_waitlisted(self):
+        self.join(self.print_a4)
+        self.assertEqual(WaitlistRequest.objects.count(), 0)
 
 
 class AccountTests(ShopTestCase):

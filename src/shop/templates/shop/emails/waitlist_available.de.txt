@@ -1,0 +1,11 @@
+{% autoescape off %}Hallo,
+
+gute Nachricht: „{{ title }}“ ({{ offer }}) ist wieder verfügbar. Du hattest mich gebeten, dir Bescheid zu sagen.
+
+Hier kannst du es ansehen:
+{{ url }}
+
+Es kann schnell weg sein, also warte nicht zu lange.
+
+Johanna Lackner
+{% endautoescape %}

@@ -353,6 +353,8 @@ class ArtworkPage(Page):
             ArtworkPage.objects.filter(translation_key=self.translation_key).exclude(
                 pk=self.pk
             ).update(status=self.status)
+            if self.status == self.STATUS_AVAILABLE:
+                self.notify_waitlist()
 
     def set_status(self, status):
         """Change the original's status for every language version."""
@@ -360,6 +362,17 @@ class ArtworkPage(Page):
             status=status
         )
         self.status = status
+        if status == self.STATUS_AVAILABLE:
+            self.notify_waitlist()
+
+    def notify_waitlist(self):
+        """Tell people waiting for this artwork that something is available again."""
+        try:
+            from shop.waitlist import notify_available
+
+            notify_available(self.commerce_page)
+        except Exception:  # the waiting list must never break saving
+            pass
 
     @cached_property
     def active_offers(self):
@@ -586,6 +599,22 @@ class Offer(Orderable):
     @property
     def purchasable(self):
         return self.is_purchasable(self.artwork.status)
+
+    @property
+    def waitlistable(self):
+        """Temporarily unavailable, so a visitor can ask to be told when it is back."""
+        if not self.is_active or not self.artwork.price_visible or self.purchasable:
+            return False
+        if self.kind == self.KIND_ORIGINAL:
+            return self.artwork.status == ArtworkPage.STATUS_RESERVED
+        if self.kind == self.KIND_PRINT:
+            return self.stock == 0
+        return False
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.purchasable:
+            self.artwork.notify_waitlist()
 
     @property
     def stock_note(self):

@@ -13,7 +13,7 @@ from artworks.models import Offer
 
 from .cart import Cart, OrderError, place_order, shop_settings
 from .forms import CheckoutForm, OrderLookupForm, RegisterForm
-from .models import Order, OrderItem
+from .models import Order, OrderItem, WaitlistRequest
 from .shipping import ShippingUnavailable, calculate_shipping, country_choices
 from analytics.models import Event
 from analytics.tracking import track
@@ -55,6 +55,42 @@ def cart_add(request, offer_id):
     if request.POST.get("buy_now"):
         return redirect("shop:checkout")
     return redirect(_safe_next(request) or "shop:cart")
+
+
+@require_POST
+def waitlist_join(request, offer_id):
+    """'Tell me when it is available again' for a sold-out print or a reserved original."""
+    from django.core.cache import cache
+    from django.core.validators import validate_email
+    from django.core.exceptions import ValidationError
+
+    offer = get_object_or_404(Offer.objects.select_related("artwork"), pk=offer_id, is_active=True)
+    back = _safe_next(request) or offer.artwork.commerce_page.url or "/"
+    email = request.POST.get("email", "").strip().lower()
+    if request.POST.get("website"):  # honeypot
+        return redirect(back)
+    try:
+        validate_email(email)
+    except ValidationError:
+        messages.error(request, _("That email address does not look right."))
+        return redirect(back)
+    key = "waitlist-rate-" + (request.META.get("HTTP_X_FORWARDED_FOR", "").split(",")[0].strip() or request.META.get("REMOTE_ADDR", ""))
+    if cache.get(key, 0) >= 10:
+        messages.error(request, _("Please try again a little later."))
+        return redirect(back)
+    cache.set(key, cache.get(key, 0) + 1, 3600)
+    if not offer.waitlistable:
+        messages.info(request, _("This is available right now, no need to wait."))
+        return redirect(back)
+    entry, created = WaitlistRequest.objects.get_or_create(
+        offer=offer, email=email, defaults={"language": translation.get_language() or "en"}
+    )
+    if not created and entry.notified_at:
+        entry.notified_at = None
+        entry.save(update_fields=["notified_at"])
+    track(request, Event.WAITLIST, page=offer.artwork)
+    messages.success(request, _("Noted! I will email you as soon as it is available again."))
+    return redirect(back)
 
 
 @require_POST

@@ -143,6 +143,17 @@
                                 <button class="btn btn--sm btn--ghost" type="submit">{% trans "Buy now" %}</button>
                             </form>
                         </div>
+                        {% elif offer.waitlistable %}
+                        <form class="offer-waitlist" method="post" action="{% url 'shop:waitlist' offer.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            <input type="text" name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+                            <label for="wl-{{ offer.pk }}">{% trans "Tell me when it is available again" %}</label>
+                            <div class="newsletter-row">
+                                <input id="wl-{{ offer.pk }}" class="form-input" type="email" name="email" required placeholder="{% trans 'Your email' %}" autocomplete="email">
+                                <button class="btn btn--sm btn--ghost" type="submit">{% trans "Notify me" %}</button>
+                            </div>
+                        </form>
                         {% endif %}
                     </div>
                     {% endwith %}

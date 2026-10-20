@@ -1,0 +1,11 @@
+{% autoescape off %}Hello,
+
+good news: "{{ title }}" ({{ offer }}) is available again. You asked me to let you know.
+
+Take a look here:
+{{ url }}
+
+It can go quickly, so do not wait too long.
+
+Johanna Lackner
+{% endautoescape %}

@@ -2736,6 +2736,22 @@ img[loading="lazy"].is-loaded {
   border-radius: 4px;
 }
 
+/* ---------- Waiting list ------------------------------------------------------ */
+
+.offer-waitlist {
+  grid-column: 1 / -1;
+  margin-top: 0.4rem;
+}
+.offer-waitlist label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.88rem;
+  color: var(--c-ink-2);
+}
+.offer-waitlist .newsletter-row .form-input {
+  padding: 0.5rem 0.8rem;
+}
+
 /* ---------- Newsletter -------------------------------------------------------- */
 
 .newsletter {

@@ -512,6 +512,32 @@ class Order(models.Model):
                 type(offer).objects.filter(pk=offer.pk).update(
                     stock=models.F("stock") + item.quantity
                 )
+                offer.artwork.notify_waitlist()
+
+
+class WaitlistRequest(models.Model):
+    """Someone wants to be told when a sold-out print or a reserved original is available."""
+
+    offer = models.ForeignKey("artworks.Offer", on_delete=models.CASCADE, related_name="waitlist")
+    email = models.EmailField()
+    language = models.CharField(max_length=5, default="en")
+    created_at = models.DateTimeField(auto_now_add=True)
+    notified_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        unique_together = [("offer", "email")]
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.email} for {self.offer}"
+
+    @property
+    def artwork_title(self):
+        return self.offer.artwork.title
+
+    @property
+    def status_label(self):
+        return "Told it is back" if self.notified_at else "Waiting"
 
 
 class OrderItem(models.Model):
