@@ -54,3 +54,45 @@ class AnalyticsTests(TestCase):
         response = self.client.get("/admin/insights/")
         self.assertContains(response, "Insights")
         self.assertContains(self.client.get("/admin/"), "Your visitors this week")
+
+
+class DigestTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        call_command("seed_site", verbosity=0)
+
+    def test_digest_lists_what_needs_attention(self):
+        from analytics.management.commands.admin_digest import build_digest
+        from contact.models import Inquiry
+
+        Inquiry.objects.create(name="A", email="a@example.com", message="Hi", inquiry_type="general")
+        body, urgent = build_digest()
+        self.assertTrue(urgent)
+        self.assertIn("1 new message", body)
+
+    def test_digest_email_goes_to_the_notification_address(self):
+        from django.core import mail
+        from shop.models import ShopSettings
+        from wagtail.models import Site
+
+        shop = ShopSettings.for_site(Site.objects.get(is_default_site=True))
+        shop.notify_email = "jo@example.com"
+        shop.save()
+        call_command("admin_digest", verbosity=0)
+        self.assertEqual(mail.outbox[0].to, ["jo@example.com"])
+        self.assertIn("Good morning", mail.outbox[0].body)
+
+    def test_daily_tasks_run_each_job_once_per_day(self):
+        from unittest import mock
+
+        from analytics.models import TaskRun
+
+        with mock.patch("analytics.management.commands.daily_tasks.call_command") as run, \
+                mock.patch("analytics.management.commands.daily_tasks.timezone.localtime") as now:
+            now.return_value.hour = 12
+            call_command("daily_tasks", verbosity=0)
+            first = run.call_count
+            call_command("daily_tasks", verbosity=0)
+        self.assertEqual(first, 3)
+        self.assertEqual(run.call_count, 3)  # nothing repeated
+        self.assertEqual(TaskRun.objects.count(), 3)

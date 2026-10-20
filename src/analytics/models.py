@@ -48,3 +48,10 @@ class Event(models.Model):
     group = models.CharField(max_length=40, blank=True, db_index=True)
     title = models.CharField(max_length=200, blank=True)
     visitor = models.CharField(max_length=16, blank=True)
+
+
+class TaskRun(models.Model):
+    """Remembers when a once-a-day job last ran, so restarting the server never repeats it."""
+
+    name = models.CharField(max_length=40, unique=True)
+    last_run = models.DateField()

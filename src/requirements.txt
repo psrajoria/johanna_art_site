@@ -18,6 +18,8 @@ djangorestframework==3.17.1
 draftjs_exporter==5.2.0
 et_xmlfile==2.0.0
 filetype==1.2.0
+fonttools==4.67.0
+fpdf2==2.8.9
 gunicorn==26.0.0
 idna==3.18
 laces==0.1.2

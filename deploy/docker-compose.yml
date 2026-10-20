@@ -21,6 +21,21 @@ services:
       retries: 3
       start_period: 40s
 
+  # once-a-day jobs: morning email for Johanna, Instagram refresh, old-statistics cleanup
+  scheduler:
+    build: ../src
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_PATH: /data/db.sqlite3
+      MEDIA_ROOT: /data/media
+      PRIVATE_MEDIA_ROOT: /data/private_media
+    volumes:
+      - data:/data
+    depends_on:
+      - web
+    command: ["sh", "-c", "sleep 60; while true; do python manage.py daily_tasks; sleep 3600; done"]
+
   caddy:
     image: caddy:2
     restart: unless-stopped
