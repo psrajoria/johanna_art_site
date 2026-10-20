@@ -2,12 +2,11 @@
   <h2 class="visuallyhidden">Shop overview</h2>
   <div style="font-weight:600;font-size:1.1em;margin:0 0 .75em">Your shop at a glance</div>
 
-  {% if placeholder_warning %}
-  <p style="background:#fff4d6;border:1px solid #e2b93b;padding:.75em 1em;border-radius:6px;margin-bottom:1em">
-    ⚠️ Your PayPal / bank details are still placeholders. Customers would be asked to pay the wrong account.
-    <a href="{{ settings_url }}"><strong>Update shop settings</strong></a>
+  {% for warning in warnings %}
+  <p style="background:#fff4d6;border:1px solid #e2b93b;padding:.75em 1em;border-radius:6px;margin-bottom:.6em">
+    ⚠️ {{ warning.text }} <a href="{{ warning.link }}"><strong>{{ warning.action }}</strong></a>
   </p>
-  {% endif %}
+  {% endfor %}
 
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75em;margin-bottom:1em">
     {% for card in cards %}

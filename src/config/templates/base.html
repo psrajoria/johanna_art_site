@@ -41,6 +41,10 @@
         (function () {
             try {
                 var d = document.documentElement;
+                // A link like ?theme=dark&palette=meadow applies (and saves) that look.
+                var q = new URLSearchParams(location.search);
+                if (q.get("theme")) localStorage.setItem("jl-theme", q.get("theme"));
+                if (q.get("palette")) localStorage.setItem("jl-palette", q.get("palette"));
                 var t = localStorage.getItem("jl-theme");
                 var p = localStorage.getItem("jl-palette");
                 if (t === "light" || t === "dark") d.setAttribute("data-theme", t);
@@ -82,6 +86,7 @@
                    href="{% pageurl item %}"
                    {% if request.path|startswith:item.url %}aria-current="page"{% endif %}>{{ item.title }}</a>
                 {% endfor %}
+                <a class="nav-link nav-extra" href="{% if user.is_authenticated %}{% url 'shop:account' %}{% else %}{% url 'shop:login' %}{% endif %}">{% trans "Your account" %}</a>
             </nav>
 
             <div class="header-tools">
@@ -137,7 +142,7 @@
                     {% endfor %}
                 </div>
 
-                <a class="icon-link" href="{% if user.is_authenticated %}{% url 'shop:account' %}{% else %}{% url 'shop:login' %}{% endif %}"
+                <a class="icon-link icon-account" href="{% if user.is_authenticated %}{% url 'shop:account' %}{% else %}{% url 'shop:login' %}{% endif %}"
                    aria-label="{% trans 'Your account' %}">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" /></svg>
                 </a>

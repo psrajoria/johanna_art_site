@@ -942,7 +942,8 @@ p {
 /* artwork card: a print pinned to the wall */
 .art-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 360px));
+  justify-content: center;
   gap: clamp(1.4rem, 3vw, 2.4rem);
 }
 
@@ -2709,6 +2710,50 @@ img[loading="lazy"].is-loaded {
   }
   .brand-subtitle {
     display: none;
+  }
+}
+
+.nav-extra {
+  display: none;
+}
+
+@media (max-width: 520px) {
+  /* a phone-width header: brand + palette + language + cart + menu */
+  .header-inner {
+    gap: 0.5rem;
+  }
+  .brand {
+    gap: 0.5rem;
+  }
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+  }
+  .brand-title {
+    font-size: 1.2rem;
+  }
+  .header-tools {
+    gap: 0.1rem;
+  }
+  .icon-link,
+  .menu-toggle {
+    width: 40px;
+    height: 40px;
+  }
+  .icon-account {
+    display: none;
+  }
+  .nav-extra {
+    display: block;
+  }
+  .lang-switch {
+    margin-right: 0.1rem;
+  }
+  .lang-switch a {
+    padding: 0.18rem 0.5rem;
+  }
+  .btn-row .btn {
+    flex: 1 1 auto;
   }
 }
 

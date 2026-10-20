@@ -4,12 +4,14 @@ from django.urls import reverse
 from django.utils import timezone
 
 from wagtail import hooks
+from wagtail.models import Locale
 from wagtail.admin.ui.components import Component
 from wagtail.permission_policies import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
 
 from artworks.models import Offer
+from home.models import StandardPage
 from contact.models import Inquiry
 
 from .cart import shop_settings
@@ -123,7 +125,37 @@ class ShopSummaryPanel(Component):
         ]
 
         shop = shop_settings()
+        legal_drafts = StandardPage.objects.filter(
+            show_in_footer=True, live=False, locale=Locale.get_default()
+        )
+        warnings = []
+        if shop and shop.has_placeholder_details:
+            warnings.append(
+                {
+                    "text": "Your PayPal / bank details are still placeholders — customers would be asked to pay the wrong account.",
+                    "link": reverse("wagtailsettings:edit", args=["shop", "shopsettings"]),
+                    "action": "Update shop settings",
+                }
+            )
+        if shop and not shop.notification_address:
+            warnings.append(
+                {
+                    "text": "No notification email is set, so you won't be told about new orders or messages.",
+                    "link": reverse("wagtailsettings:edit", args=["shop", "shopsettings"]),
+                    "action": "Add your email",
+                }
+            )
+        if legal_drafts.exists():
+            warnings.append(
+                {
+                    "text": "Legal pages are still drafts (%s). Fill in your details, have them checked, and publish them before launch."
+                    % ", ".join(legal_drafts.values_list("title", flat=True)),
+                    "link": reverse("wagtailadmin_explore", args=[legal_drafts.first().get_parent().pk]),
+                    "action": "Open pages",
+                }
+            )
         context = {
+            "warnings": warnings,
             "cards": [
                 {
                     "label": "Awaiting payment",
@@ -148,8 +180,6 @@ class ShopSummaryPanel(Component):
             "month_count": month["count"] or 0,
             "items_sold": Offer.objects.aggregate(n=Sum("sold_count"))["n"] or 0,
             "low_stock": low_stock,
-            "placeholder_warning": bool(shop and shop.has_placeholder_details),
-            "settings_url": reverse("wagtailsettings:edit", args=["shop", "shopsettings"]),
         }
         return render_to_string("shop/admin/summary_panel.html", context)
 

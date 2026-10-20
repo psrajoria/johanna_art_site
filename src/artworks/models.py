@@ -350,7 +350,7 @@ class ArtworkPage(Page):
     @property
     def size_display(self):
         if self.width_cm and self.height_cm:
-            return f"{self.width_cm:g} × {self.height_cm:g} cm"
+            return f"{self.width_cm.normalize():f} × {self.height_cm.normalize():f} cm"
         return ""
 
     @property

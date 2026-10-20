@@ -14,6 +14,8 @@ from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.fields import RichTextField
 
+from config.panels import ReadOnlyHTMLPanel
+
 from .shipping import ZONE_CHOICES, country_choices
 
 
@@ -301,7 +303,7 @@ class Order(models.Model):
             heading="Order",
         ),
         MultiFieldPanel(
-            [FieldPanel("items_summary", read_only=True)],
+            [ReadOnlyHTMLPanel("items_summary")],
             heading="What was ordered",
         ),
         MultiFieldPanel(
@@ -317,7 +319,7 @@ class Order(models.Model):
                 FieldPanel("name", read_only=True),
                 FieldPanel("email", read_only=True),
                 FieldPanel("phone", read_only=True),
-                FieldPanel("address_display", read_only=True),
+                ReadOnlyHTMLPanel("address_display", heading="Address"),
                 FieldPanel("customer_note", read_only=True),
             ],
             heading="Customer",
@@ -336,9 +338,14 @@ class Order(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._loaded_status = self.status if not self._state.adding else None
+    _loaded_status = None  # the status as stored in the database
+
+    @classmethod
+    def from_db(cls, db, field_names, values):
+        instance = super().from_db(db, field_names, values)
+        if "status" in field_names:
+            instance._loaded_status = instance.status
+        return instance
 
     def __str__(self):
         return f"{self.number or 'New order'} — {self.name}"

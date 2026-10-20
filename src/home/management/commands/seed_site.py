@@ -373,6 +373,13 @@ HOME_DE = {
 class Command(BaseCommand):
     help = "Create the default pages (EN + DE), settings and shipping prices."
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--domain",
+            help="The live domain (e.g. johannal.art). Updates the Wagtail site "
+            "record so sitemaps and links use it.",
+        )
+
     def handle(self, *args, **options):
         de, _ = Locale.objects.get_or_create(language_code="de")
         en = Locale.get_default()
@@ -386,6 +393,12 @@ class Command(BaseCommand):
         if site and site.root_page_id != home.pk:
             site.root_page = home
             site.save()
+        if site and options.get("domain"):
+            site.hostname = options["domain"]
+            site.port = 443
+            site.site_name = "Johanna L"
+            site.save()
+            self.stdout.write(f"  site domain set to {options['domain']}")
 
         home_de = self._translate(home, de)
         self._apply_home_de(home_de)
@@ -402,7 +415,7 @@ class Command(BaseCommand):
             extra={"intro": "<p>Notes on watercolour, travelling and making art.</p>"},
         )
         blog_de = self._translate(blog, de)
-        self._set(blog_de, "Blog", slug="blog-de", intro="<p>Notizen über Aquarell, Reisen und das Malen.</p>")
+        self._set(blog_de, "Blog", slug="blog", intro="<p>Notizen über Aquarell, Reisen und das Malen.</p>")
 
         for spec in PAGES:
             en_page = self._ensure_standard(home, spec, "en")
@@ -426,16 +439,21 @@ class Command(BaseCommand):
         return page
 
     def _translate(self, page, locale):
+        """Return the translation, creating it if needed (`.is_new` tells which)."""
         existing = page.get_translation_or_none(locale)
         if existing:
-            return existing.specific
-        translated = page.copy_for_translation(locale, copy_parents=True)
-        return translated.specific
+            result = existing.specific
+            result.is_new = False
+            return result
+        result = page.copy_for_translation(locale, copy_parents=True).specific
+        result.is_new = True
+        return result
 
     def _set(self, page, title, slug=None, **fields):
         """Fill in German text on a new translation (only when still untouched)."""
+        is_new = getattr(page, "is_new", True)
         page = page.specific_class.objects.get(pk=page.pk)
-        if page.title != title and page.title == page.get_translation(Locale.get_default()).title:
+        if is_new:
             page.title = title
             if slug:
                 page.slug = slug
@@ -445,8 +463,9 @@ class Command(BaseCommand):
             page.save_revision().publish()
 
     def _apply_home_de(self, home_de):
+        is_new = getattr(home_de, "is_new", True)
         home_de = HomePage.objects.get(pk=home_de.pk)
-        if home_de.hero_title == HomePage._meta.get_field("hero_title").default:
+        if is_new:
             for key, value in HOME_DE.items():
                 setattr(home_de, key, value)
             home_de.slug = "start"
@@ -476,9 +495,9 @@ class Command(BaseCommand):
         return page
 
     def _apply_standard(self, de_page, spec, lang):
+        is_new = getattr(de_page, "is_new", True)
         de_page = StandardPage.objects.get(pk=de_page.pk)
-        en = spec["en"]
-        if de_page.title == en["title"] and lang == "de":
+        if is_new and lang == "de":
             content = spec["de"]
             de_page.title = content["title"]
             de_page.intro = content["intro"]

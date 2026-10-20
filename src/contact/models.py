@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 
+from config.panels import ReadOnlyHTMLPanel
 from config.storage import private_storage
 from shop.models import new_token
 
@@ -188,7 +189,7 @@ class Inquiry(models.Model):
                 FieldPanel("budget", read_only=True),
                 FieldPanel("deadline", read_only=True),
                 FieldPanel("reference_link", read_only=True),
-                FieldPanel("reference_image_link", read_only=True),
+                ReadOnlyHTMLPanel("reference_image_link", heading="Reference photo"),
             ],
             heading="Commission details",
         ),
@@ -210,9 +211,14 @@ class Inquiry(models.Model):
         verbose_name = "Inquiry"
         verbose_name_plural = "Inquiries"
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._loaded_status = None if self._state.adding else self.status
+    _loaded_status = None  # the status as stored in the database
+
+    @classmethod
+    def from_db(cls, db, field_names, values):
+        instance = super().from_db(db, field_names, values)
+        if "status" in field_names:
+            instance._loaded_status = instance.status
+        return instance
 
     def __str__(self):
         return f"{self.number or 'New'} — {self.name} — {self.get_inquiry_type_display()}"

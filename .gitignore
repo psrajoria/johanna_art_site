@@ -231,3 +231,9 @@ media/
 node_modules/
 staticfiles/
 "@ | Out-File -Encoding utf8 .gitignore
+# Johanna site
+private_media/
+dev.sqlite3
+src/static/
+deploy/.env
+deploy/backups/

@@ -10,6 +10,9 @@ ALLOWED_HOSTS = ["*"]
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
+# Lets us preview pages at phone width inside an iframe while developing.
+X_FRAME_OPTIONS = "SAMEORIGIN"
+
 try:
     from .local import *
 except ImportError:
