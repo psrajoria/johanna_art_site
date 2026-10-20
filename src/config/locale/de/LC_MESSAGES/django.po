@@ -734,6 +734,9 @@ msgstr "Rumänien"
 msgid "Save password"
 msgstr "Passwort speichern"
 
+msgid "Save this artwork"
+msgstr "Dieses Bild merken"
+
 msgid "Say hello"
 msgstr "Sag Hallo"
 

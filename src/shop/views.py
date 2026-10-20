@@ -15,6 +15,8 @@ from .cart import Cart, OrderError, place_order, shop_settings
 from .forms import CheckoutForm, OrderLookupForm, RegisterForm
 from .models import Order, OrderItem
 from .shipping import ShippingUnavailable, calculate_shipping, country_choices
+from analytics.models import Event
+from analytics.tracking import track
 from config.storage import private_storage
 
 SESSION_ORDERS = "my_order_tokens"
@@ -48,6 +50,7 @@ def cart_add(request, offer_id):
         return redirect(_safe_next(request) or "shop:cart")
 
     Cart(request).add(offer)
+    track(request, Event.BUY_NOW if request.POST.get("buy_now") else Event.ADD_TO_CART, page=offer.artwork)
     messages.success(request, _("Added to your cart."))
     if request.POST.get("buy_now"):
         return redirect("shop:checkout")
@@ -160,6 +163,7 @@ def checkout(request):
                 )
             else:
                 cart.clear()
+                track(request, Event.ORDER, title=order.number)
                 tokens = request.session.get(SESSION_ORDERS, [])
                 request.session[SESSION_ORDERS] = tokens + [order.token]
                 return redirect("shop:order", token=order.token)

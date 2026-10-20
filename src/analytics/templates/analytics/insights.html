@@ -1,0 +1,94 @@
+{% extends "wagtailadmin/base.html" %}
+{% block titletag %}Insights{% endblock %}
+{% block content %}
+{% include "wagtailadmin/shared/header.html" with title="Insights" subtitle="Who visits, what they look at, what they love" icon="view" %}
+<div class="nice-padding">
+<style>
+  .ins-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75em;margin-bottom:1.25em}
+  .ins-card{border:1px solid #ddd;border-radius:10px;padding:.8em 1em;background:#fff}
+  .ins-card b{display:block;font-size:2em;line-height:1.05}
+  .ins-card span{color:#555;font-size:.9em}
+  .ins-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.25em;margin-bottom:1.25em}
+  .ins-box{border:1px solid #ddd;border-radius:10px;padding:1em 1.2em;background:#fff}
+  .ins-box h3{margin:0 0 .6em;font-size:1.05em}
+  .ins-table{width:100%;border-collapse:collapse}
+  .ins-table td,.ins-table th{padding:.35em .4em;border-bottom:1px solid #eee;text-align:left;font-size:.92em}
+  .ins-table th{color:#666;font-weight:600}
+  .ins-table td.n,.ins-table th.n{text-align:right;font-variant-numeric:tabular-nums}
+  .ins-bar{height:8px;border-radius:4px;background:#e8a5a0;min-width:2px}
+  .ins-range a{display:inline-block;padding:.3em .9em;border:1px solid #ccc;border-radius:999px;margin-right:.3em;text-decoration:none}
+  .ins-range a.on{background:#2a2420;color:#fff;border-color:#2a2420}
+  .ins-note{color:#666;font-size:.88em;margin-top:.6em}
+</style>
+
+<p class="ins-range">
+  {% for d in ranges %}<a href="?days={{ d }}" class="{% if d == r.days %}on{% endif %}">Last {{ d }} days</a>{% endfor %}
+</p>
+
+<div class="ins-grid">
+  <div class="ins-card"><b>{{ r.visitors_total }}</b><span>visitors</span></div>
+  <div class="ins-card"><b>{{ r.views }}</b><span>pages viewed</span></div>
+  <div class="ins-card"><b>{{ r.visitors_today }}</b><span>visitors today</span></div>
+  <div class="ins-card"><b>{{ r.hearts }}</b><span>♥ hearts given</span></div>
+  <div class="ins-card"><b>{{ r.carts }}</b><span>added to cart</span></div>
+  <div class="ins-card"><b>{{ r.instagram }}</b><span>Instagram clicks</span></div>
+</div>
+
+<div class="ins-box" style="margin-bottom:1.25em">
+  <h3>Visits per day <span style="font-weight:400;color:#777">— light = pages viewed, dark = visitors</span></h3>
+  <div style="display:flex;align-items:flex-end;gap:2px;height:150px;position:relative">
+    {% for s in r.series %}
+    <div title="{{ s.day|date:'j M' }}: {{ s.views }} views, {{ s.visitors }} visitors" style="flex:1;position:relative;height:100%">
+      <div style="position:absolute;bottom:0;left:0;right:0;height:{{ s.h }}%;background:#f0c6c2;border-radius:3px 3px 0 0"></div>
+      <div style="position:absolute;bottom:0;left:18%;right:18%;height:{{ s.hv }}%;background:#c4553b;border-radius:3px 3px 0 0"></div>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="ins-note">Nothing here is personal: no cookies, no IP addresses are saved, and your own visits while logged in are not counted. Visitors who switch on "Do Not Track" are respected.</p>
+</div>
+
+<div class="ins-two">
+  <div class="ins-box">
+    <h3>Artworks people look at</h3>
+    {% if r.artworks %}
+    <table class="ins-table"><tr><th>Artwork</th><th class="n">Views</th><th class="n">♥</th><th class="n">Cart</th><th class="n">Asked</th></tr>
+    {% for a in r.artworks %}<tr><td>{{ a.title }}</td><td class="n">{{ a.views }}</td><td class="n">{{ a.hearts }}</td><td class="n">{{ a.carts }}</td><td class="n">{{ a.enquiries }}</td></tr>{% endfor %}
+    </table>
+    <p class="ins-note">♥ = hearts, Cart = added to cart or "buy now", Asked = questions or price requests about it.</p>
+    {% else %}<p class="ins-note">No artwork views yet.</p>{% endif %}
+  </div>
+  <div class="ins-box">
+    <h3>♥ Most loved</h3>
+    {% if r.loved %}
+    <table class="ins-table">{% for a in r.loved %}<tr><td>{{ a.title }}</td><td class="n">♥ {{ a.net }}</td></tr>{% endfor %}</table>
+    {% else %}<p class="ins-note">Visitors can tap the heart on any artwork. The most loved ones show up here.</p>{% endif %}
+  </div>
+</div>
+
+<div class="ins-two">
+  <div class="ins-box">
+    <h3>Where visitors come from</h3>
+    <table class="ins-table">{% for x in r.referrers %}<tr><td>{{ x.label }}</td><td style="width:35%"><div class="ins-bar" style="width:{{ x.pct }}%"></div></td><td class="n">{{ x.n }}</td></tr>{% empty %}<tr><td class="ins-note">No data yet.</td></tr>{% endfor %}</table>
+  </div>
+  <div class="ins-box">
+    <h3>Blog posts &amp; other pages</h3>
+    <table class="ins-table">
+    {% for p in r.posts %}<tr><td>📝 {{ p.title }}</td><td class="n">{{ p.views }}</td></tr>{% endfor %}
+    {% for p in r.pages %}<tr><td>{{ p.title }}</td><td class="n">{{ p.views }}</td></tr>{% endfor %}
+    {% if not r.posts and not r.pages %}<tr><td class="ins-note">No data yet.</td></tr>{% endif %}
+    </table>
+  </div>
+</div>
+
+<div class="ins-two">
+  <div class="ins-box">
+    <h3>Language</h3>
+    <table class="ins-table">{% for x in r.languages %}<tr><td>{% if x.label == "de" %}Deutsch{% elif x.label == "en" %}English{% else %}{{ x.label|default:"?" }}{% endif %}</td><td style="width:35%"><div class="ins-bar" style="width:{{ x.pct }}%"></div></td><td class="n">{{ x.pct }}%</td></tr>{% endfor %}</table>
+  </div>
+  <div class="ins-box">
+    <h3>Phone or computer</h3>
+    <table class="ins-table">{% for x in r.devices %}<tr><td>{% if x.label == "mobile" %}Phone / tablet{% else %}Computer{% endif %}</td><td style="width:35%"><div class="ins-bar" style="width:{{ x.pct }}%"></div></td><td class="n">{{ x.pct }}%</td></tr>{% endfor %}</table>
+  </div>
+</div>
+</div>
+{% endblock %}

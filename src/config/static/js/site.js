@@ -356,6 +356,41 @@
     set();
   });
 
+  /* ---- Hearts: remembered on this device, counted anonymously ---------- */
+  function report(name, page, label) {
+    try {
+      var body = JSON.stringify({ name: name, page: page || "", label: label || "" });
+      if (navigator.sendBeacon) navigator.sendBeacon("/a/e/", new Blob([body], { type: "application/json" }));
+      else fetch("/a/e/", { method: "POST", body: body, keepalive: true });
+    } catch (e) {}
+  }
+  window.jlReport = report;
+
+  var likes = [];
+  try { likes = JSON.parse(localStorage.getItem("jl-likes") || "[]"); } catch (e) {}
+  document.querySelectorAll("[data-like]").forEach(function (btn) {
+    var id = btn.getAttribute("data-like");
+    function paint() { btn.setAttribute("aria-pressed", String(likes.indexOf(id) > -1)); }
+    paint();
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      var i = likes.indexOf(id);
+      if (i > -1) { likes.splice(i, 1); report("unlike", id); }
+      else { likes.push(id); report("like", id); }
+      try { localStorage.setItem("jl-likes", JSON.stringify(likes)); } catch (err) {}
+      // every heart for the same artwork on this page stays in step
+      document.querySelectorAll('[data-like="' + id + '"]').forEach(function (b) {
+        b.setAttribute("aria-pressed", String(likes.indexOf(id) > -1));
+      });
+    });
+  });
+
+  /* anything marked data-track reports a click (e.g. the Instagram links) */
+  document.addEventListener("click", function (e) {
+    var el = e.target.closest("[data-track]");
+    if (el) report(el.getAttribute("data-track"), "", el.getAttribute("data-track-label") || "");
+  });
+
   /* ---- Instant navigation: fetch a page when the pointer/finger approaches */
   if (!(navigator.connection && navigator.connection.saveData)) {
     var prefetched = {};

@@ -34,6 +34,7 @@ urlpatterns = [
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("sitemap.xml", sitemap),
+    path("a/", include("analytics.urls")),
     path("robots.txt", robots_txt),
 ]
 

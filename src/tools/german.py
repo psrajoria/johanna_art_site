@@ -74,6 +74,7 @@ GERMAN = {
     "Enlarge image": "Bild vergrößern",
     "Click to enlarge": "Zum Vergrößern klicken",
     "Just keep layering": "Just keep layering",
+    "Save this artwork": "Dieses Bild merken",
     "Switch to dark mode": "Zum dunklen Modus wechseln",
     "Switch to light mode": "Zum hellen Modus wechseln",
     "This corner of the studio is private.": "Diese Ecke des Ateliers ist privat.",

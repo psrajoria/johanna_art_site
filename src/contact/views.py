@@ -7,6 +7,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import translation
 from django.utils.translation import gettext as _
 
+from analytics.models import Event
+from analytics.tracking import track
 from artworks.models import ArtworkPage
 
 from . import emails
@@ -68,6 +70,7 @@ def inquiry_create(request):
                 if request.user.is_authenticated:
                     inquiry.user = request.user
                 inquiry.save()
+                track(request, Event.ENQUIRY, page=artwork, title="" if artwork else "General message")
                 transaction.on_commit(lambda: emails.send_received(inquiry))
                 return redirect("contact:thanks", token=inquiry.token)
     else:

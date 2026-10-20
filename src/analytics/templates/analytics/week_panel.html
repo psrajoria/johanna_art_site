@@ -1,0 +1,12 @@
+<section class="panel summary nice-padding" style="margin-bottom:1.5em">
+  <div style="font-weight:600;font-size:1.1em;margin:0 0 .75em">Your visitors this week</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.75em;margin-bottom:.75em">
+    <div style="border:1px solid #ddd;border-radius:8px;padding:.6em 1em"><div style="font-size:1.8em;font-weight:700;line-height:1">{{ r.visitors_total }}</div><div style="color:#555">visitors</div></div>
+    <div style="border:1px solid #ddd;border-radius:8px;padding:.6em 1em"><div style="font-size:1.8em;font-weight:700;line-height:1">{{ r.views }}</div><div style="color:#555">pages viewed</div></div>
+    <div style="border:1px solid #ddd;border-radius:8px;padding:.6em 1em"><div style="font-size:1.8em;font-weight:700;line-height:1">{{ r.hearts }}</div><div style="color:#555">♥ hearts</div></div>
+    <div style="border:1px solid #ddd;border-radius:8px;padding:.6em 1em"><div style="font-size:1.8em;font-weight:700;line-height:1">{{ r.carts }}</div><div style="color:#555">added to cart</div></div>
+  </div>
+  {% if r.artworks %}<p><strong>Most viewed:</strong> {{ r.artworks.0.title }} ({{ r.artworks.0.views }} views){% if r.loved %} · <strong>Most loved:</strong> {{ r.loved.0.title }} ♥ {{ r.loved.0.net }}{% endif %}.
+  <a href="/admin/insights/"><strong>See all insights →</strong></a></p>
+  {% else %}<p style="color:#555">Nothing yet — numbers appear as visitors arrive. <a href="/admin/insights/">Insights →</a></p>{% endif %}
+</section>
