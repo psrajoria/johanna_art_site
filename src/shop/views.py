@@ -139,6 +139,21 @@ def cart_remove(request, offer_id):
     return redirect("shop:cart")
 
 
+def invoice_download(request, token):
+    """The customer's own invoice, available once the order is paid."""
+    from django.http import HttpResponse
+
+    from .invoices import invoice_pdf
+
+    order = get_object_or_404(Order, token=token)
+    if not order.can_have_invoice:
+        raise Http404
+    order.ensure_invoice_number()
+    response = HttpResponse(invoice_pdf(order, shop_settings()), content_type="application/pdf")
+    response["Content-Disposition"] = f'inline; filename="{order.invoice_number}.pdf"'
+    return response
+
+
 def _safe_next(request):
     target = request.POST.get("next", "")
     if target.startswith("/") and not target.startswith("//"):

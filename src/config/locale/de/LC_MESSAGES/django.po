@@ -263,6 +263,9 @@ msgstr "Rabatt- oder Gutscheincode"
 msgid "Download"
 msgstr "Herunterladen"
 
+msgid "Download invoice (PDF)"
+msgstr "Rechnung herunterladen (PDF)"
+
 msgid "Download limit reached"
 msgstr "Download-Limit erreicht"
 

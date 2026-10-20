@@ -407,6 +407,55 @@ class DiscountTests(ShopTestCase):
         self.assertNotContains(self.client.get(reverse("shop:cart")), "nonsense")
 
 
+class InvoiceTests(ShopTestCase):
+    def paid_order(self, title_note=""):
+        order = self.order_for((self.print_a4, 1))
+        if title_note:
+            order.items.update(title=title_note)
+        order.status = Order.STATUS_PAID
+        order.save()
+        return order
+
+    def test_customer_gets_invoice_only_when_paid(self):
+        order = self.order_for((self.print_a4, 1))
+        self.assertEqual(self.client.get(reverse("shop:invoice", args=[order.token])).status_code, 404)
+        order.status = Order.STATUS_PAID
+        order.save()
+        response = self.client.get(reverse("shop:invoice", args=[order.token]))
+        self.assertEqual(response["Content-Type"], "application/pdf")
+        self.assertTrue(response.content.startswith(b"%PDF"))
+
+    def test_numbers_are_sequential_and_stable(self):
+        first, second = self.paid_order(), self.paid_order()
+        a, b = first.ensure_invoice_number(), second.ensure_invoice_number()
+        year = timezone.now().year
+        self.assertEqual((a, b), (f"R-{year}-0001", f"R-{year}-0002"))
+        first.invoice_number = None
+        self.assertEqual(Order.objects.get(pk=first.pk).ensure_invoice_number(), a)
+
+    def test_pdf_survives_unusual_characters_in_both_languages(self):
+        from .invoices import invoice_pdf, packing_slip_pdf
+
+        for lang in ("en", "de"):
+            order = self.paid_order("Łódź — Rynek Główny “dusk”")
+            order.language = lang
+            order.customer_note = "Bitte vorsichtig verpacken, danke ☺"
+            order.ensure_invoice_number()
+            order.refresh_from_db()
+            self.assertTrue(invoice_pdf(order, None).startswith(b"%PDF"))
+            self.assertTrue(packing_slip_pdf(order, None).startswith(b"%PDF"))
+
+    def test_admin_documents_need_permission(self):
+        order = self.paid_order()
+        url = reverse("shop_admin_document", args=[order.pk, "invoice"])
+        self.assertEqual(self.client.get(url).status_code, 302)  # sent to the admin login
+        admin = get_user_model().objects.create_superuser("jo", "j@example.com", "pw")
+        self.client.force_login(admin)
+        self.assertEqual(self.client.get(url)["Content-Type"], "application/pdf")
+        slip = self.client.get(reverse("shop_admin_document", args=[order.pk, "packing-slip"]))
+        self.assertEqual(slip["Content-Type"], "application/pdf")
+
+
 class WaitlistTests(ShopTestCase):
     def join(self, offer, email="wait@example.com"):
         return self.client.post(reverse("shop:waitlist", args=[offer.pk]), {"email": email})

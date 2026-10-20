@@ -90,6 +90,24 @@ class ShopSettings(BaseSiteSetting):
         help_text="Order value (€) from which shipping within Germany is free. 0 = never.",
     )
 
+    seller_name = models.CharField(
+        "Name on invoices", max_length=120, default="Johanna Lackner",
+        help_text="Your full name (or business name) exactly as it must appear on invoices.",
+    )
+    seller_address = models.TextField(
+        "Address on invoices", blank=True,
+        help_text="Street, postcode and city, one per line. Required on German invoices.",
+    )
+    tax_number = models.CharField(
+        "Tax number (Steuernummer)", max_length=40, blank=True,
+        help_text="From your tax office. Needed on invoices unless you give a VAT ID.",
+    )
+    vat_id = models.CharField("VAT ID (USt-IdNr.)", max_length=20, blank=True)
+    vat_rate = models.DecimalField(
+        "VAT rate included in prices (%)", max_digits=4, decimal_places=1, default=19,
+        help_text="Only used when you are NOT a small business. Ask your tax advisor.",
+    )
+
     small_business_vat_exempt = models.BooleanField(
         "Small business (Kleinunternehmer, §19 UStG)",
         default=True,
@@ -140,7 +158,17 @@ class ShopSettings(BaseSiteSetting):
         FieldPanel("payment_instructions"),
         FieldPanel("payment_instructions_de"),
         FieldPanel("free_shipping_over"),
-        FieldPanel("small_business_vat_exempt"),
+        MultiFieldPanel(
+            [
+                FieldPanel("seller_name"),
+                FieldPanel("seller_address"),
+                FieldPanel("tax_number"),
+                FieldPanel("vat_id"),
+                FieldPanel("small_business_vat_exempt"),
+                FieldPanel("vat_rate"),
+            ],
+            heading="Business details (printed on invoices)",
+        ),
         FieldPanel("digital_license"),
         FieldPanel("digital_license_de"),
     ]
@@ -273,6 +301,7 @@ class Order(models.Model):
     customer_note = models.TextField(blank=True)
 
     subtotal = models.DecimalField(max_digits=9, decimal_places=2, default=0)
+    invoice_number = models.CharField(max_length=20, unique=True, null=True, blank=True, editable=False)
     discount_code = models.CharField(max_length=40, blank=True, editable=False)
     discount_amount = models.DecimalField(max_digits=9, decimal_places=2, default=0, editable=False)
     shipping_cost = models.DecimalField(max_digits=7, decimal_places=2, default=0)
@@ -307,6 +336,10 @@ class Order(models.Model):
         MultiFieldPanel(
             [ReadOnlyHTMLPanel("items_summary")],
             heading="What was ordered",
+        ),
+        MultiFieldPanel(
+            [ReadOnlyHTMLPanel("documents_links")],
+            heading="Documents",
         ),
         MultiFieldPanel(
             [
@@ -361,6 +394,41 @@ class Order(models.Model):
     @property
     def customer_name(self):
         return self.name
+
+    INVOICE_STATUSES = ("paid", "packed", "shipped", "completed")
+
+    @property
+    def can_have_invoice(self):
+        return self.status in self.INVOICE_STATUSES
+
+    def ensure_invoice_number(self):
+        """Invoice numbers run R-2026-0001, R-2026-0002 ... without gaps (a German requirement)."""
+        if self.invoice_number or not self.can_have_invoice:
+            return self.invoice_number
+        with transaction.atomic():
+            year = (self.paid_at or timezone.now()).year
+            prefix = f"R-{year}-"
+            last = (
+                Order.objects.select_for_update()
+                .filter(invoice_number__startswith=prefix)
+                .order_by("-invoice_number")
+                .first()
+            )
+            seq = int(last.invoice_number.rsplit("-", 1)[1]) + 1 if last else 1
+            self.invoice_number = f"{prefix}{seq:04d}"
+            Order.objects.filter(pk=self.pk).update(invoice_number=self.invoice_number)
+        return self.invoice_number
+
+    @property
+    def documents_links(self):
+        if not self.pk:
+            return ""
+        return format_html(
+            '<a class="button button-small" href="{}" target="_blank">Invoice (PDF)</a> '
+            '<a class="button button-small button-secondary" href="{}" target="_blank">Packing slip (PDF)</a>',
+            reverse("shop_admin_document", args=[self.pk, "invoice"]),
+            reverse("shop_admin_document", args=[self.pk, "packing-slip"]),
+        )
 
     @property
     def items_summary(self):

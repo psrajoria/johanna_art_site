@@ -65,6 +65,38 @@ class WaitlistViewSet(SnippetViewSet):
         return NoAddPermissionPolicy(self.model)
 
 
+def order_document(request, pk, doc):
+    """Invoice or packing slip PDF for Johanna (shop managers only)."""
+    from django.core.exceptions import PermissionDenied
+    from django.http import Http404, HttpResponse
+    from django.shortcuts import get_object_or_404
+
+    from .invoices import invoice_pdf, packing_slip_pdf
+
+    if not request.user.has_perm("shop.change_order"):
+        raise PermissionDenied
+    order = get_object_or_404(Order, pk=pk)
+    if doc == "invoice":
+        if not order.can_have_invoice:
+            return HttpResponse("An invoice is available once the order is marked Paid.", status=409)
+        order.ensure_invoice_number()
+        pdf, name = invoice_pdf(order, shop_settings()), order.invoice_number
+    elif doc == "packing-slip":
+        pdf, name = packing_slip_pdf(order, shop_settings()), f"packing-{order.number}"
+    else:
+        raise Http404
+    response = HttpResponse(pdf, content_type="application/pdf")
+    response["Content-Disposition"] = f'inline; filename="{name}.pdf"'
+    return response
+
+
+@hooks.register("register_admin_urls")
+def shop_admin_urls():
+    from django.urls import path
+
+    return [path("shop-documents/<int:pk>/<str:doc>/", order_document, name="shop_admin_document")]
+
+
 class DiscountCodeViewSet(SnippetViewSet):
     model = DiscountCode
     icon = "tag"

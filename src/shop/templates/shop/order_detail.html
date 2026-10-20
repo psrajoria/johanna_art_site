@@ -101,6 +101,9 @@
             </div>
             {% endfor %}
             <div class="summary-row" style="border-top:1px solid var(--c-line);margin-top:.6rem"><span>{% trans "Subtotal" %}</span><span>{{ order.subtotal|euro }}</span></div>
+            {% if order.can_have_invoice %}
+            <p style="margin:.8rem 0 0"><a class="btn btn--ghost btn--sm" href="{% url 'shop:invoice' order.token %}" target="_blank">{% trans "Download invoice (PDF)" %}</a></p>
+            {% endif %}
             {% if order.discount_code %}
             <div class="summary-row discount-row"><span>{% trans "Discount" %} ({{ order.discount_code }})</span><span>{% if order.discount_amount %}−{{ order.discount_amount|euro }}{% else %}{% trans "Free shipping" %}{% endif %}</span></div>
             {% endif %}

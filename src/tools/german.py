@@ -74,6 +74,7 @@ GERMAN = {
     "Enlarge image": "Bild vergrößern",
     "Click to enlarge": "Zum Vergrößern klicken",
     "Just keep layering": "Just keep layering",
+    "Download invoice (PDF)": "Rechnung herunterladen (PDF)",
     "This code is not valid.": "Dieser Code ist ungültig.",
     "This code is not valid yet.": "Dieser Code ist noch nicht gültig.",
     "This code has expired.": "Dieser Code ist abgelaufen.",
