@@ -1,17 +1,1 @@
-{% extends "base.html" %}
-{% load i18n %}
-
-{% block title %}{% trans "Page not found" %}{% endblock %}
-
-{% block content %}
-<section class="section error-page">
-    <div class="shell">
-        <div class="code" aria-hidden="true">404</div>
-        <h1 class="h2">{% trans "This page wandered off the paper." %}</h1>
-        <p class="lede" style="margin-inline:auto">{% trans "The link may be old, or the artwork may have moved on to a new wall." %}</p>
-        <p class="btn-row" style="justify-content:center">
-            <a class="btn" href="/">{% trans "Back to the start" %} <span class="arrow" aria-hidden="true">→</span></a>
-        </p>
-    </div>
-</section>
-{% endblock %}
+{% extends "error.html" %}

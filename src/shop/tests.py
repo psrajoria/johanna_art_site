@@ -324,6 +324,23 @@ class HiddenPriceTests(ShopTestCase):
         self.assertNotIn("24.00", page_html)
 
 
+class ErrorPageTests(ShopTestCase):
+    @override_settings(DEBUG=False)
+    def test_styled_404_in_both_languages(self):
+        for path, text in (("/nope/", "wandered off the paper"), ("/de/nope/", "Papier")):
+            response = self.client.get(path)
+            self.assertEqual(response.status_code, 404)
+            self.assertContains(response, text, status_code=404)
+            self.assertContains(response, "Johanna Lackner", status_code=404)
+
+    def test_500_page_is_self_contained(self):
+        from django.template.loader import render_to_string
+
+        html = render_to_string("500.html")
+        self.assertIn("The paint spilled", html)
+        self.assertNotIn("{%", html)
+
+
 class AccountTests(ShopTestCase):
     def test_registering_claims_orders_placed_as_guest(self):
         self.client.post(reverse("shop:cart_add", args=[self.print_a4.pk]))

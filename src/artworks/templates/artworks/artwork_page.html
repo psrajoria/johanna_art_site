@@ -87,9 +87,9 @@
                 {% if page.short_description %}<p class="lede">{{ page.short_description }}</p>{% endif %}
 
                 {% if page.palette_list %}
-                <div class="swatches" aria-label="{% trans 'Colours in this painting' %}">
-                    {% for c in page.palette_list %}<span class="swatch" style="--c: {{ c }}; --i: {{ forloop.counter0 }}" title="{{ c }}"></span>{% endfor %}
-                    <span class="swatches-label">{% trans "On the palette" %}</span>
+                <div class="paint-chips" aria-label="{% trans 'Colours in this painting' %}">
+                    {% for c in page.palette_list %}<span class="paint-chip" style="--c: {{ c }}; --i: {{ forloop.counter0 }}" title="{{ c }}"></span>{% endfor %}
+                    <span class="paint-chips-label">{% trans "On the palette" %}</span>
                 </div>
                 {% endif %}
 

@@ -10,6 +10,7 @@ from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.documents import urls as wagtaildocs_urls
 
 from blog.feeds import LatestPostsFeed
+from config import views as config_views
 from search import views as search_views
 
 
@@ -57,4 +58,9 @@ urlpatterns += i18n_patterns(
     prefix_default_language=False,
 )
 
+if settings.DEBUG:
+    urlpatterns = [path("_errors/<int:code>/", config_views.preview_error)] + urlpatterns
+
 handler404 = "config.views.page_not_found"
+handler403 = "config.views.permission_denied"
+handler400 = "config.views.bad_request"

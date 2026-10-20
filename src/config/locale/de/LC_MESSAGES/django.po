@@ -557,6 +557,9 @@ msgstr "Optional. Gäste können immer auch ohne Konto bestellen."
 msgid "Or just reply to my email if you have questions first."
 msgstr "Oder antworte einfach auf meine E-Mail, wenn du vorher Fragen hast."
 
+msgid "Or wander on to"
+msgstr "Oder stöbere weiter bei"
+
 msgid "Order"
 msgstr "Bestellung"
 
@@ -803,6 +806,9 @@ msgstr "Ausverkauft"
 msgid "Someone asked to reset the password for your account on Johanna Lackner's site. If that was you, use this link to choose a new one:"
 msgstr "Jemand hat darum gebeten, das Passwort für dein Konto auf Johanna Ls Seite zurückzusetzen. Wenn du das warst, wähle über diesen Link ein neues:"
 
+msgid "Something about the request did not look right. Please go back and try again."
+msgstr "Etwas an der Anfrage stimmte nicht. Bitte geh zurück und versuche es noch einmal."
+
 msgid "Sorry, this item is no longer available."
 msgstr "Dieser Artikel ist leider nicht mehr verfügbar."
 
@@ -827,6 +833,12 @@ msgstr "Zusammenfassung"
 msgid "Sweden"
 msgstr "Schweden"
 
+msgid "Switch to dark mode"
+msgstr "Zum dunklen Modus wechseln"
+
+msgid "Switch to light mode"
+msgstr "Zum hellen Modus wechseln"
+
 msgid "Switzerland"
 msgstr "Schweiz"
 
@@ -848,6 +860,9 @@ msgstr "Danke, %(name)s! Deine Bestellung ist gespeichert — es fehlt nur noch 
 msgid "Thanks, %(name)s — your message has arrived and I'll reply soon."
 msgstr "Danke, %(name)s — deine Nachricht ist angekommen und ich antworte bald."
 
+msgid "That request got smudged."
+msgstr "Diese Anfrage ist verschmiert."
+
 msgid "The blog"
 msgstr "Der Blog"
 
@@ -863,6 +878,9 @@ msgstr "Die erste Skizze"
 msgid "The first story is being written."
 msgstr "Die erste Geschichte wird gerade geschrieben."
 
+msgid "The form was open for a long time or cookies are switched off. Please go back, reload the page and send it again."
+msgstr "Das Formular war lange geöffnet oder Cookies sind ausgeschaltet. Bitte geh zurück, lade die Seite neu und sende es erneut."
+
 msgid "The link may be old, or the artwork may have moved on to a new wall."
 msgstr "Vielleicht ist der Link alt, oder das Werk hängt inzwischen an einer anderen Wand."
 
@@ -874,6 +892,9 @@ msgstr "Echtes Papier, echtes Pigment — signiert und sorgfältig verschickt."
 
 msgid "There is already an account with this email. Please log in."
 msgstr "Mit dieser E-Mail gibt es bereits ein Konto. Bitte melde dich an."
+
+msgid "This corner of the studio is private."
+msgstr "Diese Ecke des Ateliers ist privat."
 
 msgid "This field is required for delivery."
 msgstr "Dieses Feld wird für die Lieferung benötigt."
@@ -962,11 +983,20 @@ msgstr "Willkommen! Dein Konto ist bereit."
 msgid "What is this about?"
 msgstr "Worum geht es?"
 
+msgid "Where to next"
+msgstr "Wohin als Nächstes"
+
+msgid "Write to Johanna"
+msgstr "Schreib Johanna"
+
 msgid "Year"
 msgstr "Jahr"
 
 msgid "You can now log in with your new password."
 msgstr "Du kannst dich jetzt mit deinem neuen Passwort anmelden."
+
+msgid "You do not have access to this page. If you think that is a mistake, please write to us."
+msgstr "Du hast keinen Zugriff auf diese Seite. Wenn du glaubst, dass das ein Fehler ist, schreib uns bitte."
 
 msgid "You get a quote"
 msgstr "Du bekommst ein Angebot"
@@ -1012,6 +1042,9 @@ msgstr "Deine Bestellung"
 
 msgid "Your orders"
 msgstr "Deine Bestellungen"
+
+msgid "Your page went stale."
+msgstr "Die Seite war zu lange offen."
 
 msgid "Your quote"
 msgstr "Dein Angebot"

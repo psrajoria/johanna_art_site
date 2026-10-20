@@ -215,3 +215,6 @@ SHOP_CURRENCY = "EUR"
 # Inbox that receives "new order / new inquiry" alerts. Can be overridden
 # in the admin under Settings > Shop settings.
 SHOP_NOTIFY_EMAIL = env("SHOP_NOTIFY_EMAIL", default="")
+
+# A styled page instead of the bare default when a form has gone stale.
+CSRF_FAILURE_VIEW = "config.views.csrf_failure"

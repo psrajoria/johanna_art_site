@@ -46,6 +46,13 @@
     function currentTheme() { return root.getAttribute("data-theme") || "auto"; }
     function currentPalette() { return root.getAttribute("data-palette") || "atelier"; }
 
+    // what the visitor is actually looking at right now (resolves "auto")
+    function isDark() {
+      var t = currentTheme();
+      if (t === "auto") return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      return t === "dark";
+    }
+
     function syncUI() {
       panel.querySelectorAll("[data-theme-choice]").forEach(function (b) {
         b.setAttribute("aria-pressed", String(b.getAttribute("data-theme-choice") === currentTheme()));
@@ -53,6 +60,10 @@
       panel.querySelectorAll("[data-palette-choice]").forEach(function (b) {
         b.setAttribute("aria-pressed", String(b.getAttribute("data-palette-choice") === currentPalette()));
       });
+      var modeBtn = document.querySelector("[data-mode-toggle]");
+      if (modeBtn) {
+        modeBtn.setAttribute("aria-label", modeBtn.getAttribute(isDark() ? "data-label-to-light" : "data-label-to-dark"));
+      }
       var meta = document.querySelector('meta[name="theme-color"]');
       if (meta) meta.setAttribute("content", getComputedStyle(root).getPropertyValue("--c-paper").trim() || "#FBF7F0");
     }
@@ -69,6 +80,18 @@
     }
 
     toggleBtn.addEventListener("click", function () { setPanel(panel.hidden); });
+
+    // one-click light / dark switch, always visible in the header
+    var modeToggle = document.querySelector("[data-mode-toggle]");
+    if (modeToggle) {
+      modeToggle.addEventListener("click", function () {
+        var next = isDark() ? "light" : "dark";
+        fade();
+        root.setAttribute("data-theme", next);
+        store("jl-theme", next);
+        syncUI();
+      });
+    }
     document.addEventListener("click", function (e) {
       if (!panel.hidden && !e.target.closest(".appearance")) setPanel(false);
     });
@@ -165,7 +188,7 @@
           io.unobserve(entry.target);
         }
       });
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+    }, { rootMargin: "0px 0px -5% 0px", threshold: 0 });
 
     // stagger siblings inside the same grid
     document.querySelectorAll("[data-reveal-group]").forEach(function (group) {
