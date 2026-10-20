@@ -273,6 +273,8 @@ class Order(models.Model):
     customer_note = models.TextField(blank=True)
 
     subtotal = models.DecimalField(max_digits=9, decimal_places=2, default=0)
+    discount_code = models.CharField(max_length=40, blank=True, editable=False)
+    discount_amount = models.DecimalField(max_digits=9, decimal_places=2, default=0, editable=False)
     shipping_cost = models.DecimalField(max_digits=7, decimal_places=2, default=0)
     total = models.DecimalField(max_digits=9, decimal_places=2, default=0)
     has_physical = models.BooleanField(default=False, editable=False)
@@ -464,6 +466,7 @@ class Order(models.Model):
             if was_paid:
                 self._undo_sale()
             self._release_stock()
+            self._release_discount()
             emails.send_cancelled(self)
 
         if new == self.STATUS_SHIPPED and not self.shipped_at:
@@ -500,6 +503,18 @@ class Order(models.Model):
                     pk=item.offer_id, sold_count__gte=item.quantity
                 ).update(sold_count=models.F("sold_count") - item.quantity)
 
+    def _release_discount(self):
+        """A cancelled order gives its discount code (or gift card balance) back."""
+        if not self.discount_code:
+            return
+        code = DiscountCode.objects.filter(code=self.discount_code).first()
+        if not code:
+            return
+        code.used_count = max(code.used_count - 1, 0)
+        if code.kind == DiscountCode.GIFT:
+            code.remaining = (code.remaining or 0) + self.discount_amount
+        code.save()
+
     def _release_stock(self):
         for item in self.items.select_related("offer", "offer__artwork"):
             offer = item.offer
@@ -513,6 +528,104 @@ class Order(models.Model):
                     stock=models.F("stock") + item.quantity
                 )
                 offer.artwork.notify_waitlist()
+
+
+class DiscountCode(models.Model):
+    """A code customers type in the cart: a percentage, a fixed amount, free shipping or a gift card."""
+
+    PERCENT = "percent"
+    FIXED = "fixed"
+    FREE_SHIPPING = "free_shipping"
+    GIFT = "gift"
+    KIND_CHOICES = [
+        (PERCENT, "Percent off"),
+        (FIXED, "Fixed amount off"),
+        (FREE_SHIPPING, "Free shipping"),
+        (GIFT, "Gift card (balance is used up over time)"),
+    ]
+
+    code = models.CharField(max_length=40, unique=True, help_text="What the customer types, e.g. SUMMER10. Capitals are added automatically.")
+    kind = models.CharField(max_length=20, choices=KIND_CHOICES, default=PERCENT)
+    value = models.DecimalField(
+        max_digits=7, decimal_places=2, default=0,
+        help_text="Percent (e.g. 10) or euros (e.g. 15). For a gift card: its value. Not needed for free shipping.",
+    )
+    remaining = models.DecimalField(
+        "Gift card balance left", max_digits=7, decimal_places=2, null=True, blank=True, editable=False
+    )
+    min_order = models.DecimalField(
+        "Minimum order (€)", max_digits=7, decimal_places=2, null=True, blank=True,
+        help_text="Optional. The code only works from this order value.",
+    )
+    valid_from = models.DateField(null=True, blank=True)
+    valid_until = models.DateField(null=True, blank=True, help_text="Optional. Last day the code works.")
+    max_uses = models.PositiveIntegerField(
+        null=True, blank=True, help_text="Optional. How many orders may use it. Empty = unlimited."
+    )
+    used_count = models.PositiveIntegerField(default=0, editable=False)
+    active = models.BooleanField(default=True)
+    note = models.CharField(max_length=200, blank=True, help_text="For you only, e.g. who the gift card is for.")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.code
+
+    def save(self, *args, **kwargs):
+        self.code = self.code.strip().upper()
+        if self.kind == self.GIFT and self.remaining is None:
+            self.remaining = self.value
+        super().save(*args, **kwargs)
+
+    @property
+    def summary(self):
+        if self.kind == self.PERCENT:
+            return f"{self.value.normalize():f}% off"
+        if self.kind == self.FIXED:
+            return f"€{self.value} off"
+        if self.kind == self.FREE_SHIPPING:
+            return "Free shipping"
+        return f"Gift card, €{self.remaining} left"
+
+    @property
+    def uses_label(self):
+        return f"{self.used_count} / {self.max_uses}" if self.max_uses else str(self.used_count)
+
+    def problem(self, subtotal, today=None):
+        """Why this code cannot be used right now ('' when it can)."""
+        from django.utils import timezone
+
+        today = today or timezone.localdate()
+        if not self.active:
+            return _("This code is not valid.")
+        if self.valid_from and today < self.valid_from:
+            return _("This code is not valid yet.")
+        if self.valid_until and today > self.valid_until:
+            return _("This code has expired.")
+        if self.max_uses is not None and self.used_count >= self.max_uses:
+            return _("This code has been used up.")
+        if self.kind == self.GIFT and (self.remaining or 0) <= 0:
+            return _("This gift card has been used up.")
+        if self.min_order and subtotal < self.min_order:
+            return _("This code needs an order of at least €%(amount)s.") % {"amount": self.min_order}
+        return ""
+
+    def amounts(self, subtotal):
+        """(amount off the goods, whether shipping becomes free)."""
+        from decimal import ROUND_HALF_UP, Decimal
+
+        cent = Decimal("0.01")
+        if self.kind == self.PERCENT:
+            off = (subtotal * self.value / 100).quantize(cent, ROUND_HALF_UP)
+        elif self.kind == self.FIXED:
+            off = self.value
+        elif self.kind == self.GIFT:
+            off = self.remaining or Decimal("0")
+        else:
+            return Decimal("0.00"), True
+        return min(off, subtotal).quantize(cent), False
 
 
 class WaitlistRequest(models.Model):

@@ -4,7 +4,8 @@ vielen Dank für deine Bestellung {{ order.number }}! Sie ist gespeichert und wa
 
 {% for item in items %}- {{ item.quantity }}x {{ item.title }}{% if item.option_label %} ({{ item.option_label }}){% endif %}: {{ item.line_total }} EUR
 {% endfor %}
-Zwischensumme: {{ order.subtotal }} EUR{% if order.has_physical %}
+Zwischensumme: {{ order.subtotal }} EUR{% if order.discount_code %}
+Rabatt ({{ order.discount_code }}){% if order.discount_amount %}: -{{ order.discount_amount }} EUR{% else %}: kostenloser Versand{% endif %}{% endif %}{% if order.has_physical %}
 Versand: {{ order.shipping_cost }} EUR{% endif %}
 Gesamt: {{ order.total }} EUR
 

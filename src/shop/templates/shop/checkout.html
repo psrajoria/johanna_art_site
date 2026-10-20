@@ -125,16 +125,21 @@
                 {% endfor %}
 
                 <div class="summary-row" style="margin-top:.6rem;border-top:1px solid var(--c-line)">
-                    <span>{% trans "Subtotal" %}</span><span data-subtotal="{{ subtotal|stringformat:".2f" }}">{{ subtotal|euro }}</span>
+                    <span>{% trans "Subtotal" %}</span><span>{{ full_subtotal|euro }}</span>
                 </div>
+                {% if pricing.code %}
+                <div class="summary-row discount-row">
+                    <span>{{ pricing.code.code }}</span>
+                    <span>{% if pricing.free_shipping %}{% trans "Free shipping" %}{% else %}−{{ pricing.discount|euro }}{% endif %}</span>
+                </div>
+                {% endif %}
+                <span data-subtotal="{{ subtotal|stringformat:".2f" }}" hidden></span>
                 {% if needs_shipping %}
                 <div class="summary-row">
                     <span>{% trans "Shipping" %}</span>
                     <span data-shipping data-free="{% trans 'Free' %}">—</span>
                 </div>
                 <p class="summary-note" data-estimate></p>
-                {% else %}
-                <span data-subtotal="{{ subtotal|stringformat:".2f" }}" hidden></span>
                 {% endif %}
 
                 <div class="summary-row total">

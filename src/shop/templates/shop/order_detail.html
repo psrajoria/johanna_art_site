@@ -101,6 +101,9 @@
             </div>
             {% endfor %}
             <div class="summary-row" style="border-top:1px solid var(--c-line);margin-top:.6rem"><span>{% trans "Subtotal" %}</span><span>{{ order.subtotal|euro }}</span></div>
+            {% if order.discount_code %}
+            <div class="summary-row discount-row"><span>{% trans "Discount" %} ({{ order.discount_code }})</span><span>{% if order.discount_amount %}−{{ order.discount_amount|euro }}{% else %}{% trans "Free shipping" %}{% endif %}</span></div>
+            {% endif %}
             {% if order.has_physical %}
             <div class="summary-row"><span>{% trans "Shipping" %}</span><span>{% if order.shipping_cost == 0 %}{% trans "Free" %}{% else %}{{ order.shipping_cost|euro }}{% endif %}</span></div>
             {% endif %}

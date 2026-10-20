@@ -4,7 +4,8 @@ thank you for your order {{ order.number }}! It is saved and just needs your pay
 
 {% for item in items %}- {{ item.quantity }}x {{ item.title }}{% if item.option_label %} ({{ item.option_label }}){% endif %}: EUR {{ item.line_total }}
 {% endfor %}
-Subtotal: EUR {{ order.subtotal }}{% if order.has_physical %}
+Subtotal: EUR {{ order.subtotal }}{% if order.discount_code %}
+Discount ({{ order.discount_code }}){% if order.discount_amount %}: -EUR {{ order.discount_amount }}{% else %}: free shipping{% endif %}{% endif %}{% if order.has_physical %}
 Shipping: EUR {{ order.shipping_cost }}{% endif %}
 Total: EUR {{ order.total }}
 

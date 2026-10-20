@@ -13,7 +13,7 @@ from artworks.models import Offer
 
 from .cart import Cart, OrderError, place_order, shop_settings
 from .forms import CheckoutForm, OrderLookupForm, RegisterForm
-from .models import Order, OrderItem, WaitlistRequest
+from .models import DiscountCode, Order, OrderItem, WaitlistRequest
 from .shipping import ShippingUnavailable, calculate_shipping, country_choices
 from analytics.models import Event
 from analytics.tracking import track
@@ -28,12 +28,17 @@ SESSION_ORDERS = "my_order_tokens"
 def cart_detail(request):
     cart = Cart(request)
     lines = cart.lines()
+    pricing = cart.pricing(lines)
+    if pricing["problem"]:
+        messages.error(request, pricing["problem"])
+        cart.clear_code()
     return render(
         request,
         "shop/cart.html",
         {
             "lines": lines,
-            "subtotal": Cart.subtotal(lines),
+            "subtotal": pricing["subtotal"],
+            "pricing": pricing,
             "has_problem": any(line.problem for line in lines),
             "has_physical": any(line.offer.is_physical for line in lines),
         },
@@ -54,6 +59,28 @@ def cart_add(request, offer_id):
     messages.success(request, _("Added to your cart."))
     if request.POST.get("buy_now"):
         return redirect("shop:checkout")
+    return redirect(_safe_next(request) or "shop:cart")
+
+
+@require_POST
+def cart_apply_code(request):
+    cart = Cart(request)
+    entered = request.POST.get("code", "").strip().upper()
+    if not entered:
+        return redirect("shop:cart")
+    cart.set_code(entered)
+    pricing = cart.pricing(cart.lines())
+    if pricing["problem"]:
+        cart.clear_code()
+        messages.error(request, pricing["problem"])
+    else:
+        messages.success(request, _("Code applied."))
+    return redirect(_safe_next(request) or "shop:cart")
+
+
+@require_POST
+def cart_remove_code(request):
+    Cart(request).clear_code()
     return redirect(_safe_next(request) or "shop:cart")
 
 
@@ -157,7 +184,13 @@ def checkout(request):
     shop = shop_settings()
     needs_shipping = any(line.offer.is_physical for line in lines)
     has_digital = any(not line.offer.is_physical for line in lines)
-    subtotal = Cart.subtotal(lines)
+    pricing = cart.pricing(lines)
+    if pricing["problem"]:
+        messages.error(request, pricing["problem"])
+        cart.clear_code()
+        return redirect("shop:cart")
+    subtotal = pricing["goods_total"]
+    full_subtotal = pricing["subtotal"]
 
     initial = {}
     if request.user.is_authenticated:
@@ -207,6 +240,9 @@ def checkout(request):
         form = CheckoutForm(initial=initial, **form_kwargs)
 
     shipping_table = _shipping_table(lines, shop) if needs_shipping else {}
+    if pricing["free_shipping"]:
+        for row in shipping_table.values():
+            row["cost"] = "0.00"
 
     return render(
         request,
@@ -215,6 +251,8 @@ def checkout(request):
             "form": form,
             "lines": lines,
             "subtotal": subtotal,
+            "full_subtotal": full_subtotal,
+            "pricing": pricing,
             "needs_shipping": needs_shipping,
             "has_digital": has_digital,
             "shipping_table": shipping_table,

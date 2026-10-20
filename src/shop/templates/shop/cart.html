@@ -50,6 +50,20 @@
             <aside class="card card-pad summary">
                 <h2>{% trans "Summary" %}</h2>
                 <div class="summary-row"><span>{% trans "Subtotal" %}</span><strong>{{ subtotal|euro }}</strong></div>
+                {% if pricing.code %}
+                <div class="summary-row discount-row">
+                    <span>{{ pricing.code.code }}
+                    <form method="post" action="{% url 'shop:cart_code_remove' %}" style="display:inline">{% csrf_token %}<button class="link-btn" type="submit">{% trans "remove" %}</button></form></span>
+                    <strong>{% if pricing.free_shipping %}{% trans "Free shipping" %}{% else %}−{{ pricing.discount|euro }}{% endif %}</strong>
+                </div>
+                {% else %}
+                <form class="code-form" method="post" action="{% url 'shop:cart_code' %}">
+                    {% csrf_token %}
+                    <label for="code" class="visuallyhidden">{% trans "Discount or gift card code" %}</label>
+                    <input id="code" class="form-input" type="text" name="code" placeholder="{% trans 'Discount or gift card code' %}" autocomplete="off">
+                    <button class="btn btn--sm btn--ghost" type="submit">{% trans "Apply" %}</button>
+                </form>
+                {% endif %}
                 <p class="summary-note">
                     {% if has_physical %}{% trans "Shipping is calculated at checkout, once you choose a country." %}{% else %}{% trans "Digital items need no shipping." %}{% endif %}
                 </p>

@@ -15,7 +15,7 @@ from home.models import StandardPage
 from contact.models import Inquiry
 
 from .cart import shop_settings
-from .models import Order, ShippingRate, WaitlistRequest
+from .models import DiscountCode, Order, ShippingRate, WaitlistRequest
 
 
 class NoAddPermissionPolicy(ModelPermissionPolicy):
@@ -65,11 +65,21 @@ class WaitlistViewSet(SnippetViewSet):
         return NoAddPermissionPolicy(self.model)
 
 
+class DiscountCodeViewSet(SnippetViewSet):
+    model = DiscountCode
+    icon = "tag"
+    menu_label = "Discount codes & gift cards"
+    menu_order = 160
+    list_display = ["code", "summary", "uses_label", "valid_until", "active"]
+    list_filter = ["kind", "active"]
+    search_fields = ["code", "note"]
+
+
 class ShopGroup(SnippetViewSetGroup):
     menu_label = "Shop"
     menu_icon = "tag"
     menu_order = 200
-    items = (OrderViewSet, WaitlistViewSet, ShippingRateViewSet)
+    items = (OrderViewSet, WaitlistViewSet, DiscountCodeViewSet, ShippingRateViewSet)
 
 
 class InquiryViewSet(SnippetViewSet):

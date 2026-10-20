@@ -16,10 +16,11 @@ from wagtail.models import Site
 from artworks.models import ArtworkPage, Offer
 
 from . import emails
-from .models import Order, OrderItem, ShopSettings
+from .models import DiscountCode, Order, OrderItem, ShopSettings
 from .shipping import calculate_shipping
 
 SESSION_KEY = "cart"
+CODE_KEY = "discount_code"
 MAX_QTY = 20
 
 
@@ -134,6 +135,41 @@ class Cart:
     def subtotal(lines):
         return sum((line.line_total for line in lines), Decimal("0.00"))
 
+    # --- discount code ------------------------------------------------
+
+    @property
+    def code(self):
+        return self.session.get(CODE_KEY, "")
+
+    def set_code(self, code):
+        self.session[CODE_KEY] = code
+        self.session.modified = True
+
+    def clear_code(self):
+        self.session.pop(CODE_KEY, None)
+        self.session.modified = True
+
+    def pricing(self, lines):
+        """Subtotal, discount and what is left to pay for goods (shipping is added later)."""
+        subtotal = self.subtotal(lines)
+        result = {
+            "subtotal": subtotal,
+            "code": None,
+            "discount": Decimal("0.00"),
+            "free_shipping": False,
+            "problem": "",
+        }
+        if self.code:
+            code = DiscountCode.objects.filter(code=self.code).first()
+            problem = code.problem(subtotal) if code else _("This code is not valid.")
+            if problem:
+                result["problem"] = problem
+            else:
+                result["code"] = code
+                result["discount"], result["free_shipping"] = code.amounts(subtotal)
+        result["goods_total"] = subtotal - result["discount"]
+        return result
+
 
 class OrderError(Exception):
     """Raised when an order can't be placed (e.g. item sold in the meantime)."""
@@ -183,6 +219,18 @@ def place_order(cart, data, user, language):
         shipping = Decimal("0.00")
     subtotal = Cart.subtotal(lines)
 
+    # a discount code is checked again, locked, so one-use codes cannot be used twice
+    code = None
+    discount = Decimal("0.00")
+    if cart.code:
+        code = DiscountCode.objects.select_for_update().filter(code=cart.code).first()
+        problem = code.problem(subtotal) if code else _("This code is not valid.")
+        if problem:
+            raise OrderError(problem)
+        discount, free_shipping = code.amounts(subtotal)
+        if free_shipping and has_physical:
+            shipping = Decimal("0.00")
+
     order = Order.objects.create(
         user=user if user and user.is_authenticated else None,
         language=language,
@@ -197,8 +245,10 @@ def place_order(cart, data, user, language):
         country=data.get("country", "") if has_physical else "",
         customer_note=data.get("customer_note", ""),
         subtotal=subtotal,
+        discount_code=code.code if code else "",
+        discount_amount=discount,
         shipping_cost=shipping,
-        total=subtotal + shipping,
+        total=subtotal - discount + shipping,
         has_physical=has_physical,
         has_digital=has_digital,
     )
@@ -223,6 +273,13 @@ def place_order(cart, data, user, language):
             Offer.objects.filter(pk=offer.pk).update(
                 stock=models.F("stock") - line.quantity
             )
+
+    if code:
+        code.used_count += 1
+        if code.kind == DiscountCode.GIFT:
+            code.remaining = max((code.remaining or Decimal("0")) - discount, Decimal("0"))
+        code.save()
+        cart.clear_code()
 
     transaction.on_commit(lambda: emails.send_order_placed(order))
     return order

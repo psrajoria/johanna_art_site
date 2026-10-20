@@ -62,6 +62,9 @@ msgstr "Alles"
 msgid "Appearance"
 msgstr "Darstellung"
 
+msgid "Apply"
+msgstr "Anwenden"
+
 msgid "Architecture & Facades"
 msgstr "Architektur & Fassaden"
 
@@ -167,6 +170,9 @@ msgstr "Schließen"
 msgid "Closed"
 msgstr "Geschlossen"
 
+msgid "Code applied."
+msgstr "Code angewendet."
+
 msgid "Colour palette"
 msgstr "Farbpalette"
 
@@ -248,6 +254,12 @@ msgstr "Digitale Downloads"
 msgid "Digital items need no shipping."
 msgstr "Digitale Artikel brauchen keinen Versand."
 
+msgid "Discount"
+msgstr "Rabatt"
+
+msgid "Discount or gift card code"
+msgstr "Rabatt- oder Gutscheincode"
+
 msgid "Download"
 msgstr "Herunterladen"
 
@@ -328,6 +340,9 @@ msgstr "Frankreich"
 
 msgid "Free"
 msgstr "Kostenlos"
+
+msgid "Free shipping"
+msgstr "Kostenloser Versand"
 
 msgid "From the blog"
 msgstr "Aus dem Blog"
@@ -953,11 +968,29 @@ msgstr "Echtes Papier, echtes Pigment — signiert und sorgfältig verschickt."
 msgid "There is already an account with this email. Please log in."
 msgstr "Mit dieser E-Mail gibt es bereits ein Konto. Bitte melde dich an."
 
+msgid "This code has been used up."
+msgstr "Dieser Code wurde bereits aufgebraucht."
+
+msgid "This code has expired."
+msgstr "Dieser Code ist abgelaufen."
+
+msgid "This code is not valid yet."
+msgstr "Dieser Code ist noch nicht gültig."
+
+msgid "This code is not valid."
+msgstr "Dieser Code ist ungültig."
+
+msgid "This code needs an order of at least €%(amount)s."
+msgstr "Dieser Code gilt ab einem Bestellwert von %(amount)s €."
+
 msgid "This corner of the studio is private."
 msgstr "Diese Ecke des Ateliers ist privat."
 
 msgid "This field is required for delivery."
 msgstr "Dieses Feld wird für die Lieferung benötigt."
+
+msgid "This gift card has been used up."
+msgstr "Dieser Gutschein ist aufgebraucht."
 
 msgid "This is available right now, no need to wait."
 msgstr "Das ist gerade verfügbar, du musst nicht warten."
@@ -1156,6 +1189,9 @@ msgstr "nenne dabei %(number)s"
 
 msgid "one of a kind"
 msgstr "ein Unikat"
+
+msgid "remove"
+msgstr "entfernen"
 
 msgid "sketchbook study"
 msgstr "Skizzenbuch-Studie"

@@ -1,5 +1,6 @@
 import shutil
 import tempfile
+from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
@@ -8,6 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.management import call_command
 from django.test import TestCase, override_settings
+from django.utils import timezone
 from django.urls import reverse
 from wagtail.images.tests.utils import get_test_image_file
 from wagtail.images.models import Image
@@ -16,7 +18,7 @@ from wagtail.models import Locale
 from artworks.models import ArtworkIndexPage, ArtworkPage, Offer
 
 from .cart import Cart, OrderError, place_order
-from .models import WaitlistRequest, Order, ShippingRate
+from .models import DiscountCode, Order, ShippingRate, WaitlistRequest
 from .shipping import ShippingUnavailable, calculate_shipping
 
 PRIVATE_ROOT = tempfile.mkdtemp()
@@ -339,6 +341,70 @@ class ErrorPageTests(ShopTestCase):
         html = render_to_string("500.html")
         self.assertIn("The paint spilled", html)
         self.assertNotIn("{%", html)
+
+
+class DiscountTests(ShopTestCase):
+    def cart(self, code=None, *pairs):
+        cart = cart_with(*(pairs or ((self.print_a4, 2),)))  # 2 x A4 = 48 EUR
+        if code:
+            cart.set_code(code)
+        return cart
+
+    def test_percent_code_reduces_total_and_counts_use(self):
+        DiscountCode.objects.create(code="summer10", kind="percent", value=10, max_uses=1)
+        order = place_order(self.cart("SUMMER10"), dict(CHECKOUT), None, "en")
+        self.assertEqual(order.discount_amount, Decimal("4.80"))
+        self.assertEqual(order.total, Decimal("48.00") - Decimal("4.80") + Decimal("2.90"))
+        self.assertEqual(DiscountCode.objects.get().used_count, 1)
+        # the single use is gone
+        with self.assertRaises(OrderError):
+            place_order(self.cart("SUMMER10"), dict(CHECKOUT), None, "en")
+
+    def test_cancelling_gives_the_use_back(self):
+        DiscountCode.objects.create(code="ONCE", kind="fixed", value=5, max_uses=1)
+        order = place_order(self.cart("ONCE"), dict(CHECKOUT), None, "en")
+        order.status = Order.STATUS_CANCELLED
+        order.save()
+        self.assertEqual(DiscountCode.objects.get().used_count, 0)
+
+    def test_rules(self):
+        cart = self.cart()
+        subtotal = Decimal("48.00")
+        self.assertIn("at least", DiscountCode(code="A", kind="fixed", value=5, min_order=100).problem(subtotal))
+        self.assertIn("expired", DiscountCode(code="B", kind="fixed", value=5, valid_until=timezone.localdate() - timedelta(days=1)).problem(subtotal))
+        self.assertTrue(DiscountCode(code="C", kind="fixed", value=5, active=False).problem(subtotal))
+        # a fixed code never takes more than the goods are worth
+        self.assertEqual(DiscountCode(code="D", kind="fixed", value=500).amounts(subtotal)[0], subtotal)
+        self.assertEqual(cart.pricing(cart.lines())["discount"], 0)
+
+    def test_gift_card_balance_is_spent_over_two_orders(self):
+        DiscountCode.objects.create(code="GIFT50", kind="gift", value=50)
+        first = place_order(self.cart("GIFT50"), dict(CHECKOUT), None, "en")  # 48 off, 2 EUR left
+        self.assertEqual(first.discount_amount, Decimal("48.00"))
+        self.assertEqual(DiscountCode.objects.get().remaining, Decimal("2.00"))
+        second = place_order(self.cart("GIFT50", (self.print_a4, 1)), dict(CHECKOUT), None, "en")
+        self.assertEqual(second.discount_amount, Decimal("2.00"))
+        self.assertEqual(DiscountCode.objects.get().remaining, Decimal("0.00"))
+        first.status = Order.STATUS_CANCELLED
+        first.save()
+        self.assertEqual(DiscountCode.objects.get().remaining, Decimal("48.00"))
+
+    def test_free_shipping_code(self):
+        DiscountCode.objects.create(code="SHIPFREE", kind="free_shipping")
+        order = place_order(self.cart("SHIPFREE"), dict(CHECKOUT), None, "en")
+        self.assertEqual(order.shipping_cost, Decimal("0.00"))
+        self.assertEqual(order.total, Decimal("48.00"))
+
+    def test_cart_page_applies_and_removes_a_code(self):
+        DiscountCode.objects.create(code="HELLO", kind="percent", value=25)
+        self.client.post(reverse("shop:cart_add", args=[self.print_a4.pk]))
+        self.client.post(reverse("shop:cart_code"), {"code": "hello"})
+        self.assertContains(self.client.get(reverse("shop:cart")), "HELLO")
+        self.assertContains(self.client.get(reverse("shop:checkout")), "−€6.00")
+        self.client.post(reverse("shop:cart_code_remove"))
+        self.assertNotContains(self.client.get(reverse("shop:cart")), "HELLO")
+        self.client.post(reverse("shop:cart_code"), {"code": "nonsense"})
+        self.assertNotContains(self.client.get(reverse("shop:cart")), "nonsense")
 
 
 class WaitlistTests(ShopTestCase):

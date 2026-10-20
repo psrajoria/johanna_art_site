@@ -2736,6 +2736,33 @@ img[loading="lazy"].is-loaded {
   border-radius: 4px;
 }
 
+/* ---------- Discount codes ---------------------------------------------------- */
+
+.code-form {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.8rem 0 0.2rem;
+}
+.code-form .form-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.55rem 0.8rem;
+  text-transform: uppercase;
+}
+.discount-row {
+  color: var(--c-ok);
+}
+.link-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
 /* ---------- Waiting list ------------------------------------------------------ */
 
 .offer-waitlist {
