@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load i18n wagtailcore_tags site_tags %}
+
+{% block title %}{% blocktrans with number=inquiry.number %}Request {{ number }}{% endblocktrans %}{% endblock %}
+
+{% block extra_head %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="shell--narrow">
+        <div class="eyebrow">{{ inquiry.get_inquiry_type_display }}</div>
+        <h1 class="display">{{ inquiry.number }}</h1>
+        <p class="lede">{% blocktrans with name=inquiry.name %}Hi {{ name }} — here is where your request stands.{% endblocktrans %}</p>
+    </div>
+</section>
+
+<section class="section" style="padding-top:1rem">
+    <div class="shell--narrow stack" style="--stack:1.5rem">
+
+        {% if inquiry.status == "declined" %}
+        <div class="notice notice--warn"><strong>{% trans "Unfortunately I can't take this one on." %}</strong> {% trans "Thank you for thinking of me — please feel free to ask again for something else." %}</div>
+        {% elif inquiry.status == "closed" %}
+        <div class="notice">{% trans "This request is closed." %}</div>
+        {% elif steps %}
+        <div class="card card-pad">
+            <ol class="timeline">
+                {% for label, state in steps %}<li class="{{ state }}">{{ label }}</li>{% endfor %}
+            </ol>
+        </div>
+        {% endif %}
+
+        {% if inquiry.status == "quoted" and inquiry.quote_amount %}
+        <div class="card card-pad">
+            <h2 class="h3">{% trans "Your quote" %}</h2>
+            <p class="display" style="font-size:var(--step-3);margin:.6rem 0">{{ inquiry.quote_amount|euro }}</p>
+            {% if inquiry.quote_message %}<p>{{ inquiry.quote_message|linebreaksbr }}</p>{% endif %}
+            <div class="pay-box">
+                <p style="margin:0"><strong>{% trans "To accept, simply pay and mention" %}</strong> <span class="pay-ref">{{ inquiry.number }}</span></p>
+                <dl>
+                    {% if shop.paypal_email %}<dt>PayPal</dt><dd>{{ shop.paypal_email }}</dd>{% endif %}
+                    {% if shop.bank_iban %}<dt>IBAN</dt><dd>{{ shop.bank_iban }}</dd>{% endif %}
+                </dl>
+                <p class="help" style="margin:0">{% trans "Or just reply to my email if you have questions first." %}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if inquiry.tracking_number %}
+        <div class="card card-pad">
+            <strong>{% trans "On its way" %}</strong>
+            {% if inquiry.carrier %}· {{ inquiry.carrier }}{% endif %} · {{ inquiry.tracking_number }}
+        </div>
+        {% endif %}
+
+        <div class="card card-pad">
+            <h2 class="h3" style="margin-bottom:.8rem">{% trans "Your message" %}</h2>
+            <p style="white-space:pre-line">{{ inquiry.message }}</p>
+            {% if inquiry.size_wanted %}<p class="muted">{% trans "Size" %}: {{ inquiry.size_wanted }}</p>{% endif %}
+        </div>
+
+        <p style="text-align:center"><a class="link-arrow" href="{% url 'contact:inquiry' %}">{% trans "Send another message" %} <span class="arrow">→</span></a></p>
+    </div>
+</section>
+{% endblock %}

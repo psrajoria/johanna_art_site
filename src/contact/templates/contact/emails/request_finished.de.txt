@@ -1,0 +1,8 @@
+{% autoescape off %}Hallo {{ inquiry.name }},
+
+dein Werk zu Anfrage {{ inquiry.number }} ist fertig! Ich verpacke es und melde mich, sobald es unterwegs ist.
+
+{{ status_url }}
+
+Johanna
+{% endautoescape %}

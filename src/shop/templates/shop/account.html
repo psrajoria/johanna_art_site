@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n site_tags %}
+
+{% block title %}{% trans "Your account" %}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="shell">
+        <div class="eyebrow">{% trans "Your account" %}</div>
+        <h1 class="display">{% blocktrans with name=user.first_name|default:user.email %}Hello, {{ name }}{% endblocktrans %}</h1>
+    </div>
+</section>
+
+<section class="section" style="padding-top:1rem">
+    <div class="shell">
+        <div class="card card-pad">
+            <h2 class="h3" style="margin-bottom:1rem">{% trans "Your orders" %}</h2>
+            {% if orders %}
+            <table class="orders-table">
+                <thead><tr><th>{% trans "Order" %}</th><th>{% trans "Date" %}</th><th>{% trans "Status" %}</th><th>{% trans "Total" %}</th><th></th></tr></thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td data-label="{% trans 'Order' %}"><strong>{{ order.number }}</strong></td>
+                        <td data-label="{% trans 'Date' %}">{{ order.created_at|date:"j F Y" }}</td>
+                        <td data-label="{% trans 'Status' %}">{{ order.get_status_display }}</td>
+                        <td data-label="{% trans 'Total' %}">{{ order.total|euro }}</td>
+                        <td><a class="link-arrow" href="{% url 'shop:order' order.token %}">{% trans "View" %} <span class="arrow">→</span></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="muted">{% trans "No orders yet." %}</p>
+            {% endif %}
+        </div>
+
+        <form method="post" action="{% url 'shop:logout' %}" style="margin-top:1.5rem">
+            {% csrf_token %}
+            <button class="btn btn--ghost btn--sm" type="submit">{% trans "Log out" %}</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

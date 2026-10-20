@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load i18n wagtailcore_tags site_tags %}
+
+{% block title %}{% blocktrans with number=order.number %}Order {{ number }}{% endblocktrans %}{% endblock %}
+
+{% block extra_head %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="shell--narrow">
+        <div class="eyebrow">{% trans "Your order" %}</div>
+        <h1 class="display">{{ order.number }}</h1>
+        {% if awaiting %}
+        <p class="lede">{% blocktrans with name=order.name %}Thank you, {{ name }}! Your order is saved — it just needs your payment.{% endblocktrans %}</p>
+        {% endif %}
+    </div>
+</section>
+
+<section class="section" style="padding-top:1rem">
+    <div class="shell--narrow stack" style="--stack:1.5rem">
+
+        {% if order.status == "cancelled" %}
+        <div class="notice notice--bad"><strong>{% trans "This order was cancelled." %}</strong> {% trans "If this is a surprise, please get in touch." %}</div>
+        {% else %}
+        <div class="card card-pad">
+            <ol class="timeline">
+                {% for label, state in steps %}
+                <li class="{{ state }}">{{ label }}</li>
+                {% endfor %}
+            </ol>
+
+            {% if order.status == "shipped" or order.tracking_number %}
+            <p style="margin-top:1.4rem">
+                <strong>{% trans "On its way" %}</strong>
+                {% if order.carrier %}· {{ order.carrier }}{% endif %}
+                {% if order.tracking_number %}·
+                {% if order.tracking_url %}<a href="{{ order.tracking_url }}" target="_blank" rel="noopener">{{ order.tracking_number }}</a>{% else %}{{ order.tracking_number }}{% endif %}
+                {% endif %}
+            </p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if awaiting %}
+        <div class="card card-pad">
+            <h2 class="h3">{% trans "How to pay" %}</h2>
+            <div class="rich-text" style="margin-top:.8rem">{{ shop.instructions|richtext }}</div>
+
+            <div class="pay-box">
+                <p style="margin:0"><strong>{% trans "Amount" %}: {{ order.total|euro }}</strong> ·
+                    {% trans "Reference" %}: <span class="pay-ref">{{ order.number }}</span></p>
+
+                {% if order.payment_method == "paypal" %}
+                <dl>
+                    {% if shop.paypal_email %}<dt>PayPal</dt><dd>{{ shop.paypal_email }}</dd>{% endif %}
+                </dl>
+                {% if paypal_url %}
+                <a class="btn btn--accent" href="{{ paypal_url }}" target="_blank" rel="noopener">{% trans "Pay with PayPal" %} <span class="arrow" aria-hidden="true">→</span></a>
+                {% endif %}
+                {% else %}
+                <dl>
+                    <dt>{% trans "Account holder" %}</dt><dd>{{ shop.bank_account_holder }}</dd>
+                    <dt>IBAN</dt><dd>{{ shop.bank_iban }}</dd>
+                    {% if shop.bank_bic %}<dt>BIC</dt><dd>{{ shop.bank_bic }}</dd>{% endif %}
+                    {% if shop.bank_name %}<dt>{% trans "Bank" %}</dt><dd>{{ shop.bank_name }}</dd>{% endif %}
+                </dl>
+                {% endif %}
+            </div>
+            <p class="help" style="margin-top:1rem">{% trans "We've also emailed you these details. You can always come back to this page using the link in that email." %}</p>
+        </div>
+        {% endif %}
+
+        {% if order.is_paid and order.has_digital %}
+        <div class="card card-pad">
+            <h2 class="h3">{% trans "Your downloads" %}</h2>
+            {% if order.downloads_available %}
+            <ul class="download-list">
+                {% for item in items %}{% if item.is_digital %}
+                <li>
+                    <span>{{ item.title }}</span>
+                    {% if item.can_download %}
+                    <a class="btn btn--sm" href="{% url 'shop:download' order.token item.pk %}">{% trans "Download" %}</a>
+                    {% else %}<span class="muted">{% trans "Download limit reached" %}</span>{% endif %}
+                </li>
+                {% endif %}{% endfor %}
+            </ul>
+            <p class="help" style="margin-top:.8rem">{% blocktrans with date=expires|date:"j F Y" %}Available until {{ date }}.{% endblocktrans %}</p>
+            <div class="rich-text help" style="margin-top:.6rem">{{ shop.license_text|richtext }}</div>
+            {% else %}
+            <p class="muted">{% trans "The download period has ended. Please get in touch and we'll help." %}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="card card-pad">
+            <h2 class="h3" style="margin-bottom:1rem">{% trans "Order summary" %}</h2>
+            {% for item in items %}
+            <div class="mini-line">
+                <span>{{ item.quantity }}× {{ item.title }}{% if item.option_label %}<br><small class="muted">{{ item.option_label }}</small>{% endif %}</span>
+                <span>{{ item.line_total|euro }}</span>
+            </div>
+            {% endfor %}
+            <div class="summary-row" style="border-top:1px solid var(--c-line);margin-top:.6rem"><span>{% trans "Subtotal" %}</span><span>{{ order.subtotal|euro }}</span></div>
+            {% if order.has_physical %}
+            <div class="summary-row"><span>{% trans "Shipping" %}</span><span>{% if order.shipping_cost == 0 %}{% trans "Free" %}{% else %}{{ order.shipping_cost|euro }}{% endif %}</span></div>
+            {% endif %}
+            <div class="summary-row total"><span>{% trans "Total" %}</span><span>{{ order.total|euro }}</span></div>
+
+            {% if order.has_physical %}
+            <hr style="border:0;border-top:1px dashed var(--c-line);margin:1.4rem 0">
+            <div class="eyebrow" style="margin-bottom:.4rem">{% trans "Delivery address" %}</div>
+            <address style="font-style:normal">
+                {{ order.name }}<br>{{ order.address_line1 }}<br>
+                {% if order.address_line2 %}{{ order.address_line2 }}<br>{% endif %}
+                {{ order.postal_code }} {{ order.city }}<br>{{ order.get_country_display }}
+            </address>
+            {% endif %}
+        </div>
+
+        <p class="muted" style="text-align:center">
+            {% trans "Questions about your order?" %}
+            <a href="{% url 'contact:inquiry' %}">{% trans "Get in touch" %}</a>
+            · {% blocktrans with number=order.number %}mention {{ number }}{% endblocktrans %}
+        </p>
+    </div>
+</section>
+{% endblock %}

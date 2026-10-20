@@ -1,27 +1,26 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Thank you | Johanna L{% endblock %}
+{% block title %}{% trans "Thank you" %}{% endblock %}
+
+{% block extra_head %}<meta name="robots" content="noindex">{% endblock %}
 
 {% block content %}
-
-<section class="contact-hero">
-    <div class="site-shell">
-        <div class="paper-card thank-you-card">
-            <div class="eyebrow">Message sent</div>
-
-            <h1 class="section-title">Thank you.</h1>
-
-            <p class="section-text">
-                Your inquiry has been saved. Johanna can now read it in the admin.
-                Email notifications will be added in a later phase.
+<section class="section">
+    <div class="shell">
+        <div class="card card-pad form-card" style="text-align:center">
+            <div class="eyebrow" style="justify-content:center">{% trans "Message sent" %}</div>
+            <h1 class="h1">{% trans "Thank you!" %}</h1>
+            <p class="lede" style="margin-inline:auto">
+                {% blocktrans with name=inquiry.name %}Thanks, {{ name }} — your message has arrived and I'll reply soon.{% endblocktrans %}
             </p>
+            <p class="muted">{% blocktrans with number=inquiry.number %}Your reference: <strong>{{ number }}</strong>{% endblocktrans %}</p>
 
-            <div class="hero-actions">
-                <a class="btn btn-primary" href="/gallery/">Back to gallery</a>
-                <a class="btn btn-secondary" href="/">Back home</a>
-            </div>
+            {% if inquiry.is_request %}
+            <p><a class="btn" href="{% url 'contact:request_status' inquiry.token %}">{% trans "Follow your request" %} <span class="arrow" aria-hidden="true">→</span></a></p>
+            {% endif %}
+            <p><a class="btn btn--ghost btn--sm" href="/">{% trans "Back to the start" %}</a></p>
         </div>
     </div>
 </section>
-
 {% endblock %}

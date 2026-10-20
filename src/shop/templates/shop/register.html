@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Create an account" %}{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="shell">
+        <div class="card card-pad form-card">
+            <h1 class="h2">{% trans "Create an account" %}</h1>
+            <p class="muted">{% trans "Optional. Guests can always check out without one." %}</p>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                <div class="field{% if field.errors %} has-error{% endif %}">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {{ field.errors }}
+                    {% if field.help_text and field.name == "password1" %}<div class="help">{{ field.help_text|safe }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                <button class="btn btn--block" type="submit">{% trans "Create account" %}</button>
+            </form>
+            <p class="help" style="margin-top:1rem">{% trans "Already have one?" %} <a href="{% url 'shop:login' %}">{% trans "Log in" %}</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}

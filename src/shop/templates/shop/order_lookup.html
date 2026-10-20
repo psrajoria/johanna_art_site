@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Track an order" %}{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="shell">
+        <div class="card card-pad form-card">
+            <h1 class="h2">{% trans "Track an order" %}</h1>
+            <p class="muted">{% trans "Enter the order number from your confirmation email and the email address you used." %}</p>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <div class="field">
+                    <label for="{{ form.number.id_for_label }}">{{ form.number.label }}</label>
+                    {{ form.number }}{{ form.number.errors }}
+                </div>
+                <div class="field">
+                    <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                    {{ form.email }}{{ form.email.errors }}
+                </div>
+                <button class="btn btn--block" type="submit">{% trans "Find my order" %}</button>
+            </form>
+            <p class="help" style="margin-top:1rem">{% trans "Have an account?" %} <a href="{% url 'shop:login' %}">{% trans "Log in" %}</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}

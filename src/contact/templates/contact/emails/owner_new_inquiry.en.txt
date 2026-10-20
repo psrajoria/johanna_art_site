@@ -1,0 +1,14 @@
+{% autoescape off %}New {{ inquiry.get_inquiry_type_display }}: {{ inquiry.number }}
+
+From: {{ inquiry.name }} <{{ inquiry.email }}>{% if inquiry.artwork %}
+About: {{ inquiry.artwork.title }}{% endif %}{% if inquiry.size_wanted %}
+Size: {{ inquiry.size_wanted }}{% endif %}{% if inquiry.budget %}
+Budget: {{ inquiry.budget }}{% endif %}{% if inquiry.deadline %}
+Deadline: {{ inquiry.deadline }}{% endif %}{% if inquiry.reference_link %}
+Reference: {{ inquiry.reference_link }}{% endif %}{% if inquiry.reference_image %}
+(A reference photo was uploaded — open it in the admin.){% endif %}
+
+{{ inquiry.message }}
+
+Open in the admin: {{ admin_url }}
+{% endautoescape %}

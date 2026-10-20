@@ -1,0 +1,32 @@
+<section class="panel summary nice-padding" style="margin-bottom:1.5em">
+  <h2 class="visuallyhidden">Shop overview</h2>
+  <div style="font-weight:600;font-size:1.1em;margin:0 0 .75em">Your shop at a glance</div>
+
+  {% if placeholder_warning %}
+  <p style="background:#fff4d6;border:1px solid #e2b93b;padding:.75em 1em;border-radius:6px;margin-bottom:1em">
+    ⚠️ Your PayPal / bank details are still placeholders. Customers would be asked to pay the wrong account.
+    <a href="{{ settings_url }}"><strong>Update shop settings</strong></a>
+  </p>
+  {% endif %}
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75em;margin-bottom:1em">
+    {% for card in cards %}
+    <a href="{{ card.url }}" style="display:block;text-decoration:none;border:1px solid #ddd;border-radius:8px;padding:.75em 1em;{% if card.count %}background:#fdf1ec;border-color:#e6a690{% endif %}">
+      <div style="font-size:2em;font-weight:700;line-height:1">{{ card.count }}</div>
+      <div style="color:#555">{{ card.label }}</div>
+    </a>
+    {% endfor %}
+  </div>
+
+  <p><strong>This month:</strong> €{{ month_total }} from {{ month_count }} paid order{{ month_count|pluralize }}.
+     <strong>All time:</strong> {{ items_sold }} item{{ items_sold|pluralize }} sold.</p>
+
+  {% if low_stock %}
+  <p style="margin-top:.75em"><strong>Running low:</strong></p>
+  <ul>
+    {% for offer in low_stock %}
+    <li>{{ offer.artwork.title }} — {{ offer.short_label }}: {% if offer.stock == 0 %}<strong>sold out</strong>{% else %}{{ offer.stock }} left{% endif %}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</section>

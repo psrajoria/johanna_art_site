@@ -1,174 +1,216 @@
 {% extends "base.html" %}
-{% load static wagtailcore_tags wagtailimages_tags %}
+{% load i18n wagtailcore_tags wagtailimages_tags site_tags %}
 
-{% block title %}Johanna L | Just Keep Layering{% endblock %}
+{% block title %}Johanna L — {{ settings.home.SiteSettings|localized:"tagline" }}{% endblock %}
+
+{% block share_image %}
+{% if hero_artwork and hero_artwork.main_image %}
+{% image hero_artwork.main_image fill-1200x630 as share_img %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ share_img.url }}" />
+{% else %}{{ block.super }}{% endif %}
+{% endblock %}
 
 {% block content %}
 
 <section class="hero">
-    <div class="site-shell hero-grid">
-        <div>
-            <div class="eyebrow">
-                {{ page.hero_eyebrow }}
-            </div>
+    <div class="blobs" aria-hidden="true">
+        <span class="blob blob--1"></span>
+        <span class="blob blob--2"></span>
+        <span class="blob blob--3"></span>
+    </div>
 
-            <h1 class="hero-title">
-                {{ page.hero_title }} <span>{{ page.hero_highlight }}</span>
+    <div class="shell hero-grid">
+        <div>
+            <div class="eyebrow">{{ page.hero_eyebrow }}</div>
+
+            <h1 class="display" data-rise>
+                {{ page.hero_title }}
+                <span class="brush">{{ page.hero_highlight }}
+                    <svg viewBox="0 0 400 20" preserveAspectRatio="none" aria-hidden="true"><path d="M4 13C70 4 140 20 220 9S340 14 396 6" /></svg>
+                </span>
             </h1>
 
-            <div class="hero-text">
-                {{ page.hero_text|richtext }}
-            </div>
+            <div class="hero-text rich-text">{{ page.hero_text|richtext }}</div>
 
-            <div class="hero-actions">
-                <a class="btn btn-primary" href="/gallery/">View gallery</a>
-                <a class="btn btn-secondary" href="/contact/inquiry/?type=commission">Commission a memory</a>
+            <div class="btn-row">
+                {% if gallery_page %}
+                <a class="btn" href="{% pageurl gallery_page %}">{% trans "Explore the gallery" %} <span class="arrow" aria-hidden="true">→</span></a>
+                {% endif %}
+                <a class="btn btn--ghost" href="{% url 'contact:inquiry' %}?type=commission">{% trans "Commission a memory" %}</a>
             </div>
         </div>
 
-        <div class="paper-card hero-art-card">
-            {% if hero_artwork and hero_artwork.main_image %}
-            <a href="{% pageurl hero_artwork %}" class="hero-art-link">
-                <div class="hero-art-inner hero-art-photo">
-                    {% image hero_artwork.main_image fill-720x900 as hero_img %}
-                    <img src="{{ hero_img.url }}" alt="{{ hero_artwork.title }}">
+        <div class="hero-art">
+            <div class="hero-sheet hero-sheet--a" aria-hidden="true"></div>
+            <div class="hero-sheet hero-sheet--b" aria-hidden="true"></div>
+
+            {% if page.hero_image %}
+            <div class="hero-card">
+                <span class="tape" aria-hidden="true"></span>
+                <div class="frame-inner">
+                    {% image page.hero_image fill-760x950 format-webp as hero_img %}
+                    <img src="{{ hero_img.url }}" width="{{ hero_img.width }}" height="{{ hero_img.height }}" alt="{{ page.hero_image.title }}">
                 </div>
-                <div class="caption-note">
+            </div>
+            {% elif hero_artwork and hero_artwork.main_image %}
+            <a class="hero-card" href="{% pageurl hero_artwork %}">
+                <span class="tape" aria-hidden="true"></span>
+                <div class="frame-inner">
+                    {% image hero_artwork.main_image fill-760x950 format-webp as hero_img %}
+                    <img src="{{ hero_img.url }}" width="{{ hero_img.width }}" height="{{ hero_img.height }}" alt="{{ hero_artwork.title }}">
+                </div>
+                <div class="hero-caption">
                     <span>{{ hero_artwork.title }}</span>
-                    <span>{{ hero_artwork.location_display|default:"just keep layering" }}</span>
+                    <span>{{ hero_artwork.location_display }}</span>
                 </div>
             </a>
             {% else %}
-            <div class="hero-art-inner">
-                <div class="sketch-mark" aria-hidden="true"></div>
-            </div>
-            <div class="caption-note">
-                <span>sketchbook study</span>
-                <span>just keep layering</span>
+            <div class="hero-card">
+                <span class="tape" aria-hidden="true"></span>
+                <div class="frame-inner"><div class="sketch-mark"></div></div>
+                <div class="hero-caption"><span>{% trans "sketchbook study" %}</span><span>{{ settings.home.SiteSettings|localized:"tagline" }}</span></div>
             </div>
             {% endif %}
         </div>
     </div>
 </section>
 
+{% if places %}
+<div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+        {% for place in places %}<span>{{ place }}</span>{% endfor %}
+        {% for place in places %}<span>{{ place }}</span>{% endfor %}
+    </div>
+</div>
+{% endif %}
+
 <section class="section" id="featured">
-    <div class="site-shell">
-        <div class="section-heading">
-            <div class="eyebrow">Featured works</div>
-            <h2 class="section-title">{{ page.featured_title }}</h2>
-            <div class="section-text">
-                {{ page.featured_text|richtext }}
-            </div>
+    <div class="shell">
+        <div class="section-head" data-reveal>
+            <div class="eyebrow">{% trans "Featured works" %}</div>
+            <h2 class="h2">{{ page.featured_title }}</h2>
+            <div class="lede rich-text">{{ page.featured_text|richtext }}</div>
         </div>
 
         {% if featured_artworks %}
-        <div class="home-artwork-grid">
+        <div class="art-grid" data-reveal-group>
             {% for artwork in featured_artworks %}
-            <article class="art-card paper-card">
-                <a href="{% pageurl artwork %}">
-                    <div class="art-image-wrap">
-                        {% image artwork.main_image fill-620x760 as art_img %}
-                        <img src="{{ art_img.url }}" alt="{{ artwork.title }}">
-                    </div>
-
-                    <div class="art-card-body">
-                        <div class="art-card-meta">
-                            <span>{{ artwork.get_category_display }}</span>
-                            <span class="status-pill status-{{ artwork.status }}">
-                                {{ artwork.get_status_display }}
-                            </span>
-                        </div>
-
-                        <h2>{{ artwork.title }}</h2>
-
-                        {% if artwork.location_display %}
-                        <p class="art-location">{{ artwork.location_display }}</p>
-                        {% endif %}
-
-                        {% if artwork.short_description %}
-                        <p>{{ artwork.short_description }}</p>
-                        {% endif %}
-                    </div>
-                </a>
-            </article>
+            {% include "includes/artwork_card.html" with artwork=artwork %}
             {% endfor %}
         </div>
         {% else %}
-        <div class="home-empty paper-card">
-            <h3>No featured artworks yet.</h3>
-            <p>
-                In Wagtail admin, open an Artwork page and turn on
-                <strong>Featured</strong>. Then it will appear here.
-            </p>
+        <div class="empty">
+            <h3>{% trans "The first pieces are on their way." %}</h3>
+            <p class="muted">{% trans "Check back soon, or say hello in the meantime." %}</p>
+        </div>
+        {% endif %}
+
+        {% if gallery_page %}
+        <p class="btn-row" style="justify-content:center">
+            <a class="btn btn--ghost" href="{% pageurl gallery_page %}">{% trans "See everything" %} <span class="arrow" aria-hidden="true">→</span></a>
+        </p>
+        {% endif %}
+    </div>
+</section>
+
+<section class="section section--tint" id="process">
+    <div class="shell split">
+        <div data-reveal>
+            {% if page.process_image %}
+            {% image page.process_image width-900 format-webp as process_img %}
+            <div class="photo-card">
+                <span class="tape tape--rose" aria-hidden="true"></span>
+                <img src="{{ process_img.url }}" width="{{ process_img.width }}" height="{{ process_img.height }}" alt="{{ page.process_image.title }}" loading="lazy">
+            </div>
+            {% else %}
+            <div class="quote-card"><p>{{ settings.home.SiteSettings|localized:"tagline" }}.</p></div>
+            {% endif %}
+        </div>
+
+        <div data-reveal>
+            <div class="eyebrow">{% trans "Process" %}</div>
+            <h2 class="h2">{{ page.process_title }}</h2>
+            <div class="lede rich-text" style="margin-top:1rem">{{ page.process_text|richtext }}</div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="shop">
+    <div class="shell">
+        <div class="section-head section-head--center" data-reveal>
+            <div class="eyebrow">{% trans "Shop" %}</div>
+            <h2 class="h2">{{ page.shop_title }}</h2>
+            <div class="lede rich-text" style="margin-inline:auto">{{ page.shop_text|richtext }}</div>
+        </div>
+
+        {% if gallery_page %}
+        <div class="shop-strip" data-reveal-group>
+            <a class="shop-tile shop-tile--1" href="{% pageurl gallery_page %}?buy=original" data-reveal>
+                <span class="hand">{% trans "one of a kind" %}</span>
+                <h3>{% trans "Original paintings" %}</h3>
+                <p>{% trans "The real paper, the real pigment — signed and shipped carefully." %}</p>
+            </a>
+            <a class="shop-tile shop-tile--2" href="{% pageurl gallery_page %}?buy=print" data-reveal>
+                <span class="hand">{% trans "for every wall" %}</span>
+                <h3>{% trans "Fine-art prints" %}</h3>
+                <p>{% trans "Museum-quality paper in several sizes, or ask for your own size." %}</p>
+            </a>
+            <a class="shop-tile shop-tile--3" href="{% pageurl gallery_page %}?buy=digital" data-reveal>
+                <span class="hand">{% trans "instantly yours" %}</span>
+                <h3>{% trans "Digital downloads" %}</h3>
+                <p>{% trans "High-resolution files to print at home or at your local print shop." %}</p>
+            </a>
         </div>
         {% endif %}
     </div>
 </section>
 
-<section class="section" id="process">
-    <div class="site-shell philosophy">
-        <div class="paper-card philosophy-quote">
-            <p>Just keep layering.</p>
-        </div>
-
-        <div class="paper-card philosophy-text">
-            <div class="small-label">Process</div>
-            <h2 class="section-title">{{ page.process_title }}</h2>
-            <div>
-                {{ page.process_text|richtext }}
-            </div>
-        </div>
-    </div>
-</section>
-
 {% if latest_artworks %}
-<section class="section" id="latest">
-    <div class="site-shell">
-        <div class="section-heading">
-            <div class="eyebrow">Latest from the sketchbook</div>
-            <h2 class="section-title">Recently added layers.</h2>
-            <p class="section-text">
-                New sketches, finished pieces, and small studies from the growing gallery.
-            </p>
+<section class="section section--tint" id="latest">
+    <div class="shell">
+        <div class="section-head" data-reveal>
+            <div class="eyebrow">{% trans "Latest from the sketchbook" %}</div>
+            <h2 class="h2">{% trans "Recently added layers." %}</h2>
         </div>
-
-        <div class="latest-strip">
-            {% for artwork in latest_artworks %}
-            <a class="latest-card paper-card" href="{% pageurl artwork %}">
-                {% if artwork.main_image %}
-                {% image artwork.main_image fill-420x420 as latest_img %}
-                <img src="{{ latest_img.url }}" alt="{{ artwork.title }}">
-                {% endif %}
-                <span>{{ artwork.title }}</span>
-            </a>
+        <div class="art-grid" data-reveal-group>
+            {% for artwork in latest_artworks|slice:":4" %}
+            {% include "includes/artwork_card.html" with artwork=artwork %}
             {% endfor %}
         </div>
     </div>
 </section>
 {% endif %}
 
-<section class="section" id="commissions">
-    <div class="site-shell commission-panel paper-card">
-        <div>
-            <div class="eyebrow">Commissions</div>
-            <h2 class="section-title">{{ page.commission_title }}</h2>
-            <div class="section-text">
-                {{ page.commission_text|richtext }}
-            </div>
+{% if latest_posts %}
+<section class="section" id="journal">
+    <div class="shell">
+        <div class="section-head" data-reveal>
+            <div class="eyebrow">{% trans "From the blog" %}</div>
+            <h2 class="h2">{% trans "Notes from the desk." %}</h2>
         </div>
-
-        <a class="btn btn-primary" href="/contact/inquiry/?type=commission">Request a commission</a>
+        <div class="post-grid" data-reveal-group>
+            {% for post in latest_posts %}
+            {% include "includes/post_card.html" with post=post %}
+            {% endfor %}
+        </div>
+        {% if blog_page %}
+        <p class="btn-row" style="justify-content:center">
+            <a class="btn btn--ghost" href="{% pageurl blog_page %}">{% trans "Read more" %} <span class="arrow" aria-hidden="true">→</span></a>
+        </p>
+        {% endif %}
     </div>
 </section>
+{% endif %}
 
-<section class="section" id="contact">
-    <div class="site-shell">
-        <div class="section-heading">
-            <div class="eyebrow">Contact</div>
-            <h2 class="section-title">For now, send a message through Instagram.</h2>
-            <p class="section-text">
-                In the next phase, we will add a real contact and commission request form.
-            </p>
+<section class="section" id="commissions">
+    <div class="shell">
+        <div class="cta-band" data-reveal>
+            <div>
+                <div class="eyebrow">{% trans "Commissions" %}</div>
+                <h2 class="h2">{{ page.commission_title }}</h2>
+                <div class="lede rich-text" style="margin-top:1rem">{{ page.commission_text|richtext }}</div>
+            </div>
+            <a class="btn" href="{% url 'contact:inquiry' %}?type=commission">{% trans "Request a commission" %} <span class="arrow" aria-hidden="true">→</span></a>
         </div>
     </div>
 </section>

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="shell{% if not page.hero_image %} shell--narrow{% endif %}">
+        {% if page.hero_image %}
+        <div class="split">
+            <div>
+                <h1 class="display">{{ page.title }}</h1>
+                {% if page.intro %}<p class="lede">{{ page.intro }}</p>{% endif %}
+            </div>
+            <div class="photo-card">
+                <span class="tape" aria-hidden="true"></span>
+                {% image page.hero_image width-900 format-webp as hero %}
+                <img src="{{ hero.url }}" width="{{ hero.width }}" height="{{ hero.height }}" alt="{{ page.hero_image.title }}">
+            </div>
+        </div>
+        {% else %}
+        <h1 class="display">{{ page.title }}</h1>
+        {% if page.intro %}<p class="lede">{{ page.intro }}</p>{% endif %}
+        {% endif %}
+    </div>
+</section>
+
+<section class="section" style="padding-top:1rem">
+    <div class="shell--narrow prose">
+        {% for block in page.body %}
+        {% include_block block %}
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

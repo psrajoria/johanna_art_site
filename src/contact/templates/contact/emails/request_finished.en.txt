@@ -1,0 +1,8 @@
+{% autoescape off %}Hi {{ inquiry.name }},
+
+your piece for request {{ inquiry.number }} is finished! I will pack it up and let you know when it ships.
+
+{{ status_url }}
+
+Johanna
+{% endautoescape %}

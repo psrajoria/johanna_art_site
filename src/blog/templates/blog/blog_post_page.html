@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load i18n wagtailcore_tags wagtailimages_tags %}
+
+{% block og_type %}article{% endblock %}
+
+{% block meta_description %}
+<meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}{{ page.intro }}{% endif %}" />
+{% endblock %}
+
+{% block share_image %}
+{% if page.hero_image %}
+{% image page.hero_image fill-1200x630 as share_img %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ share_img.url }}" />
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<article class="post-body">
+    <header class="post-hero">
+        <div class="shell--narrow">
+            <a class="breadcrumb" href="{% pageurl page.get_parent %}">← {{ page.get_parent.title }}</a>
+            <h1 class="display" style="font-size:var(--step-4)">{{ page.title }}</h1>
+            <div class="post-meta">
+                <time datetime="{{ page.date|date:'Y-m-d' }}">{{ page.date|date:"j F Y" }}</time>
+                <span>· {% blocktrans with n=page.reading_minutes %}{{ n }} min read{% endblocktrans %}</span>
+            </div>
+            {% if page.tags.all %}
+            <div class="tag-list">
+                {% for tag in page.tags.all %}
+                <a class="tag" href="{% pageurl page.get_parent %}?tag={{ tag.slug }}">{{ tag.name }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </header>
+
+    {% if page.hero_image %}
+    <div class="shell post-cover">
+        {% image page.hero_image width-1600 format-webp as cover %}
+        <img src="{{ cover.url }}" width="{{ cover.width }}" height="{{ cover.height }}" alt="{{ page.hero_image.title }}">
+    </div>
+    {% endif %}
+
+    <div class="shell--narrow prose">
+        {% if page.intro %}<p class="lede">{{ page.intro }}</p>{% endif %}
+        {% for block in page.body %}
+        {% include_block block %}
+        {% endfor %}
+    </div>
+
+    {% if page.related_artwork and page.related_artwork.live %}
+    <div class="shell--narrow" style="margin-top:3rem">
+        <div class="card card-pad" style="display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap">
+            <div style="flex:1;min-width:14rem">
+                <div class="eyebrow">{% trans "About this artwork" %}</div>
+                <h2 class="h3">{{ page.related_artwork.title }}</h2>
+            </div>
+            <a class="btn btn--sm" href="{% pageurl page.related_artwork %}">{% trans "See the artwork" %} <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+    </div>
+    {% endif %}
+</article>
+
+{% if more_posts %}
+<section class="section section--tint">
+    <div class="shell">
+        <div class="section-head" data-reveal>
+            <div class="eyebrow">{% trans "Keep reading" %}</div>
+        </div>
+        <div class="post-grid">
+            {% for post in more_posts %}
+            {% include "includes/post_card.html" with post=post %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

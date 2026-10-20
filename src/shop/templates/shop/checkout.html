@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load i18n wagtailcore_tags site_tags %}
+
+{% block title %}{% trans "Checkout" %}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="shell">
+        <h1 class="display">{% trans "Checkout" %}</h1>
+        {% if not user.is_authenticated %}
+        <p class="lede">{% trans "Checking out as a guest." %}
+            <a href="{% url 'shop:login' %}?next={% url 'shop:checkout' %}">{% trans "Log in instead" %}</a></p>
+        {% endif %}
+    </div>
+</section>
+
+<section class="section" style="padding-top:1rem">
+    <div class="shell">
+        <form method="post" class="checkout-layout" novalidate>
+            {% csrf_token %}
+
+            <div class="stack" style="--stack:1.5rem">
+                {% if form.non_field_errors %}
+                <div class="notice notice--bad">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <div class="card card-pad">
+                    <h2 class="h3" style="margin-bottom:1.2rem">{% trans "Your details" %}</h2>
+                    <div class="form-grid">
+                        <div class="field{% if form.email.errors %} has-error{% endif %}">
+                            <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                            {{ form.email }}{{ form.email.errors }}
+                        </div>
+                        <div class="field{% if form.name.errors %} has-error{% endif %}">
+                            <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                            {{ form.name }}{{ form.name.errors }}
+                        </div>
+                        <div class="field field--full">
+                            <label for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
+                            {{ form.phone }}
+                        </div>
+                    </div>
+                </div>
+
+                {% if needs_shipping %}
+                <div class="card card-pad">
+                    <h2 class="h3" style="margin-bottom:1.2rem">{% trans "Delivery address" %}</h2>
+                    <div class="form-grid">
+                        <div class="field field--full{% if form.address_line1.errors %} has-error{% endif %}">
+                            <label for="{{ form.address_line1.id_for_label }}">{{ form.address_line1.label }}</label>
+                            {{ form.address_line1 }}{{ form.address_line1.errors }}
+                        </div>
+                        <div class="field field--full">
+                            <label for="{{ form.address_line2.id_for_label }}">{{ form.address_line2.label }}</label>
+                            {{ form.address_line2 }}
+                        </div>
+                        <div class="field{% if form.postal_code.errors %} has-error{% endif %}">
+                            <label for="{{ form.postal_code.id_for_label }}">{{ form.postal_code.label }}</label>
+                            {{ form.postal_code }}{{ form.postal_code.errors }}
+                        </div>
+                        <div class="field{% if form.city.errors %} has-error{% endif %}">
+                            <label for="{{ form.city.id_for_label }}">{{ form.city.label }}</label>
+                            {{ form.city }}{{ form.city.errors }}
+                        </div>
+                        <div class="field field--full{% if form.country.errors %} has-error{% endif %}">
+                            <label for="{{ form.country.id_for_label }}">{{ form.country.label }}</label>
+                            <select name="country" id="{{ form.country.id_for_label }}" class="form-input" data-country-select>
+                                {% for value, label in form.fields.country.choices %}
+                                <option value="{{ value }}"{% if form.country.value == value %} selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                            {{ form.country.errors }}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="card card-pad">
+                    <h2 class="h3" style="margin-bottom:1.2rem">{% trans "Payment" %}</h2>
+                    <div class="radio-cards">
+                        {% for value, label in form.fields.payment_method.choices %}
+                        <label class="radio-card">
+                            <input type="radio" name="payment_method" value="{{ value }}"
+                                   {% if form.payment_method.value == value or form.fields.payment_method.choices|length == 1 %}checked{% endif %}>
+                            <span>{{ label }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                    {{ form.payment_method.errors }}
+                    <p class="help" style="margin-top:.8rem">{% trans "You pay after placing the order — we show you exactly how on the next page." %}</p>
+
+                    <div class="field" style="margin-top:1.2rem">
+                        <label for="{{ form.customer_note.id_for_label }}">{{ form.customer_note.label }}</label>
+                        {{ form.customer_note }}
+                    </div>
+                </div>
+
+                <div class="card card-pad stack" style="--stack:.9rem">
+                    <label class="check{% if form.accept_terms.errors %} has-error{% endif %}">
+                        <input type="checkbox" name="accept_terms" {% if form.accept_terms.value %}checked{% endif %}>
+                        <span>{% blocktrans %}I have read and accept the terms and the privacy policy.{% endblocktrans %}
+                            {% footer_pages as legal %}{% for item in legal %}<a href="{% pageurl item %}" target="_blank" rel="noopener">{{ item.title }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</span>
+                    </label>
+                    {{ form.accept_terms.errors }}
+
+                    {% if has_digital %}
+                    <label class="check">
+                        <input type="checkbox" name="accept_digital_waiver" {% if form.accept_digital_waiver.value %}checked{% endif %}>
+                        <span>{% trans "I want my digital download to be available immediately and understand that I lose my right of withdrawal once the download has begun." %}</span>
+                    </label>
+                    {{ form.accept_digital_waiver.errors }}
+                    {% endif %}
+
+                    <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+                </div>
+            </div>
+
+            <aside class="card card-pad summary">
+                <h2>{% trans "Your order" %}</h2>
+                {% for line in lines %}
+                <div class="mini-line">
+                    <span>{{ line.quantity }}× {{ line.page.title }}<br><small class="muted">{{ line.offer.short_label }}</small></span>
+                    <span>{{ line.line_total|euro }}</span>
+                </div>
+                {% endfor %}
+
+                <div class="summary-row" style="margin-top:.6rem;border-top:1px solid var(--c-line)">
+                    <span>{% trans "Subtotal" %}</span><span data-subtotal="{{ subtotal|stringformat:".2f" }}">{{ subtotal|euro }}</span>
+                </div>
+                {% if needs_shipping %}
+                <div class="summary-row">
+                    <span>{% trans "Shipping" %}</span>
+                    <span data-shipping data-free="{% trans 'Free' %}">—</span>
+                </div>
+                <p class="summary-note" data-estimate></p>
+                {% else %}
+                <span data-subtotal="{{ subtotal|stringformat:".2f" }}" hidden></span>
+                {% endif %}
+
+                <div class="summary-row total">
+                    <span>{% trans "Total" %}</span><span data-total>{{ subtotal|euro }}</span>
+                </div>
+                {% if shop.small_business_vat_exempt %}
+                <p class="summary-note">{% trans "No VAT is charged in accordance with §19 UStG (small business regulation)." %}</p>
+                {% endif %}
+
+                <p style="margin-top:1.2rem">
+                    <button class="btn btn--block btn--accent" type="submit">{% trans "Place order" %} <span class="arrow" aria-hidden="true">→</span></button>
+                </p>
+                <p class="summary-note">{% trans "You'll get an email with your payment details." %}</p>
+            </aside>
+        </form>
+    </div>
+</section>
+
+{% if needs_shipping %}
+{{ shipping_table|json_script:"shipping-table" }}
+{% endif %}
+{% endblock %}

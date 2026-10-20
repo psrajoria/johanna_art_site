@@ -1,0 +1,6 @@
+{% autoescape off %}Hi {{ order.name }},
+
+your order {{ order.number }} has been cancelled. If you did not expect this, or if you already paid, please reply to this email and I will sort it out right away.
+
+Johanna
+{% endautoescape %}

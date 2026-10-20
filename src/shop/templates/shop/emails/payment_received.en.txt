@@ -1,0 +1,14 @@
+{% autoescape off %}Hi {{ order.name }},
+
+your payment for order {{ order.number }} has arrived — thank you!
+
+{% if order.has_digital %}YOUR DOWNLOADS
+Your digital items are ready on your order page:
+{{ order_url }}
+(Available for {{ order.DOWNLOAD_DAYS }} days.)
+
+{% endif %}{% if order.has_physical %}I will now prepare your order and send you another email with the tracking details as soon as it ships.
+
+{% endif %}Warm regards,
+Johanna
+{% endautoescape %}

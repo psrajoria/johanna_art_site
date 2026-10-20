@@ -1,0 +1,10 @@
+{% autoescape off %}Hi {{ inquiry.name }},
+
+your piece for request {{ inquiry.number }} is on its way!{% if inquiry.carrier %}
+Carrier: {{ inquiry.carrier }}{% endif %}{% if inquiry.tracking_number %}
+Tracking number: {{ inquiry.tracking_number }}{% endif %}
+
+{{ status_url }}
+
+Johanna
+{% endautoescape %}

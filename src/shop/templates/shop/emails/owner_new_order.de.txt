@@ -1,0 +1,18 @@
+{% autoescape off %}New order {{ order.number }} — EUR {{ order.total }}
+
+{{ order.name }} <{{ order.email }}>
+Payment: {{ order.get_payment_method_display }}
+
+{% for item in items %}- {{ item.quantity }}x {{ item.title }}{% if item.option_label %} ({{ item.option_label }}){% endif %}: EUR {{ item.line_total }}
+{% endfor %}
+{% if order.has_physical %}Ship to:
+{{ order.name }}
+{{ order.address_line1 }}{% if order.address_line2 %}
+{{ order.address_line2 }}{% endif %}
+{{ order.postal_code }} {{ order.city }}
+{{ order.get_country_display }}
+{% endif %}{% if order.customer_note %}
+Note from customer: {{ order.customer_note }}
+{% endif %}
+When the money has arrived, open the order in the admin and set its status to "Paid".
+{% endautoescape %}

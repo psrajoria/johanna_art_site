@@ -1,0 +1,10 @@
+{% autoescape off %}Hallo {{ inquiry.name }},
+
+vielen Dank, dass du an mich gedacht hast (Anfrage {{ inquiry.number }}). Leider kann ich diesen Auftrag gerade nicht übernehmen.{% if inquiry.quote_message %}
+
+{{ inquiry.quote_message }}{% endif %}
+
+Ich freue mich, wenn du dich für etwas anderes wieder meldest.
+
+Johanna
+{% endautoescape %}

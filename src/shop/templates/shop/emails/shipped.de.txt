@@ -1,0 +1,13 @@
+{% autoescape off %}Hallo {{ order.name }},
+
+gute Nachrichten: deine Bestellung {{ order.number }} ist unterwegs!
+{% if order.carrier %}
+Versanddienstleister: {{ order.carrier }}{% endif %}{% if order.tracking_number %}
+Sendungsnummer: {{ order.tracking_number }}{% endif %}{% if order.tracking_url %}
+Sendung verfolgen: {{ order.tracking_url }}{% endif %}
+
+Deine Bestellseite: {{ order_url }}
+
+Ich hoffe, sie zaubert dir ein Lächeln ins Gesicht.
+Johanna
+{% endautoescape %}

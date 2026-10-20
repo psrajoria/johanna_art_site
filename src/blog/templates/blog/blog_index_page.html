@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n wagtailcore_tags %}
+
+{% block content %}
+
+<section class="page-hero">
+    <div class="shell">
+        <div class="eyebrow">{% trans "The blog" %}</div>
+        <h1 class="display">{{ page.title }}</h1>
+        {% if page.intro %}
+        <div class="lede rich-text">{{ page.intro|richtext }}</div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="section" style="padding-top:1.5rem">
+    <div class="shell">
+        {% if tags %}
+        <div class="filter-bar">
+            <div class="chips">
+                <span class="chips-label">{% trans "Topic" %}</span>
+                <a class="chip{% if not selected_tag %} is-active{% endif %}" href="{% pageurl page %}">{% trans "All" %}</a>
+                {% for tag in tags %}
+                <a class="chip{% if selected_tag == tag.slug %} is-active{% endif %}" href="{% pageurl page %}?tag={{ tag.slug }}">{{ tag.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if posts %}
+        <div class="post-grid" data-reveal-group>
+            {% for post in posts %}
+            {% include "includes/post_card.html" with post=post %}
+            {% endfor %}
+        </div>
+        {% include "includes/pagination.html" with page_obj=posts %}
+        {% else %}
+        <div class="empty">
+            <h2 class="h3">{% trans "No posts yet." %}</h2>
+            <p class="muted">{% trans "The first story is being written." %}</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

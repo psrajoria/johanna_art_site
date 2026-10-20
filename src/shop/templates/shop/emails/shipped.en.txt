@@ -1,0 +1,13 @@
+{% autoescape off %}Hi {{ order.name }},
+
+good news: your order {{ order.number }} is on its way!
+{% if order.carrier %}
+Carrier: {{ order.carrier }}{% endif %}{% if order.tracking_number %}
+Tracking number: {{ order.tracking_number }}{% endif %}{% if order.tracking_url %}
+Track it here: {{ order.tracking_url }}{% endif %}
+
+Your order page: {{ order_url }}
+
+I hope it makes you smile.
+Johanna
+{% endautoescape %}

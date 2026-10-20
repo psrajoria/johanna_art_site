@@ -1,0 +1,14 @@
+{% autoescape off %}Hallo {{ order.name }},
+
+deine Zahlung für die Bestellung {{ order.number }} ist angekommen — vielen Dank!
+
+{% if order.has_digital %}DEINE DOWNLOADS
+Deine digitalen Artikel stehen auf deiner Bestellseite bereit:
+{{ order_url }}
+(Verfügbar für {{ order.DOWNLOAD_DAYS }} Tage.)
+
+{% endif %}{% if order.has_physical %}Ich bereite deine Bestellung jetzt vor und schreibe dir noch einmal mit den Versanddetails, sobald sie unterwegs ist.
+
+{% endif %}Herzliche Grüße
+Johanna
+{% endautoescape %}

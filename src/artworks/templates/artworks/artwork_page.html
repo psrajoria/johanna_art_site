@@ -1,87 +1,132 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load i18n wagtailcore_tags wagtailimages_tags site_tags %}
 
-{% block title %}{{ page.title }} | Johanna L{% endblock %}
+{% block meta_description %}
+<meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% elif page.short_description %}{{ page.short_description }}{% else %}{{ page.title }}{% endif %}" />
+{% endblock %}
+
+{% block og_type %}article{% endblock %}
+
+{% block share_image %}
+{% if page.main_image %}
+{% image page.main_image width-1200 as share_img %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ share_img.url }}" />
+{% endif %}
+{% endblock %}
 
 {% block content %}
 
 <section class="art-detail">
-    <div class="site-shell art-detail-grid">
+    <div class="shell">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="{% pageurl page.get_parent %}">← {{ page.get_parent.title }}</a>
+        </nav>
 
-        <div class="art-detail-image paper-card">
-            {% if page.main_image %}
-            {% image page.main_image width-1200 as main_img %}
-            <img src="{{ main_img.url }}" alt="{{ page.title }}">
-            {% else %}
-            <div class="art-placeholder large">
-                <span>No image yet</span>
+        <div class="art-detail-grid">
+            <div class="art-stage">
+                {% if page.main_image %}
+                {% image page.main_image width-1100 format-webp as main_img %}
+                {% image page.main_image width-2200 format-webp as full_img %}
+                <div class="art-main" data-main-image>
+                    <span class="tape" aria-hidden="true"></span>
+                    <button type="button" data-lightbox="{{ full_img.url }}" data-alt="{{ page.title }}" aria-label="{% trans 'Enlarge image' %}">
+                        <img src="{{ main_img.url }}" width="{{ main_img.width }}" height="{{ main_img.height }}" alt="{{ page.title }}" style="transition:opacity .2s">
+                    </button>
+                    <span class="zoom-hint" aria-hidden="true">{% trans "Click to enlarge" %}</span>
+                </div>
+
+                {% if page.gallery_images.all %}
+                <div class="thumbs">
+                    <button type="button" class="is-active" data-thumb="{{ main_img.url }}" data-full="{{ full_img.url }}" data-alt="{{ page.title }}" aria-label="{{ page.title }}">
+                        {% image page.main_image fill-160x160 format-webp as t0 %}<img src="{{ t0.url }}" alt="">
+                    </button>
+                    {% for item in page.gallery_images.all %}
+                    {% image item.image width-1100 format-webp as g_main %}
+                    {% image item.image width-2200 format-webp as g_full %}
+                    {% image item.image fill-160x160 format-webp as g_thumb %}
+                    <button type="button" data-thumb="{{ g_main.url }}" data-full="{{ g_full.url }}" data-alt="{{ item.caption|default:page.title }}" aria-label="{{ item.caption|default:page.title }}">
+                        <img src="{{ g_thumb.url }}" alt="">
+                    </button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="art-main"><div class="art-placeholder" style="aspect-ratio:4/5"><span>{% trans "No image yet" %}</span></div></div>
+                {% endif %}
             </div>
-            {% endif %}
+
+            <div class="art-info">
+                <div class="badges" style="margin-bottom:1rem">
+                    <span class="badge">{{ page.get_category_display }}</span>
+                    {% for modifier, text in page.badges %}<span class="badge badge--{{ modifier }}">{{ text }}</span>{% endfor %}
+                </div>
+                <h1>{{ page.title }}</h1>
+                {% if page.short_description %}<p class="lede">{{ page.short_description }}</p>{% endif %}
+
+                <dl class="facts card">
+                    {% if page.location_display %}<div><dt>{% trans "Place" %}</dt><dd>{{ page.location_display }}</dd></div>{% endif %}
+                    {% if page.medium %}<div><dt>{% trans "Medium" %}</dt><dd>{{ page.medium }}</dd></div>{% endif %}
+                    {% if page.size_display %}<div><dt>{% trans "Original size" %}</dt><dd>{{ page.size_display }}</dd></div>{% endif %}
+                    {% if page.year %}<div><dt>{% trans "Year" %}</dt><dd>{{ page.year }}</dd></div>{% endif %}
+                </dl>
+
+                {% if offers %}
+                <div class="offers">
+                    <h2 class="offers-title">{% trans "Ways to take it home" %}</h2>
+                    {% for offer in offers %}
+                    {% with ok=offer.purchasable %}
+                    <div class="offer{% if not ok %} is-unavailable{% endif %}">
+                        <div>
+                            <div class="offer-name">{{ offer.display_label }}</div>
+                            <div class="offer-note">
+                                {% if offer.kind == "original" %}
+                                    {% if page.status == "available" %}{% trans "One of a kind · ships carefully packed" %}
+                                    {% elif page.status == "reserved" %}{% trans "Currently reserved by someone else" %}
+                                    {% else %}{% trans "This original has found its home" %}{% endif %}
+                                {% elif offer.kind == "digital" %}
+                                    {% trans "Instant download after payment is confirmed" %}
+                                {% else %}
+                                    {% if offer.stock_note %}<strong>{{ offer.stock_note }}</strong> · {% endif %}{% trans "Printed on fine-art paper" %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="offer-price">{{ offer.price|euro }}</div>
+                        {% if ok %}
+                        <div class="offer-actions">
+                            <form method="post" action="{% url 'shop:cart_add' offer.pk %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <button class="btn btn--sm" type="submit">{% trans "Add to cart" %}</button>
+                            </form>
+                            <form method="post" action="{% url 'shop:cart_add' offer.pk %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="buy_now" value="1">
+                                <button class="btn btn--sm btn--ghost" type="submit">{% trans "Buy now" %}</button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endwith %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="btn-row" style="margin-top:1rem">
+                    <a class="btn btn--ghost btn--sm" href="{% url 'contact:inquiry' %}?artwork={{ page.id }}&amp;type=print">{% trans "Want another size?" %}</a>
+                    <a class="btn btn--ghost btn--sm" href="{% url 'contact:inquiry' %}?artwork={{ page.id }}">{% trans "Ask a question" %}</a>
+                </div>
+            </div>
         </div>
-
-        <aside class="art-detail-info">
-            <div class="eyebrow">{{ page.get_category_display }}</div>
-
-            <h1 class="section-title">{{ page.title }}</h1>
-
-            {% if page.short_description %}
-            <p class="hero-text">{{ page.short_description }}</p>
-            {% endif %}
-
-            <div class="detail-list paper-card">
-                <div>
-                    <span>Status</span>
-                    <strong>{{ page.get_status_display }}</strong>
-                </div>
-
-                {% if page.location_display %}
-                <div>
-                    <span>Place</span>
-                    <strong>{{ page.location_display }}</strong>
-                </div>
-                {% endif %}
-
-                {% if page.medium %}
-                <div>
-                    <span>Medium</span>
-                    <strong>{{ page.medium }}</strong>
-                </div>
-                {% endif %}
-
-                {% if page.size_display %}
-                <div>
-                    <span>Size</span>
-                    <strong>{{ page.size_display }}</strong>
-                </div>
-                {% endif %}
-
-                {% if page.year %}
-                <div>
-                    <span>Year</span>
-                    <strong>{{ page.year }}</strong>
-                </div>
-                {% endif %}
-
-                {% if page.price_display %}
-                <div>
-                    <span>Price</span>
-                    <strong>{{ page.price_display }}</strong>
-                </div>
-                {% endif %}
-            </div>
-
-
-            <a class="btn btn-primary" href="/contact/inquiry/?artwork={{ page.id }}">Ask about this piece</a>
-        </aside>
     </div>
 </section>
 
 {% if page.story %}
-<section class="section">
-    <div class="site-shell story-block paper-card">
-        <div class="small-label">The memory behind this piece</div>
-        <div class="story-content">
-            {{ page.story|richtext }}
+<section class="story">
+    <div class="shell">
+        <div class="card story-card" data-reveal>
+            <span class="tape tape--sage" aria-hidden="true"></span>
+            <div class="eyebrow">{% trans "The memory behind this piece" %}</div>
+            <div class="prose rich-text">{{ page.story|richtext }}</div>
         </div>
     </div>
 </section>
@@ -89,22 +134,37 @@
 
 {% if page.gallery_images.all %}
 <section class="section">
-    <div class="site-shell">
-        <div class="section-heading">
-            <div class="eyebrow">Details & process</div>
-            <h2 class="section-title">Extra layers.</h2>
+    <div class="shell">
+        <div class="section-head" data-reveal>
+            <div class="eyebrow">{% trans "Details & process" %}</div>
+            <h2 class="h2">{% trans "Extra layers." %}</h2>
         </div>
-
-        <div class="process-grid">
+        <div class="process-grid" data-reveal-group>
             {% for item in page.gallery_images.all %}
-            <figure class="process-card paper-card">
-                {% image item.image fill-520x420 as detail_img %}
-                <img src="{{ detail_img.url }}" alt="{{ item.caption|default:page.title }}">
-
-                {% if item.caption %}
-                <figcaption>{{ item.caption }}</figcaption>
-                {% endif %}
+            <figure class="process-card" data-reveal>
+                {% image item.image fill-520x420 format-webp as detail_img %}
+                {% image item.image width-2200 format-webp as detail_full %}
+                <button type="button" data-lightbox="{{ detail_full.url }}" data-alt="{{ item.caption|default:page.title }}">
+                    <img src="{{ detail_img.url }}" width="{{ detail_img.width }}" height="{{ detail_img.height }}" alt="{{ item.caption|default:page.title }}" loading="lazy">
+                </button>
+                {% if item.caption %}<figcaption>{{ item.caption }}</figcaption>{% endif %}
             </figure>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if related_artworks %}
+<section class="section section--tint">
+    <div class="shell">
+        <div class="section-head" data-reveal>
+            <div class="eyebrow">{% trans "You might also like" %}</div>
+            <h2 class="h2">{% trans "More from this corner of the sketchbook." %}</h2>
+        </div>
+        <div class="art-grid" data-reveal-group>
+            {% for artwork in related_artworks %}
+            {% include "includes/artwork_card.html" with artwork=artwork %}
             {% endfor %}
         </div>
     </div>

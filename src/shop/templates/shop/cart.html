@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load i18n wagtailimages_tags site_tags %}
+
+{% block title %}{% trans "Your cart" %}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="shell">
+        <h1 class="display">{% trans "Your cart" %}</h1>
+    </div>
+</section>
+
+<section class="section" style="padding-top:1rem">
+    <div class="shell">
+        {% if lines %}
+        <div class="cart-layout">
+            <form method="post" action="{% url 'shop:cart_update' %}" class="card card-pad">
+                {% csrf_token %}
+                {% for line in lines %}
+                <div class="cart-line">
+                    {% if line.page.main_image %}
+                    {% image line.page.main_image fill-192x192 format-webp as thumb %}
+                    <img src="{{ thumb.url }}" width="96" height="96" alt="{{ line.page.title }}">
+                    {% else %}<span></span>{% endif %}
+
+                    <div>
+                        <h3>{{ line.page.title }}</h3>
+                        <div class="meta">{{ line.offer.display_label }}</div>
+                        {% if line.problem %}<div class="problem">{{ line.problem }}</div>{% endif %}
+                        {% if line.max_quantity > 1 %}
+                        <div class="qty">
+                            <label class="visually-hidden" for="qty_{{ line.offer.pk }}">{% trans "Quantity" %}</label>
+                            <input id="qty_{{ line.offer.pk }}" type="number" name="qty_{{ line.offer.pk }}"
+                                   value="{{ line.quantity }}" min="1" max="{{ line.max_quantity }}">
+                        </div>
+                        {% endif %}
+                        <div style="margin-top:.4rem">
+                            <button class="link-button" type="submit" formaction="{% url 'shop:cart_remove' line.offer.pk %}" formnovalidate>{% trans "Remove" %}</button>
+                        </div>
+                    </div>
+
+                    <div class="line-total">{{ line.line_total|euro }}</div>
+                </div>
+                {% endfor %}
+                <div class="btn-row">
+                    <button class="btn btn--ghost btn--sm" type="submit">{% trans "Update quantities" %}</button>
+                </div>
+            </form>
+
+            <aside class="card card-pad summary">
+                <h2>{% trans "Summary" %}</h2>
+                <div class="summary-row"><span>{% trans "Subtotal" %}</span><strong>{{ subtotal|euro }}</strong></div>
+                <p class="summary-note">
+                    {% if has_physical %}{% trans "Shipping is calculated at checkout, once you choose a country." %}{% else %}{% trans "Digital items need no shipping." %}{% endif %}
+                </p>
+                <p style="margin-top:1.2rem">
+                    {% if has_problem %}
+                    <span class="btn btn--block is-disabled">{% trans "Checkout" %}</span>
+                    {% else %}
+                    <a class="btn btn--block" href="{% url 'shop:checkout' %}">{% trans "Checkout" %} <span class="arrow" aria-hidden="true">→</span></a>
+                    {% endif %}
+                </p>
+                <p class="summary-note">{% trans "No account needed — you can check out as a guest." %}</p>
+            </aside>
+        </div>
+        {% else %}
+        <div class="empty">
+            <h2 class="h3">{% trans "Your cart is empty." %}</h2>
+            <p class="muted">{% trans "Find something that speaks to you in the gallery." %}</p>
+            <p><a class="btn" href="/">{% trans "Back to the start" %}</a></p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

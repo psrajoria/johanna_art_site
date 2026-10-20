@@ -1,0 +1,8 @@
+{% autoescape off %}Hi {{ inquiry.name }},
+
+I have started working on your request {{ inquiry.number }}. I will let you know as soon as it is finished.
+
+Follow along: {{ status_url }}
+
+Johanna
+{% endautoescape %}

@@ -1,0 +1,9 @@
+{% autoescape off %}Hallo {{ inquiry.name }},
+
+danke für deine Nachricht ({{ inquiry.number }}) — sie ist angekommen und ich antworte bald.
+{% if inquiry.is_request %}
+Den Stand deiner Anfrage kannst du hier verfolgen:
+{{ status_url }}
+{% endif %}
+Johanna
+{% endautoescape %}

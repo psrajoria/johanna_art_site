@@ -1,0 +1,9 @@
+<div class="card price-list">
+    {% if value.title %}<h3>{{ value.title }}</h3>{% endif %}
+    {% for row in value.rows %}
+    <div class="price-row">
+        <span>{{ row.label }}{% if row.note %}<span class="note">{{ row.note }}</span>{% endif %}</span>
+        <strong>{{ row.price }}</strong>
+    </div>
+    {% endfor %}
+</div>

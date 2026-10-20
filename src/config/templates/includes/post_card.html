@@ -1,0 +1,17 @@
+{% load wagtailcore_tags wagtailimages_tags i18n %}
+<a class="post-card card" href="{% pageurl post %}" data-reveal>
+    <div class="post-card-image">
+        {% if post.hero_image %}
+        {% image post.hero_image fill-720x480 format-webp as cover %}
+        <img src="{{ cover.url }}" width="{{ cover.width }}" height="{{ cover.height }}" alt="" loading="lazy">
+        {% endif %}
+    </div>
+    <div class="post-card-body">
+        <div class="post-meta">
+            <time datetime="{{ post.date|date:'Y-m-d' }}">{{ post.date|date:"j F Y" }}</time>
+            <span>· {% blocktrans with n=post.reading_minutes %}{{ n }} min read{% endblocktrans %}</span>
+        </div>
+        <h3>{{ post.title }}</h3>
+        {% if post.intro %}<p>{{ post.intro }}</p>{% endif %}
+    </div>
+</a>

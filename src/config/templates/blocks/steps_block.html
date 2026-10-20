@@ -1,0 +1,6 @@
+{% if value.title %}<h2>{{ value.title }}</h2>{% endif %}
+<ol class="steps">
+    {% for step in value.steps %}
+    <li><strong>{{ step.title }}</strong>{{ step.text }}</li>
+    {% endfor %}
+</ol>

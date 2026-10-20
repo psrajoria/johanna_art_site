@@ -1,0 +1,10 @@
+{% autoescape off %}Hi {{ inquiry.name }},
+
+thank you so much for thinking of me for request {{ inquiry.number }}. Unfortunately I can't take this one on right now.{% if inquiry.quote_message %}
+
+{{ inquiry.quote_message }}{% endif %}
+
+I would love to hear from you again for something else.
+
+Johanna
+{% endautoescape %}

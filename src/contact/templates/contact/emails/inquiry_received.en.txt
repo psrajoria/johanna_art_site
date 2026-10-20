@@ -1,0 +1,9 @@
+{% autoescape off %}Hi {{ inquiry.name }},
+
+thank you for your message ({{ inquiry.number }}) — it has arrived and I will reply soon.
+{% if inquiry.is_request %}
+You can follow your request here:
+{{ status_url }}
+{% endif %}
+Johanna
+{% endautoescape %}

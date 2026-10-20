@@ -1,0 +1,17 @@
+{% autoescape off %}Hi {{ inquiry.name }},
+
+thank you for your request {{ inquiry.number }}. Here is my quote:
+
+  EUR {{ inquiry.quote_amount }}
+{% if inquiry.quote_message %}
+{{ inquiry.quote_message }}
+{% endif %}
+If you would like to go ahead, please pay and write {{ inquiry.number }} in the payment note:
+{% if shop.paypal_email %}  PayPal: {{ shop.paypal_email }}
+{% endif %}{% if shop.bank_iban %}  Bank: {{ shop.bank_account_holder }}, IBAN {{ shop.bank_iban }}
+{% endif %}
+Questions? Just reply to this email. Your request page:
+{{ status_url }}
+
+Johanna
+{% endautoescape %}

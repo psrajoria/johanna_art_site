@@ -1,0 +1,17 @@
+{% autoescape off %}Hallo {{ inquiry.name }},
+
+danke für deine Anfrage {{ inquiry.number }}. Hier ist mein Angebot:
+
+  {{ inquiry.quote_amount }} EUR
+{% if inquiry.quote_message %}
+{{ inquiry.quote_message }}
+{% endif %}
+Wenn du loslegen möchtest, bezahle bitte und gib {{ inquiry.number }} als Verwendungszweck an:
+{% if shop.paypal_email %}  PayPal: {{ shop.paypal_email }}
+{% endif %}{% if shop.bank_iban %}  Bank: {{ shop.bank_account_holder }}, IBAN {{ shop.bank_iban }}
+{% endif %}
+Fragen? Antworte einfach auf diese E-Mail. Deine Anfrageseite:
+{{ status_url }}
+
+Johanna
+{% endautoescape %}

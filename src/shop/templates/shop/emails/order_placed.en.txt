@@ -1,0 +1,26 @@
+{% autoescape off %}Hi {{ order.name }},
+
+thank you for your order {{ order.number }}! It is saved and just needs your payment.
+
+{% for item in items %}- {{ item.quantity }}x {{ item.title }}{% if item.option_label %} ({{ item.option_label }}){% endif %}: EUR {{ item.line_total }}
+{% endfor %}
+Subtotal: EUR {{ order.subtotal }}{% if order.has_physical %}
+Shipping: EUR {{ order.shipping_cost }}{% endif %}
+Total: EUR {{ order.total }}
+
+HOW TO PAY
+{% if order.payment_method == "paypal" %}Send EUR {{ order.total }} via PayPal to: {{ shop.paypal_email }}
+{% else %}Bank transfer to:
+  {{ shop.bank_account_holder }}
+  IBAN: {{ shop.bank_iban }}{% if shop.bank_bic %}
+  BIC: {{ shop.bank_bic }}{% endif %}
+{% endif %}Please write your order number in the payment note: {{ order.number }}
+
+As soon as your payment arrives I will confirm it by email and get your order ready.
+
+You can follow your order any time here:
+{{ order_url }}
+
+Warm regards,
+Johanna
+{% endautoescape %}

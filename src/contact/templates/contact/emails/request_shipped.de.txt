@@ -1,0 +1,10 @@
+{% autoescape off %}Hallo {{ inquiry.name }},
+
+dein Werk zu Anfrage {{ inquiry.number }} ist unterwegs!{% if inquiry.carrier %}
+Versanddienstleister: {{ inquiry.carrier }}{% endif %}{% if inquiry.tracking_number %}
+Sendungsnummer: {{ inquiry.tracking_number }}{% endif %}
+
+{{ status_url }}
+
+Johanna
+{% endautoescape %}

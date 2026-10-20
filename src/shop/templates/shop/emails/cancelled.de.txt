@@ -1,0 +1,6 @@
+{% autoescape off %}Hallo {{ order.name }},
+
+deine Bestellung {{ order.number }} wurde storniert. Falls dich das überrascht oder du schon bezahlt hast, antworte bitte auf diese E-Mail — dann kläre ich das sofort.
+
+Johanna
+{% endautoescape %}

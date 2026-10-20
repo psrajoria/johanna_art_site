@@ -1,0 +1,8 @@
+{% autoescape off %}Hallo {{ inquiry.name }},
+
+ich habe mit deiner Anfrage {{ inquiry.number }} begonnen. Ich melde mich, sobald alles fertig ist.
+
+Verfolge den Fortschritt: {{ status_url }}
+
+Johanna
+{% endautoescape %}

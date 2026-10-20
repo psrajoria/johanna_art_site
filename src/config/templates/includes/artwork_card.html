@@ -1,0 +1,31 @@
+{% load wagtailcore_tags wagtailimages_tags i18n site_tags %}
+<article class="art-card" data-reveal>
+    <a class="art-card-link" href="{% pageurl artwork %}">
+        <div class="art-frame">
+            <span class="tape" aria-hidden="true"></span>
+            <div class="frame-inner">
+                {% if artwork.main_image %}
+                {% image artwork.main_image fill-480x600 format-webp as small %}
+                {% image artwork.main_image fill-900x1125 format-webp as large %}
+                <img src="{{ small.url }}" srcset="{{ small.url }} 480w, {{ large.url }} 900w"
+                     sizes="(min-width: 960px) 25vw, (min-width: 600px) 45vw, 90vw"
+                     width="{{ small.width }}" height="{{ small.height }}" alt="{{ artwork.title }}" loading="lazy">
+                {% else %}
+                <div class="art-placeholder"><span>{% trans "No image yet" %}</span></div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="art-card-body">
+            <div class="badges">
+                {% for modifier, text in artwork.badges %}
+                <span class="badge badge--{{ modifier }}">{{ text }}</span>
+                {% endfor %}
+            </div>
+            <h3 class="art-card-title">{{ artwork.title }}</h3>
+            {% if artwork.location_display %}<p class="art-card-meta">{{ artwork.location_display }}</p>{% endif %}
+            {% if artwork.from_price %}
+            <p class="art-card-price">{% trans "from" %} {{ artwork.from_price|euro }}</p>
+            {% endif %}
+        </div>
+    </a>
+</article>

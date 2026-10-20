@@ -1,0 +1,26 @@
+{% autoescape off %}Hallo {{ order.name }},
+
+vielen Dank für deine Bestellung {{ order.number }}! Sie ist gespeichert und wartet nur noch auf deine Zahlung.
+
+{% for item in items %}- {{ item.quantity }}x {{ item.title }}{% if item.option_label %} ({{ item.option_label }}){% endif %}: {{ item.line_total }} EUR
+{% endfor %}
+Zwischensumme: {{ order.subtotal }} EUR{% if order.has_physical %}
+Versand: {{ order.shipping_cost }} EUR{% endif %}
+Gesamt: {{ order.total }} EUR
+
+SO BEZAHLST DU
+{% if order.payment_method == "paypal" %}Sende {{ order.total }} EUR per PayPal an: {{ shop.paypal_email }}
+{% else %}Überweisung an:
+  {{ shop.bank_account_holder }}
+  IBAN: {{ shop.bank_iban }}{% if shop.bank_bic %}
+  BIC: {{ shop.bank_bic }}{% endif %}
+{% endif %}Bitte gib deine Bestellnummer als Verwendungszweck an: {{ order.number }}
+
+Sobald deine Zahlung eingegangen ist, bestätige ich sie dir per E-Mail und mache deine Bestellung fertig.
+
+Du kannst deine Bestellung jederzeit hier verfolgen:
+{{ order_url }}
+
+Herzliche Grüße
+Johanna
+{% endautoescape %}
