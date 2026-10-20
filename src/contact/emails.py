@@ -71,6 +71,17 @@ def send_received(inquiry):
         )
 
 
+def send_progress_update(inquiry, update):
+    lang = inquiry.language if inquiry.language in ("en", "de") else "en"
+    subject = {
+        "en": f"Your request {inquiry.number} - a look at the painting",
+        "de": f"Deine Anfrage {inquiry.number} - ein Blick auf das Bild",
+    }[lang]
+    context = _context(inquiry)
+    context["update"] = update
+    send_email(subject, "request_update", context, inquiry.email, lang, FOLDER)
+
+
 def send_status_update(inquiry, status):
     lang = inquiry.language if inquiry.language in ("en", "de") else "en"
     subject = STATUS_SUBJECTS[status][lang].format(number=inquiry.number)

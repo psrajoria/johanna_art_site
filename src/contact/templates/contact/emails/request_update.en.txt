@@ -1,0 +1,11 @@
+{% autoescape off %}Hi {{ inquiry.name }},
+
+a little look at your painting ({{ inquiry.number }}):
+{% if update.note %}
+"{{ update.note }}"
+{% endif %}
+See the photo on your request page:
+{{ status_url }}
+
+Johanna
+{% endautoescape %}

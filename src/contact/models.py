@@ -5,14 +5,17 @@ from django.utils import translation
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
+from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
+from wagtail.models import Orderable
 
 from config.panels import ReadOnlyHTMLPanel
 from config.storage import private_storage
 from shop.models import new_token
 
 
-class Inquiry(models.Model):
+class Inquiry(ClusterableModel):
     """
     A message from the public contact form: a question about an artwork, a
     custom commission, a print in a custom size, or a general message.
@@ -153,8 +156,24 @@ class Inquiry(models.Model):
         blank=True,
         help_text="Optional personal note included in the customer's email.",
     )
+    deposit_amount = models.DecimalField(
+        "Deposit asked (€)",
+        max_digits=8,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text=(
+            "Optional. Many artists ask for part of the price up front. The quote email then "
+            "says: this much now, the rest when the painting is finished."
+        ),
+    )
+    deposit_received = models.BooleanField(
+        default=False, help_text="Tick when the deposit has arrived."
+    )
     payment_received = models.BooleanField(
-        default=False, help_text="Tick when the customer has paid (for your records)."
+        "Everything paid",
+        default=False,
+        help_text="Tick when the customer has paid in full (for your records).",
     )
     carrier = models.CharField(max_length=60, blank=True)
     tracking_number = models.CharField(max_length=80, blank=True)
@@ -197,14 +216,33 @@ class Inquiry(models.Model):
             [
                 FieldPanel("quote_amount"),
                 FieldPanel("quote_message"),
+                FieldPanel("deposit_amount"),
+                FieldPanel("deposit_received"),
                 FieldPanel("payment_received"),
                 FieldPanel("carrier"),
                 FieldPanel("tracking_number"),
             ],
             heading="Quote, payment & delivery",
         ),
+        MultiFieldPanel(
+            [
+                InlinePanel("updates", label="Progress update", heading="Progress photos"),
+            ],
+            heading="Show the customer how it is going",
+            help_text=(
+                "Add a photo and a few words. The customer sees it on their private page "
+                "and, if ticked, gets an email."
+            ),
+        ),
         FieldPanel("internal_notes"),
     ]
+
+    @property
+    def balance_due(self):
+        """What is still to pay after the deposit (None when there is nothing special)."""
+        if self.quote_amount is None or self.deposit_amount is None:
+            return None
+        return max(self.quote_amount - self.deposit_amount, 0)
 
     class Meta:
         ordering = ["-created_at"]
@@ -274,3 +312,38 @@ class Inquiry(models.Model):
                 new_status = self.status
                 transaction.on_commit(lambda: emails.send_status_update(self, new_status))
             self._loaded_status = self.status
+            if not creating:
+                self._send_pending_updates()
+
+    def _send_pending_updates(self):
+        pending = [u for u in self.updates.all() if u.notify_customer and not u.emailed and u.pk]
+        if not pending:
+            return
+        from . import emails
+
+        for update in pending:
+            InquiryUpdate.objects.filter(pk=update.pk).update(emailed=True)
+            transaction.on_commit(lambda u=update: emails.send_progress_update(self, u))
+
+
+class InquiryUpdate(Orderable):
+    """A progress photo and note Johanna adds to a commission."""
+
+    inquiry = ParentalKey(Inquiry, on_delete=models.CASCADE, related_name="updates")
+    image = models.ForeignKey(
+        "wagtailimages.Image",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        help_text="A photo of the work so far.",
+    )
+    note = models.CharField(max_length=300, blank=True, help_text="A few words, e.g. 'First wash on the sky.'")
+    notify_customer = models.BooleanField(default=True, help_text="Email the customer about this update.")
+    emailed = models.BooleanField(default=False, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    panels = [FieldPanel("image"), FieldPanel("note"), FieldPanel("notify_customer")]
+
+    class Meta(Orderable.Meta):
+        ordering = ["created_at", "sort_order"]

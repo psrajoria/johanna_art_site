@@ -76,10 +76,13 @@ def inquiry_create(request):
     else:
         form = InquiryForm(initial=initial)
 
+    from shop.cart import shop_settings
+    from shop.models import size_estimates
+
     return render(
         request,
         "contact/inquiry_form.html",
-        {"form": form, "artwork": artwork},
+        {"form": form, "artwork": artwork, "size_options": size_estimates(shop_settings())},
     )
 
 

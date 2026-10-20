@@ -356,6 +356,32 @@
     set();
   });
 
+  /* ---- Commission size picker: shows the size and a rough price --------- */
+  document.querySelectorAll("[data-size-picker]").forEach(function (box) {
+    var input = document.getElementById(box.getAttribute("data-target"));
+    var preview = box.querySelector(".size-preview");
+    var sheet = box.querySelector(".size-sheet");
+    var text = box.querySelector("[data-estimate]");
+    var lang = document.documentElement.lang;
+    var chips = box.querySelectorAll(".chip");
+    chips.forEach(function (chip) {
+      chip.addEventListener("click", function () {
+        chips.forEach(function (c) { c.classList.remove("is-active"); });
+        chip.classList.add("is-active");
+        if (input) input.value = chip.getAttribute("data-size-text");
+        var w = parseFloat(chip.getAttribute("data-w")), h = parseFloat(chip.getAttribute("data-h"));
+        var scale = Math.min(110 / 50, 140 / 70) * 1;          // 50 x 70 cm fills the box
+        sheet.setAttribute("width", (w * scale).toFixed(1));
+        sheet.setAttribute("height", (h * scale).toFixed(1));
+        var price = chip.getAttribute("data-price");
+        text.textContent = text.getAttribute("data-template").replace(
+          "%(price)s", lang === "de" ? price + " €" : "€" + price
+        );
+        preview.hidden = false;
+      });
+    });
+  });
+
   /* ---- Hearts: remembered on this device, counted anonymously ---------- */
   function report(name, page, label) {
     try {

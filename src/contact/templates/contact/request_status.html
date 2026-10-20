@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n wagtailcore_tags site_tags %}
+{% load i18n wagtailcore_tags wagtailimages_tags site_tags %}
 
 {% block title %}{% blocktrans with number=inquiry.number %}Request {{ number }}{% endblocktrans %}{% endblock %}
 
@@ -34,6 +34,9 @@
             <h2 class="h3">{% trans "Your quote" %}</h2>
             <p class="display" style="font-size:var(--step-3);margin:.6rem 0">{{ inquiry.quote_amount|euro }}</p>
             {% if inquiry.quote_message %}<p>{{ inquiry.quote_message|linebreaksbr }}</p>{% endif %}
+            {% if inquiry.deposit_amount %}
+            <p class="muted">{% blocktrans with deposit=inquiry.deposit_amount|euro balance=inquiry.balance_due|euro %}A deposit of {{ deposit }} gets me started. The remaining {{ balance }} is due when the painting is finished.{% endblocktrans %}</p>
+            {% endif %}
             <div class="pay-box">
                 <p style="margin:0"><strong>{% trans "To accept, simply pay and mention" %}</strong> <span class="pay-ref">{{ inquiry.number }}</span></p>
                 <dl>
@@ -42,6 +45,21 @@
                 </dl>
                 <p class="help" style="margin:0">{% trans "Or just reply to my email if you have questions first." %}</p>
             </div>
+        </div>
+        {% endif %}
+
+        {% if inquiry.updates.all %}
+        <div class="card card-pad progress-card">
+            <h2 class="h3" style="margin-bottom:1rem">{% trans "Progress" %}</h2>
+            <ol class="progress-list">
+                {% for update in inquiry.updates.all %}
+                <li>
+                    <time datetime="{{ update.created_at|date:'Y-m-d' }}">{{ update.created_at|date:"j F" }}</time>
+                    {% if update.image %}{% image update.image width-900 format-webp as pic %}<img src="{{ pic.url }}" width="{{ pic.width }}" height="{{ pic.height }}" alt="{{ update.note }}" loading="lazy">{% endif %}
+                    {% if update.note %}<p>{{ update.note }}</p>{% endif %}
+                </li>
+                {% endfor %}
+            </ol>
         </div>
         {% endif %}
 

@@ -1,7 +1,8 @@
 {% autoescape off %}Hi {{ inquiry.name }},
 
-your piece for request {{ inquiry.number }} is finished! I will pack it up and let you know when it ships.
-
+your piece for request {{ inquiry.number }} is finished! {% if inquiry.balance_due and not inquiry.payment_received %}The remaining balance of EUR {{ inquiry.balance_due }} is now due (reference {{ inquiry.number }}). Once it has arrived I will pack the painting and send it off.
+{% else %}I will pack it up and let you know when it ships.
+{% endif %}
 {{ status_url }}
 
 Johanna

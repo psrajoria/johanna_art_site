@@ -1,7 +1,8 @@
 {% autoescape off %}Hallo {{ inquiry.name }},
 
-dein Werk zu Anfrage {{ inquiry.number }} ist fertig! Ich verpacke es und melde mich, sobald es unterwegs ist.
-
+dein Werk zu Anfrage {{ inquiry.number }} ist fertig! {% if inquiry.balance_due and not inquiry.payment_received %}Der Restbetrag von {{ inquiry.balance_due }} EUR ist jetzt fällig (Verwendungszweck {{ inquiry.number }}). Sobald er angekommen ist, verpacke ich das Bild und schicke es los.
+{% else %}Ich verpacke es und melde mich, sobald es unterwegs ist.
+{% endif %}
 {{ status_url }}
 
 Johanna

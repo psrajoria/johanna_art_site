@@ -37,6 +37,20 @@
                         <label for="{{ form.message.id_for_label }}">{{ form.message.label }}</label>
                         {{ form.message }}{{ form.message.errors }}
                     </div>
+                    {% if size_options %}
+                    <div class="field field--full size-picker" data-size-picker data-target="{{ form.size_wanted.id_for_label }}">
+                        <span class="size-label">{% trans "How big would you like it?" %}</span>
+                        <div class="size-chips" role="group" aria-label="{% trans 'Sizes' %}">
+                            {% for s in size_options %}
+                            <button type="button" class="chip" data-size-text="{{ s.text }}" data-w="{{ s.width }}" data-h="{{ s.height }}" data-price="{{ s.price }}">{{ s.label }}</button>
+                            {% endfor %}
+                        </div>
+                        <div class="size-preview" hidden>
+                            <svg viewBox="0 0 120 150" aria-hidden="true"><rect class="size-sheet" x="0" y="0" width="0" height="0" rx="2"/></svg>
+                            <p data-estimate data-template="{% trans 'Roughly %(price)s for a commission this size. You get an exact quote from Johanna, with no obligation.' %}"></p>
+                        </div>
+                    </div>
+                    {% endif %}
                     <div class="field">
                         <label for="{{ form.size_wanted.id_for_label }}">{{ form.size_wanted.label }}</label>
                         {{ form.size_wanted }}{{ form.size_wanted.errors }}

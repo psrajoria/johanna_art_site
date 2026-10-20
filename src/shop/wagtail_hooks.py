@@ -36,6 +36,13 @@ class OrderViewSet(SnippetViewSet):
     list_filter = ["status", "payment_method"]
     search_fields = ["number", "name", "email"]
     ordering = ["-created_at"]
+    # "Download CSV / Excel" button above the list, e.g. for the tax advisor
+    list_export = [
+        "number", "invoice_number", "created_at", "paid_at", "status", "name", "email",
+        "country", "subtotal", "discount_code", "discount_amount", "shipping_cost", "total",
+        "payment_method", "carrier", "tracking_number",
+    ]
+    export_filename = "orders"
 
     @property
     def permission_policy(self):
@@ -124,6 +131,11 @@ class InquiryViewSet(SnippetViewSet):
     list_filter = ["status", "inquiry_type"]
     search_fields = ["number", "name", "email", "message"]
     ordering = ["-created_at"]
+    list_export = [
+        "number", "created_at", "inquiry_type", "status", "name", "email",
+        "quote_amount", "payment_received", "message",
+    ]
+    export_filename = "messages-and-commissions"
 
     @property
     def permission_policy(self):

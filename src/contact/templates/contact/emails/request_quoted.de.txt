@@ -3,10 +3,12 @@
 danke für deine Anfrage {{ inquiry.number }}. Hier ist mein Angebot:
 
   {{ inquiry.quote_amount }} EUR
-{% if inquiry.quote_message %}
+{% if inquiry.deposit_amount %}
+Zum Start bitte ich um eine Anzahlung von {{ inquiry.deposit_amount }} EUR. Die restlichen {{ inquiry.balance_due }} EUR sind fällig, wenn das Bild fertig ist.
+{% endif %}{% if inquiry.quote_message %}
 {{ inquiry.quote_message }}
 {% endif %}
-Wenn du loslegen möchtest, bezahle bitte und gib {{ inquiry.number }} als Verwendungszweck an:
+Wenn du loslegen möchtest, bezahle bitte{% if inquiry.deposit_amount %} die Anzahlung{% endif %} und gib {{ inquiry.number }} als Verwendungszweck an:
 {% if shop.paypal_email %}  PayPal: {{ shop.paypal_email }}
 {% endif %}{% if shop.bank_iban %}  Bank: {{ shop.bank_account_holder }}, IBAN {{ shop.bank_iban }}
 {% endif %}

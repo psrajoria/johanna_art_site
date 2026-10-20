@@ -90,6 +90,15 @@ class ShopSettings(BaseSiteSetting):
         help_text="Order value (€) from which shipping within Germany is free. 0 = never.",
     )
 
+    commission_base_price = models.DecimalField(
+        "Commission: base price (€)", max_digits=7, decimal_places=2, default=30,
+        help_text="Used for the rough price shown on the commission form. Set both prices to 0 to hide the estimate.",
+    )
+    commission_price_per_100cm2 = models.DecimalField(
+        "Commission: price per 100 cm² (€)", max_digits=6, decimal_places=2, default=3.5,
+        help_text="Added to the base price for each 100 square centimetres (10 × 10 cm).",
+    )
+
     seller_name = models.CharField(
         "Name on invoices", max_length=120, default="Johanna Lackner",
         help_text="Your full name (or business name) exactly as it must appear on invoices.",
@@ -158,6 +167,10 @@ class ShopSettings(BaseSiteSetting):
         FieldPanel("payment_instructions"),
         FieldPanel("payment_instructions_de"),
         FieldPanel("free_shipping_over"),
+        MultiFieldPanel(
+            [FieldPanel("commission_base_price"), FieldPanel("commission_price_per_100cm2")],
+            heading="Rough price on the commission form",
+        ),
         MultiFieldPanel(
             [
                 FieldPanel("seller_name"),
@@ -596,6 +609,39 @@ class Order(models.Model):
                     stock=models.F("stock") + item.quantity
                 )
                 offer.artwork.notify_waitlist()
+
+
+SIZE_PRESETS = [
+    ("A6", 10.5, 14.8),
+    ("A5", 14.8, 21.0),
+    ("A4", 21.0, 29.7),
+    ("A3", 29.7, 42.0),
+    ("30 × 40 cm", 30, 40),
+    ("A2", 42.0, 59.4),
+    ("50 × 70 cm", 50, 70),
+]
+
+
+def size_estimates(settings_obj):
+    """Sizes with a rough commission price, for the visual size picker."""
+    if not settings_obj:
+        return []
+    base, rate = settings_obj.commission_base_price, settings_obj.commission_price_per_100cm2
+    if not base and not rate:
+        return []
+    out = []
+    for label, width, height in SIZE_PRESETS:
+        price = float(base) + width * height / 100 * float(rate)
+        out.append(
+            {
+                "label": label,
+                "width": width,
+                "height": height,
+                "price": int(round(price / 5.0) * 5),  # round to a friendly 5 €
+                "text": f"{label} ({width:g} × {height:g} cm)" if "cm" not in label else label,
+            }
+        )
+    return out
 
 
 class DiscountCode(models.Model):

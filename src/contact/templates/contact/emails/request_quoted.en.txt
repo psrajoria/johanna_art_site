@@ -3,10 +3,12 @@
 thank you for your request {{ inquiry.number }}. Here is my quote:
 
   EUR {{ inquiry.quote_amount }}
-{% if inquiry.quote_message %}
+{% if inquiry.deposit_amount %}
+To get started I ask for a deposit of EUR {{ inquiry.deposit_amount }}. The remaining EUR {{ inquiry.balance_due }} is due when the painting is finished.
+{% endif %}{% if inquiry.quote_message %}
 {{ inquiry.quote_message }}
 {% endif %}
-If you would like to go ahead, please pay and write {{ inquiry.number }} in the payment note:
+If you would like to go ahead, please pay{% if inquiry.deposit_amount %} the deposit{% endif %} and write {{ inquiry.number }} in the payment note:
 {% if shop.paypal_email %}  PayPal: {{ shop.paypal_email }}
 {% endif %}{% if shop.bank_iban %}  Bank: {{ shop.bank_account_holder }}, IBAN {{ shop.bank_iban }}
 {% endif %}
