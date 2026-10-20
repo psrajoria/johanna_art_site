@@ -363,7 +363,7 @@
     var sheet = box.querySelector(".size-sheet");
     var text = box.querySelector("[data-estimate]");
     var lang = document.documentElement.lang;
-    var chips = box.querySelectorAll(".chip");
+    var chips = box.querySelectorAll(".size-chip");
     chips.forEach(function (chip) {
       chip.addEventListener("click", function () {
         chips.forEach(function (c) { c.classList.remove("is-active"); });

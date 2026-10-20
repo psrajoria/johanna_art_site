@@ -17,6 +17,7 @@ urlpatterns = [
     path("checkout/", views.checkout, name="checkout"),
     path("order/lookup/", views.order_lookup, name="order_lookup"),
     path("order/<str:token>/", views.order_detail, name="order"),
+    path("order/<str:token>/review/", views.review_submit, name="review"),
     path("order/<str:token>/invoice/", views.invoice_download, name="invoice"),
     path("order/<str:token>/download/<int:item_id>/", views.download, name="download"),
     # accounts (optional: guests can always check out without one)

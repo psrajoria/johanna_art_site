@@ -742,6 +742,45 @@ class DiscountCode(models.Model):
         return min(off, subtotal).quantize(cent), False
 
 
+class Testimonial(models.Model):
+    """Kind words from a buyer. Customers can send one from their order page; Johanna decides what is shown."""
+
+    quote = models.TextField(help_text="What they said.")
+    quote_de = models.TextField("Quote (German)", blank=True, help_text="Optional translation for the German site.")
+    name = models.CharField(max_length=80, help_text="How they are shown, e.g. 'Anna'.")
+    place = models.CharField(max_length=80, blank=True, help_text="Optional, e.g. 'Berlin'.")
+    rating = models.PositiveSmallIntegerField(null=True, blank=True, help_text="1 to 5 stars (optional).")
+    artwork = models.ForeignKey(
+        "artworks.ArtworkPage", null=True, blank=True, on_delete=models.SET_NULL, related_name="+",
+        help_text="Optional: show it on this artwork's page as well.",
+    )
+    order = models.OneToOneField(Order, null=True, blank=True, on_delete=models.SET_NULL, related_name="testimonial", editable=False)
+    published = models.BooleanField(
+        "Show on the site", default=True,
+        help_text="Customer reviews start hidden. Tick this to show one.",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.name}: {self.quote[:40]}"
+
+    @property
+    def status_label(self):
+        return "Shown" if self.published else "Waiting for you"
+
+    @property
+    def stars(self):
+        return "★" * (self.rating or 0)
+
+    def text_for(self, language):
+        if language and language.startswith("de") and self.quote_de:
+            return self.quote_de
+        return self.quote
+
+
 class WaitlistRequest(models.Model):
     """Someone wants to be told when a sold-out print or a reserved original is available."""
 

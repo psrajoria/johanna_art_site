@@ -18,7 +18,7 @@ from wagtail.models import Locale
 from artworks.models import ArtworkIndexPage, ArtworkPage, Offer
 
 from .cart import Cart, OrderError, place_order
-from .models import DiscountCode, Order, ShippingRate, WaitlistRequest
+from .models import DiscountCode, Order, ShippingRate, Testimonial, WaitlistRequest
 from .shipping import ShippingUnavailable, calculate_shipping
 
 PRIVATE_ROOT = tempfile.mkdtemp()
@@ -454,6 +454,54 @@ class InvoiceTests(ShopTestCase):
         self.assertEqual(self.client.get(url)["Content-Type"], "application/pdf")
         slip = self.client.get(reverse("shop_admin_document", args=[order.pk, "packing-slip"]))
         self.assertEqual(slip["Content-Type"], "application/pdf")
+
+
+class ReviewAndCollectionTests(ShopTestCase):
+    def shipped_order(self):
+        order = self.order_for((self.print_a4, 1))
+        order.status = Order.STATUS_PAID
+        order.save()
+        order.status = Order.STATUS_SHIPPED
+        order.save()
+        return Order.objects.get(pk=order.pk)
+
+    def test_customer_review_starts_hidden_and_is_shown_after_approval(self):
+        order = self.shipped_order()
+        url = reverse("shop:review", args=[order.token])
+        self.assertContains(self.client.get(order.get_absolute_url()), "How did it go?")
+        self.client.post(url, {"quote": "Beautiful colours, arrived safely.", "name": "Bea", "rating": "5"})
+        review = Testimonial.objects.get()
+        self.assertFalse(review.published)
+        self.assertEqual(review.rating, 5)
+        self.assertEqual(review.artwork_id, self.artwork.pk)
+        self.assertNotContains(self.client.get("/"), "Beautiful colours")
+        # a second review for the same order is refused
+        self.assertEqual(self.client.post(url, {"quote": "Again please"}).status_code, 404)
+
+        Testimonial.objects.update(published=True)
+        self.assertContains(self.client.get("/"), "Beautiful colours")
+        self.assertContains(self.client.get(self.artwork.url), "Beautiful colours")
+
+    def test_cannot_review_an_unshipped_order(self):
+        order = self.order_for((self.print_a4, 1))
+        self.assertEqual(
+            self.client.post(reverse("shop:review", args=[order.token]), {"quote": "Too early"}).status_code, 404
+        )
+
+    def test_collection_filter_and_banner(self):
+        from artworks.models import Collection
+
+        lisbon = Collection.objects.create(name="Summer in Lisbon", name_de="Sommer in Lissabon", slug="lisbon", description="Tiles and trams.")
+        ArtworkPage.objects.filter(pk=self.artwork.pk).update(collection=lisbon)
+        other = make_artwork("Other piece", "other-piece")
+        gallery = self.artwork.get_parent().url
+        page = self.client.get(f"{gallery}?collection=lisbon")
+        self.assertContains(page, "Tiles and trams.")
+        self.assertContains(page, "Test Artwork")
+        self.assertNotContains(page, "Other piece")
+        self.assertContains(self.client.get(gallery), "Summer in Lisbon")
+        self.assertContains(self.client.get(self.artwork.url), "Summer in Lisbon")
+        self.assertEqual(lisbon.localized("name", "de"), "Sommer in Lissabon")
 
 
 class WaitlistTests(ShopTestCase):

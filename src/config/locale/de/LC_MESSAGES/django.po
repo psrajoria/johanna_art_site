@@ -14,6 +14,9 @@ msgstr "%(n)s Min. Lesezeit"
 msgid "A deposit of %(deposit)s gets me started. The remaining %(balance)s is due when the painting is finished."
 msgstr "Mit einer Anzahlung von %(deposit)s lege ich los. Die restlichen %(balance)s sind fällig, wenn das Bild fertig ist."
 
+msgid "A few kind words mean the world to a small studio. Johanna reads every one."
+msgstr "Ein paar liebe Worte bedeuten einem kleinen Atelier die Welt. Johanna liest jedes einzelne."
+
 msgid "A growing sketchbook of travel-inspired watercolours, architecture studies and landscapes — most of them available as an original, a print or a digital download."
 msgstr "Ein wachsendes Skizzenbuch voller reiseinspirierter Aquarelle, Architekturstudien und Landschaften — die meisten als Original, Druck oder digitaler Download erhältlich."
 
@@ -175,6 +178,9 @@ msgstr "Geschlossen"
 
 msgid "Code applied."
 msgstr "Code angewendet."
+
+msgid "Collection"
+msgstr "Kollektion"
 
 msgid "Colour palette"
 msgstr "Farbpalette"
@@ -350,6 +356,9 @@ msgstr "Kostenlos"
 msgid "Free shipping"
 msgstr "Kostenloser Versand"
 
+msgid "From people who took a painting home."
+msgstr "Von Menschen, die ein Bild mit nach Hause genommen haben."
+
 msgid "From the blog"
 msgstr "Aus dem Blog"
 
@@ -394,6 +403,9 @@ msgstr "Wie groß soll es sein?"
 
 msgid "How commissions work"
 msgstr "So funktionieren Auftragsarbeiten"
+
+msgid "How did it go?"
+msgstr "Wie war es?"
 
 msgid "How to pay"
 msgstr "So bezahlst du"
@@ -463,6 +475,9 @@ msgstr "Just keep layering"
 
 msgid "Keep reading"
 msgstr "Weiterlesen"
+
+msgid "Kind words"
+msgstr "Liebe Worte"
 
 msgid "Landscapes"
 msgstr "Landschaften"
@@ -707,6 +722,9 @@ msgstr "Bitte geh zurück und versuche es noch einmal."
 msgid "Please try again a little later."
 msgstr "Bitte versuche es etwas später noch einmal."
 
+msgid "Please write a few words."
+msgstr "Bitte schreibe ein paar Worte."
+
 msgid "Poland"
 msgstr "Polen"
 
@@ -751,6 +769,9 @@ msgstr "Fragen zu deiner Bestellung?"
 
 msgid "Quote sent"
 msgstr "Angebot gesendet"
+
+msgid "Rating"
+msgstr "Bewertung"
 
 msgid "Read more"
 msgstr "Mehr lesen"
@@ -820,6 +841,9 @@ msgstr "Alles ansehen"
 
 msgid "See the artwork"
 msgstr "Zum Werk"
+
+msgid "Send"
+msgstr "Senden"
 
 msgid "Send another message"
 msgstr "Weitere Nachricht senden"
@@ -934,6 +958,12 @@ msgstr "Danke"
 
 msgid "Thank you for thinking of me — please feel free to ask again for something else."
 msgstr "Danke, dass du an mich gedacht hast — frag gern wieder an, wenn du etwas anderes möchtest."
+
+msgid "Thank you for your review!"
+msgstr "Danke für deine Bewertung!"
+
+msgid "Thank you so much! Johanna will read it and may show it on the site."
+msgstr "Vielen Dank! Johanna liest es und zeigt es vielleicht auf der Seite."
 
 msgid "Thank you!"
 msgstr "Vielen Dank!"
@@ -1192,6 +1222,9 @@ msgstr "Dein Angebot"
 
 msgid "Your reference: <strong>%(number)s</strong>"
 msgstr "Deine Referenz: <strong>%(number)s</strong>"
+
+msgid "Your words"
+msgstr "Deine Worte"
 
 msgid "for every wall"
 msgstr "für jede Wand"

@@ -18,7 +18,24 @@
 <section class="section" style="padding-top:1.5rem">
     <div class="shell">
 
+        {% if selected_collection %}
+        <div class="collection-banner" {% if selected_collection.wash_colour %}style="--wash: {{ selected_collection.wash_colour }}"{% endif %}>
+            <div class="eyebrow">{% trans "Collection" %}</div>
+            <h2 class="h2">{{ selected_collection.display_name }}</h2>
+            {% if selected_collection.display_description %}<p class="lede">{{ selected_collection.display_description }}</p>{% endif %}
+            <a class="link-arrow" href="{% pageurl page %}">{% trans "See everything" %} <span class="arrow">→</span></a>
+        </div>
+        {% endif %}
         <div class="filter-bar">
+            {% if collections %}
+            <div class="chips">
+                <span class="chips-label">{% trans "Collection" %}</span>
+                <a class="chip{% if not selected_collection %} is-active{% endif %}" href="{% querystring collection=None page=None %}">{% trans "All" %}</a>
+                {% for c in collections %}
+                <a class="chip{% if selected_collection == c %} is-active{% endif %}" href="{% querystring collection=c.slug page=None %}">{{ c.display_name }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
             <div class="chips">
                 <span class="chips-label">{% trans "Topic" %}</span>
                 <a class="chip{% if not selected_category %} is-active{% endif %}" href="{% pageurl page %}{% if selected_buy %}?buy={{ selected_buy }}{% endif %}">{% trans "All" %}</a>

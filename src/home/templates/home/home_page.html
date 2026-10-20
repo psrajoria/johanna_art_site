@@ -181,6 +181,22 @@
 </section>
 {% endif %}
 
+{% if testimonials %}
+<section class="section" id="kind-words">
+    <div class="shell">
+        <div class="section-head section-head--center" data-reveal>
+            <div class="eyebrow">{% trans "Kind words" %}</div>
+            <h2 class="h2">{% trans "From people who took a painting home." %}</h2>
+        </div>
+        <div class="testimonial-grid" data-reveal-group>
+            {% for item in testimonials %}
+            <div data-reveal>{% include "includes/testimonial.html" with t=item.t text=item.text %}</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
 {% if latest_posts %}
 <section class="section" id="journal">
     <div class="shell">

@@ -15,7 +15,7 @@ from home.models import StandardPage
 from contact.models import Inquiry
 
 from .cart import shop_settings
-from .models import DiscountCode, Order, ShippingRate, WaitlistRequest
+from .models import DiscountCode, Order, ShippingRate, Testimonial, WaitlistRequest
 
 
 class NoAddPermissionPolicy(ModelPermissionPolicy):
@@ -114,11 +114,21 @@ class DiscountCodeViewSet(SnippetViewSet):
     search_fields = ["code", "note"]
 
 
+class TestimonialViewSet(SnippetViewSet):
+    model = Testimonial
+    icon = "openquote"
+    menu_label = "Kind words (reviews)"
+    menu_order = 170
+    list_display = ["name", "stars", "status_label", "created_at"]
+    list_filter = ["published"]
+    search_fields = ["name", "quote"]
+
+
 class ShopGroup(SnippetViewSetGroup):
     menu_label = "Shop"
     menu_icon = "tag"
     menu_order = 200
-    items = (OrderViewSet, WaitlistViewSet, DiscountCodeViewSet, ShippingRateViewSet)
+    items = (OrderViewSet, WaitlistViewSet, DiscountCodeViewSet, TestimonialViewSet, ShippingRateViewSet)
 
 
 class InquiryViewSet(SnippetViewSet):

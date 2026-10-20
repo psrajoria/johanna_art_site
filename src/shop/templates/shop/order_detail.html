@@ -123,6 +123,26 @@
             {% endif %}
         </div>
 
+        {% if can_review %}
+        <div class="card card-pad review-card">
+            <h2 class="h3">{% trans "How did it go?" %}</h2>
+            <p class="muted">{% trans "A few kind words mean the world to a small studio. Johanna reads every one." %}</p>
+            <form method="post" action="{% url 'shop:review' order.token %}">
+                {% csrf_token %}
+                <div class="rating" role="radiogroup" aria-label="{% trans 'Rating' %}">
+                    {% for n in "54321" %}<input type="radio" id="rate{{ n }}" name="rating" value="{{ n }}"><label for="rate{{ n }}" title="{{ n }}">★</label>{% endfor %}
+                </div>
+                <label class="visuallyhidden" for="review-text">{% trans "Your words" %}</label>
+                <textarea id="review-text" class="form-input" name="quote" rows="4" required minlength="5" maxlength="1200" placeholder="{% trans 'Your words' %}"></textarea>
+                <label class="visuallyhidden" for="review-name">{% trans "Your name" %}</label>
+                <input id="review-name" class="form-input" type="text" name="name" maxlength="80" value="{{ order.name|truncatechars:30 }}" style="margin-top:.6rem">
+                <p><button class="btn btn--sm" type="submit">{% trans "Send" %}</button></p>
+            </form>
+        </div>
+        {% elif order.testimonial %}
+        <p class="muted" style="text-align:center">{% trans "Thank you for your review!" %}</p>
+        {% endif %}
+
         <p class="muted" style="text-align:center">
             {% trans "Questions about your order?" %}
             <a href="{% url 'contact:inquiry' %}">{% trans "Get in touch" %}</a>

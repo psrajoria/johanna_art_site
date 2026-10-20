@@ -80,6 +80,7 @@
 
             <div class="art-info">
                 <div class="badges" style="margin-bottom:1rem">
+                    {% if page.collection %}<a class="badge badge--collection" href="{% pageurl page.get_parent %}?collection={{ page.collection.slug }}">{{ page.collection.display_name }}</a>{% endif %}
                     <span class="badge">{{ page.get_category_display }}</span>
                     {% for modifier, text in page.badges %}<span class="badge badge--{{ modifier }}">{{ text }}</span>{% endfor %}
                 </div>
@@ -169,6 +170,14 @@
         </div>
     </div>
 </section>
+
+{% if testimonials %}
+<section class="story">
+    <div class="shell">
+        <div class="testimonial-grid">{% for item in testimonials %}{% include "includes/testimonial.html" with t=item.t text=item.text %}{% endfor %}</div>
+    </div>
+</section>
+{% endif %}
 
 {% if page.story %}
 <section class="story">

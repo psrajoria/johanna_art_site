@@ -2736,6 +2736,99 @@ img[loading="lazy"].is-loaded {
   border-radius: 4px;
 }
 
+/* ---------- Kind words ---------------------------------------------------------- */
+
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.4rem;
+  margin-top: 2rem;
+}
+.testimonial {
+  position: relative;
+  height: 100%;
+  margin: 0;
+  padding: 1.6rem 1.5rem 1.3rem;
+  background: var(--c-card);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+}
+.testimonial::before {
+  content: "\201C";
+  position: absolute;
+  top: -0.2rem;
+  left: 0.9rem;
+  font-family: var(--font-display);
+  font-size: 4.5rem;
+  line-height: 1;
+  color: var(--c-rose);
+  opacity: 0.8;
+}
+.testimonial blockquote {
+  margin: 0.6rem 0 1rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  line-height: 1.5;
+}
+.testimonial figcaption {
+  font-size: 0.92rem;
+}
+.testimonial .stars {
+  display: block;
+  color: var(--c-ochre);
+  letter-spacing: 0.15em;
+}
+.rating {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  margin-bottom: 0.6rem;
+}
+.rating input {
+  position: absolute;
+  opacity: 0;
+}
+.rating label {
+  padding: 0 0.1rem;
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--c-line);
+  cursor: pointer;
+  transition: color 0.2s, transform 0.2s var(--ease);
+}
+.rating label:hover,
+.rating label:hover ~ label,
+.rating input:checked ~ label {
+  color: var(--c-ochre);
+}
+.rating label:hover {
+  transform: scale(1.15);
+}
+.rating input:focus-visible + label {
+  outline: 2px solid var(--c-terracotta);
+  border-radius: 4px;
+}
+
+/* ---------- Collections --------------------------------------------------------- */
+
+.collection-banner {
+  position: relative;
+  margin-bottom: 1.6rem;
+  padding: clamp(1.4rem, 4vw, 2.4rem);
+  border-radius: var(--radius-lg, 22px);
+  background:
+    radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--wash, var(--c-rose)) 38%, transparent), transparent 62%),
+    radial-gradient(90% 120% at 100% 100%, color-mix(in srgb, var(--wash, var(--c-ochre)) 24%, transparent), transparent 66%),
+    var(--c-card);
+  box-shadow: var(--shadow-sm);
+}
+.collection-banner .lede {
+  max-width: 46rem;
+}
+.badge--collection {
+  background: color-mix(in srgb, var(--c-sage) 24%, transparent);
+  color: var(--c-sage-deep);
+}
+
 /* ---------- Commissions: size picker and progress ------------------------------ */
 
 .size-picker .size-label {
@@ -2748,7 +2841,7 @@ img[loading="lazy"].is-loaded {
   flex-wrap: wrap;
   gap: 0.5rem;
 }
-.chip {
+.size-chip {
   padding: 0.45rem 1rem;
   border: 1.5px solid var(--c-line);
   border-radius: 999px;
@@ -2758,11 +2851,11 @@ img[loading="lazy"].is-loaded {
   cursor: pointer;
   transition: border-color 0.25s, background-color 0.25s, transform 0.25s var(--ease);
 }
-.chip:hover {
+.size-chip:hover {
   border-color: var(--c-terracotta);
   transform: translateY(-1px);
 }
-.chip.is-active {
+.size-chip.is-active {
   border-color: var(--c-terracotta);
   background: color-mix(in srgb, var(--c-terracotta) 14%, transparent);
 }

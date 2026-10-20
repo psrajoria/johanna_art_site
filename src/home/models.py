@@ -220,6 +220,13 @@ class HomePage(Page):
         context["hero_artwork"] = hero_artwork
         context["places"] = places[:14]
         context["instagram_tiles"] = self.instagram_tiles()
+        from shop.models import Testimonial
+
+        language = request.LANGUAGE_CODE if hasattr(request, "LANGUAGE_CODE") else "en"
+        context["testimonials"] = [
+            {"t": t, "text": t.text_for(language)}
+            for t in Testimonial.objects.filter(published=True)[:3]
+        ]
         context["latest_posts"] = list(
             BlogPostPage.objects.live().public().filter(locale=self.locale)
             .order_by("-date")[:3]

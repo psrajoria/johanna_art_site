@@ -1,0 +1,7 @@
+{% autoescape off %}{{ name }} left a review. It stays hidden until you show it.
+
+"{{ quote }}"
+
+Open the admin, then Shop, Kind words, and tick "Show on the site" if you like it:
+{{ admin_url }}
+{% endautoescape %}

@@ -1,0 +1,8 @@
+{% load i18n %}
+<figure class="testimonial">
+    <blockquote>{{ text }}</blockquote>
+    <figcaption>
+        {% if t.rating %}<span class="stars" aria-label="{{ t.rating }} / 5">{{ t.stars }}</span>{% endif %}
+        <strong>{{ t.name }}</strong>{% if t.place %}<span class="muted">, {{ t.place }}</span>{% endif %}
+    </figcaption>
+</figure>

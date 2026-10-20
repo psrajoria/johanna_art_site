@@ -11,9 +11,10 @@ from django.views.decorators.http import require_POST
 
 from artworks.models import Offer
 
+from . import emails
 from .cart import Cart, OrderError, place_order, shop_settings
 from .forms import CheckoutForm, OrderLookupForm, RegisterForm
-from .models import DiscountCode, Order, OrderItem, WaitlistRequest
+from .models import DiscountCode, Order, OrderItem, Testimonial, WaitlistRequest
 from .shipping import ShippingUnavailable, calculate_shipping, country_choices
 from analytics.models import Event
 from analytics.tracking import track
@@ -137,6 +138,35 @@ def cart_remove(request, offer_id):
     Cart(request).remove(offer_id)
     messages.info(request, _("Removed from your cart."))
     return redirect("shop:cart")
+
+
+@require_POST
+def review_submit(request, token):
+    """A buyer leaves a few kind words. It stays hidden until Johanna approves it."""
+    order = get_object_or_404(Order, token=token)
+    if not _can_review(order):
+        raise Http404
+    text = request.POST.get("quote", "").strip()[:1200]
+    name = request.POST.get("name", "").strip()[:80] or order.name.split(" ")[0]
+    if len(text) < 5:
+        messages.error(request, _("Please write a few words."))
+        return redirect(order.get_absolute_url())
+    rating = request.POST.get("rating", "")
+    item = order.items.exclude(offer__isnull=True).select_related("offer__artwork").first()
+    Testimonial.objects.create(
+        quote=text, name=name, place=order.city[:80],
+        rating=int(rating) if rating.isdigit() and 1 <= int(rating) <= 5 else None,
+        artwork=item.offer.artwork if item else None, order=order, published=False,
+    )
+    owner = emails.notify_address()
+    if owner:
+        emails.send_email(
+            f"New review from {name}", "owner_new_review",
+            {"name": name, "quote": text, "admin_url": emails.site_base_url() + "/admin/"},
+            owner, "en",
+        )
+    messages.success(request, _("Thank you so much! Johanna will read it and may show it on the site."))
+    return redirect(order.get_absolute_url())
 
 
 def invoice_download(request, token):
@@ -279,6 +309,13 @@ def checkout(request):
 # --- orders ----------------------------------------------------------------
 
 
+def _can_review(order):
+    finished = order.status in ("shipped", "completed") or (
+        order.has_digital and not order.has_physical and order.can_have_invoice
+    )
+    return finished and not hasattr(order, "testimonial")
+
+
 def order_detail(request, token):
     order = get_object_or_404(Order, token=token)
     shop = shop_settings()
@@ -298,6 +335,7 @@ def order_detail(request, token):
             "awaiting": order.status == Order.STATUS_AWAITING,
             "steps": _progress_steps(order),
             "expires": order.download_expires,
+            "can_review": _can_review(order),
         },
     )
 

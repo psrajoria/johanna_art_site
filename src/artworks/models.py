@@ -12,6 +12,54 @@ from wagtail.models import Locale, Orderable, Page
 from config.storage import private_storage
 
 
+class Collection(models.Model):
+    """A themed series of artworks, e.g. 'Summer in Lisbon', with its own colour wash."""
+
+    name = models.CharField(max_length=80)
+    name_de = models.CharField("Name (German)", max_length=80, blank=True)
+    slug = models.SlugField(unique=True, help_text="Used in the web address. Letters, numbers and dashes.")
+    description = models.TextField(blank=True, help_text="A few sentences shown above the collection.")
+    description_de = models.TextField("Description (German)", blank=True)
+    wash_colour = models.CharField(
+        max_length=7,
+        blank=True,
+        help_text="Optional colour wash behind the collection, like #e8a5a0. Leave empty for the site colours.",
+    )
+    sort_order = models.PositiveIntegerField(default=0, help_text="Smaller numbers come first.")
+
+    panels = [
+        FieldPanel("name"),
+        FieldPanel("name_de"),
+        FieldPanel("slug"),
+        FieldPanel("description"),
+        FieldPanel("description_de"),
+        FieldPanel("wash_colour"),
+        FieldPanel("sort_order"),
+    ]
+
+    class Meta:
+        ordering = ["sort_order", "name"]
+
+    def __str__(self):
+        return self.name
+
+    def localized(self, field, language=None):
+        from django.utils import translation
+
+        language = language or translation.get_language() or "en"
+        if language.startswith("de"):
+            return getattr(self, f"{field}_de") or getattr(self, field)
+        return getattr(self, field)
+
+    @property
+    def display_name(self):
+        return self.localized("name")
+
+    @property
+    def display_description(self):
+        return self.localized("description")
+
+
 class ArtworkIndexPage(Page):
     """
     Gallery landing page.
@@ -42,6 +90,10 @@ class ArtworkIndexPage(Page):
             .descendant_of(self)
             .order_by("-first_published_at")
         )
+
+        selected_collection = Collection.objects.filter(slug=request.GET.get("collection", "")).first()
+        if selected_collection:
+            artworks = artworks.filter(collection=selected_collection)
 
         selected_category = request.GET.get("category")
         selected_status = request.GET.get("status")
@@ -85,6 +137,10 @@ class ArtworkIndexPage(Page):
         query = request.GET.copy()
         query.pop("page", None)
 
+        context["collections"] = [
+            c for c in Collection.objects.filter(artworks__live=True).distinct()
+        ]
+        context["selected_collection"] = selected_collection
         context["artworks"] = page_obj
         context["total_count"] = paginator.count
         context["category_choices"] = ArtworkPage.CATEGORY_CHOICES
@@ -147,6 +203,15 @@ class ArtworkPage(Page):
         max_length=240,
         blank=True,
         help_text="One short sentence for gallery cards.",
+    )
+
+    collection = models.ForeignKey(
+        Collection,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="artworks",
+        help_text="Optional: put this piece into a themed series.",
     )
 
     sketch_image = models.ForeignKey(
@@ -255,6 +320,7 @@ class ArtworkPage(Page):
         MultiFieldPanel(
             [
                 FieldPanel("category"),
+                FieldPanel("collection"),
                 FieldPanel("status"),
                 FieldPanel("price_visible"),
                 FieldPanel("featured"),
@@ -442,6 +508,13 @@ class ArtworkPage(Page):
     def get_context(self, request):
         context = super().get_context(request)
         context["offers"] = self.active_offers
+        from shop.models import Testimonial
+
+        language = getattr(request, "LANGUAGE_CODE", "en")
+        context["testimonials"] = [
+            {"t": t, "text": t.text_for(language)}
+            for t in Testimonial.objects.filter(published=True, artwork__translation_key=self.translation_key)[:3]
+        ]
         context["related_artworks"] = list(
             ArtworkPage.objects.live()
             .public()
