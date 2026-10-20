@@ -202,6 +202,32 @@
 </section>
 {% endif %}
 
+{% if site_settings.instagram_url %}
+<section class="section section--tint insta" id="instagram">
+    <div class="shell">
+        <div class="section-head section-head--center" data-reveal>
+            <div class="eyebrow">{% trans "On Instagram" %}</div>
+            <h2 class="h2">{% trans "Follow the sketchbook as it grows." %}</h2>
+            <p class="lede">{% trans "Work in progress, little studies and new paintings appear there first." %}</p>
+        </div>
+        {% if instagram_tiles %}
+        <div class="insta-grid" data-reveal-group>
+            {% for tile in instagram_tiles %}
+            <a class="insta-tile" data-reveal href="{{ tile.link|default:site_settings.instagram_url }}" target="_blank" rel="noopener" data-track="instagram" data-track-label="strip" aria-label="{{ tile.caption|default:'Instagram' }}">
+                <img src="{{ tile.url }}" alt="{{ tile.caption }}" width="480" height="480" loading="lazy">
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <p class="btn-row" style="justify-content:center">
+            <a class="btn" href="{{ site_settings.instagram_url }}" target="_blank" rel="noopener" data-track="instagram" data-track-label="home">
+                <span class="btn-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg></span> {% trans "Follow" %} {{ site_settings.instagram_handle }}
+            </a>
+        </p>
+    </div>
+</section>
+{% endif %}
+
 <section class="section" id="commissions">
     <div class="shell">
         <div class="cta-band" data-reveal>

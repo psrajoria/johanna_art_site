@@ -1,9 +1,10 @@
 from django.db import models
 
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from modelcluster.fields import ParentalKey
+from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.fields import RichTextField, StreamField
-from wagtail.models import Page
+from wagtail.models import Orderable, Page
 
 from .blocks import page_blocks
 
@@ -159,7 +160,33 @@ class HomePage(Page):
             ],
             heading="Commission section",
         ),
+        MultiFieldPanel(
+            [
+                InlinePanel("instagram_posts", label="Instagram post", max_num=9),
+            ],
+            heading="Instagram strip: pick your favourite posts",
+            help_text=(
+                "Add a photo from a post and paste the link of that post. "
+                "If Instagram is connected in Settings, Site settings, the newest posts "
+                "appear here automatically and this list is not needed."
+            ),
+        ),
     ]
+
+    def instagram_tiles(self):
+        """Posts for the homepage strip: automatic ones if connected, else her manual picks."""
+        tiles = []
+        for post in InstagramPost.objects.all()[:9]:
+            if post.image:
+                tiles.append({"link": post.permalink, "caption": post.caption, "url": post.image.url})
+        if tiles:
+            return tiles
+        for item in self.instagram_posts.all():
+            if not item.image_id:
+                continue
+            rendition = item.image.get_rendition("fill-480x480 format-webp")
+            tiles.append({"link": item.link, "caption": item.caption, "url": rendition.url})
+        return tiles
 
     def get_context(self, request):
         context = super().get_context(request)
@@ -192,12 +219,46 @@ class HomePage(Page):
         context["latest_artworks"] = latest_artworks
         context["hero_artwork"] = hero_artwork
         context["places"] = places[:14]
+        context["instagram_tiles"] = self.instagram_tiles()
         context["latest_posts"] = list(
             BlogPostPage.objects.live().public().filter(locale=self.locale)
             .order_by("-date")[:3]
         )
 
         return context
+
+
+class HomePageInstagramPost(Orderable):
+    """A post she picked by hand for the homepage Instagram strip."""
+
+    page = ParentalKey(HomePage, on_delete=models.CASCADE, related_name="instagram_posts")
+    image = models.ForeignKey(
+        "wagtailimages.Image",
+        on_delete=models.CASCADE,
+        related_name="+",
+        help_text="The photo from the post (use your original file).",
+    )
+    link = models.URLField(
+        "Post link",
+        blank=True,
+        help_text="Optional. Open the post on Instagram, copy the address and paste it here.",
+    )
+    caption = models.CharField(max_length=160, blank=True)
+
+    panels = [FieldPanel("image"), FieldPanel("link"), FieldPanel("caption")]
+
+
+class InstagramPost(models.Model):
+    """Fetched automatically from Instagram (see manage.py fetch_instagram)."""
+
+    instagram_id = models.CharField(max_length=40, unique=True)
+    permalink = models.URLField()
+    caption = models.CharField(max_length=160, blank=True)
+    image = models.ImageField(upload_to="instagram/")
+    posted_at = models.DateTimeField()
+
+    class Meta:
+        ordering = ["-posted_at"]
 
 
 class StandardPage(Page):
@@ -263,7 +324,19 @@ class SiteSettings(BaseSiteSetting):
         help_text="Shown in the footer and on the contact page.",
     )
 
-    instagram_url = models.URLField(blank=True)
+    instagram_url = models.URLField(
+        blank=True,
+        default="https://www.instagram.com/from.j2l/",
+        help_text="Her Instagram profile. Shown in the footer and on the homepage.",
+    )
+    instagram_access_token = models.CharField(
+        max_length=400,
+        blank=True,
+        help_text=(
+            "Optional, for showing new Instagram posts automatically. Needs a Creator or "
+            "Business Instagram account; ask your site helper for the short setup."
+        ),
+    )
     pinterest_url = models.URLField(blank=True)
     facebook_url = models.URLField(blank=True)
     youtube_url = models.URLField(blank=True)
@@ -300,6 +373,7 @@ class SiteSettings(BaseSiteSetting):
         MultiFieldPanel(
             [
                 FieldPanel("instagram_url"),
+                FieldPanel("instagram_access_token"),
                 FieldPanel("pinterest_url"),
                 FieldPanel("facebook_url"),
                 FieldPanel("youtube_url"),
@@ -309,6 +383,11 @@ class SiteSettings(BaseSiteSetting):
         FieldPanel("default_share_image"),
         FieldPanel("analytics_snippet"),
     ]
+
+    @property
+    def instagram_handle(self):
+        parts = [p for p in self.instagram_url.split("/") if p]
+        return "@" + parts[-1] if parts and "instagram.com" in self.instagram_url else ""
 
     class Meta:
         verbose_name = "Site settings"

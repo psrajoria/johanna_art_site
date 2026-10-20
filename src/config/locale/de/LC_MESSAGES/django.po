@@ -305,6 +305,12 @@ msgstr "Finnland"
 msgid "Flat / tube (prints, cards)"
 msgstr "Flach / Rolle (Drucke, Karten)"
 
+msgid "Follow"
+msgstr "Folge"
+
+msgid "Follow the sketchbook as it grows."
+msgstr "Folge dem Skizzenbuch beim Wachsen."
+
 msgid "Follow your request"
 msgstr "Anfrage verfolgen"
 
@@ -535,6 +541,9 @@ msgstr "Notizen über Aquarell, Reisen und das Malen."
 
 msgid "Nothing here yet."
 msgstr "Hier ist noch nichts."
+
+msgid "On Instagram"
+msgstr "Auf Instagram"
 
 msgid "On its way"
 msgstr "Unterwegs"
@@ -988,6 +997,9 @@ msgstr "Worum geht es?"
 
 msgid "Where to next"
 msgstr "Wohin als Nächstes"
+
+msgid "Work in progress, little studies and new paintings appear there first."
+msgstr "Entstehendes, kleine Studien und neue Bilder erscheinen dort zuerst."
 
 msgid "Write to Johanna"
 msgstr "Schreib Johanna"

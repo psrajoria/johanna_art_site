@@ -524,6 +524,9 @@ class Command(BaseCommand):
         if not settings_obj.contact_email:
             settings_obj.contact_email = "hello@example.com"
             settings_obj.save()
+        if not settings_obj.instagram_url:
+            settings_obj.instagram_url = "https://www.instagram.com/from.j2l/"
+            settings_obj.save()
         ShopSettings.for_site(site)
 
     def _ensure_shipping(self):

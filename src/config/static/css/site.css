@@ -2736,6 +2736,58 @@ img[loading="lazy"].is-loaded {
   border-radius: 4px;
 }
 
+/* ---------- Instagram -------------------------------------------------------- */
+
+.btn-icon {
+  display: inline-grid;
+  place-items: center;
+  vertical-align: -0.25em;
+  margin-right: 0.3rem;
+}
+.btn-icon svg {
+  width: 1.2em;
+  height: 1.2em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+.social-ig {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+.insta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: clamp(0.6rem, 1.6vw, 1.1rem);
+  margin: 2rem 0;
+}
+.insta-tile {
+  position: relative;
+  display: block;
+  padding: 7px 7px 22px;
+  background: var(--c-card);
+  border-radius: 4px;
+  box-shadow: var(--shadow);
+  transition: rotate 0.5s var(--ease), translate 0.5s var(--ease), box-shadow 0.5s;
+}
+.insta-tile:nth-child(odd) { rotate: -1.6deg; }
+.insta-tile:nth-child(even) { rotate: 1.4deg; margin-top: 6px; }
+.insta-tile:nth-child(3n) { rotate: 0.6deg; }
+.insta-tile:hover {
+  rotate: 0deg;
+  translate: 0 -6px;
+  box-shadow: var(--shadow-lg);
+  z-index: 2;
+}
+.insta-tile img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  background: var(--c-paper-3);
+}
+
 /* ---------- Hearts ------------------------------------------------------------ */
 
 .heart {
