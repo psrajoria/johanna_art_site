@@ -87,9 +87,9 @@ class DigestTests(TestCase):
 
         from analytics.models import TaskRun
 
-        with mock.patch("analytics.management.commands.daily_tasks.call_command") as run, \
-                mock.patch("analytics.management.commands.daily_tasks.timezone.localtime") as now:
-            now.return_value.hour = 12
+        with mock.patch("analytics.management.commands.daily_tasks.call_command") as run, mock.patch(
+            "analytics.management.commands.daily_tasks.current_hour", return_value=12
+        ):
             call_command("daily_tasks", verbosity=0)
             first = run.call_count
             call_command("daily_tasks", verbosity=0)
