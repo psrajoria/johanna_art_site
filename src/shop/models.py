@@ -50,7 +50,7 @@ class ShopSettings(BaseSiteSetting):
         ),
     )
 
-    bank_account_holder = models.CharField(max_length=120, blank=True, default="Johanna L")
+    bank_account_holder = models.CharField(max_length=120, blank=True, default="Johanna Lackner")
     bank_iban = models.CharField(
         "IBAN",
         max_length=40,
@@ -105,7 +105,7 @@ class ShopSettings(BaseSiteSetting):
         default=(
             "<p>Digital downloads are for <b>personal use only</b>: you may print "
             "them for yourself or as a gift. You may not resell, redistribute or "
-            "use them commercially, and the artwork stays © Johanna L.</p>"
+            "use them commercially, and the artwork stays © Johanna Lackner.</p>"
         ),
     )
     digital_license_de = RichTextField(
@@ -115,7 +115,7 @@ class ShopSettings(BaseSiteSetting):
             "<p>Digitale Downloads sind nur für den <b>privaten Gebrauch</b>: "
             "Du darfst sie für dich selbst oder als Geschenk ausdrucken. Der "
             "Weiterverkauf, die Weitergabe und die kommerzielle Nutzung sind nicht "
-            "erlaubt; das Urheberrecht bleibt bei Johanna L.</p>"
+            "erlaubt; das Urheberrecht bleibt bei Johanna Lackner.</p>"
         ),
     )
 

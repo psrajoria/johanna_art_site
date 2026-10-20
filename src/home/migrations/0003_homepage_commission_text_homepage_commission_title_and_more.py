@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='homepage',
             name='hero_text',
-            field=wagtail.fields.RichTextField(blank=True, default='Travel-inspired watercolour sketches by Johanna L — quiet streets, soft landscapes, architecture, and small moments captured through pencil, colour, and practice.'),
+            field=wagtail.fields.RichTextField(blank=True, default='Travel-inspired watercolour sketches by Johanna Lackner — quiet streets, soft landscapes, architecture, and small moments captured through pencil, colour, and practice.'),
         ),
         migrations.AddField(
             model_name='homepage',

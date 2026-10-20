@@ -11,7 +11,7 @@ class LatestPostsFeed(Feed):
     """RSS feed of the newest blog posts in the visitor's language."""
 
     def title(self):
-        return _("Johanna L — from the sketchbook")
+        return _("Johanna Lackner — from the sketchbook")
 
     def link(self):
         return "/blog/"

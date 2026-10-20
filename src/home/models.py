@@ -35,7 +35,7 @@ class HomePage(Page):
     hero_text = RichTextField(
         blank=True,
         default=(
-            "Travel-inspired watercolour sketches by Johanna L — quiet streets, "
+            "Travel-inspired watercolour sketches by Johanna Lackner — quiet streets, "
             "soft landscapes, architecture, and small moments captured through "
             "pencil, colour, and practice."
         ),

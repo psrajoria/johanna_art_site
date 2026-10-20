@@ -9,15 +9,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#FBF7F0" />
 
-    <title>{% block title %}{% if page.seo_title %}{{ page.seo_title }}{% elif page.title %}{{ page.title }}{% endif %}{% endblock %} · Johanna L</title>
+    <title>{% block title %}{% if page.seo_title %}{{ page.seo_title }}{% elif page.title %}{{ page.title }}{% endif %}{% endblock %} · Johanna Lackner</title>
 
     {% block meta_description %}
-    <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}{% trans 'Travel-inspired watercolour paintings and sketches by Johanna L — originals, prints and digital downloads, made in Braunschweig.' %}{% endif %}" />
+    <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}{% trans 'Travel-inspired watercolour paintings and sketches by Johanna Lackner — originals, prints and digital downloads, made in Braunschweig.' %}{% endif %}" />
     {% endblock %}
 
-    <meta property="og:site_name" content="Johanna L" />
+    <meta property="og:site_name" content="Johanna Lackner" />
     <meta property="og:type" content="{% block og_type %}website{% endblock %}" />
-    <meta property="og:title" content="{% block og_title %}{% if page.seo_title %}{{ page.seo_title }}{% elif page.title %}{{ page.title }}{% else %}Johanna L{% endif %}{% endblock %}" />
+    <meta property="og:title" content="{% block og_title %}{% if page.seo_title %}{{ page.seo_title }}{% elif page.title %}{{ page.title }}{% else %}Johanna Lackner{% endif %}{% endblock %}" />
     <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}" />
     <meta property="og:locale" content="{% if LANGUAGE_CODE == 'de' %}de_DE{% else %}en_GB{% endif %}" />
     {% block share_image %}
@@ -67,14 +67,14 @@
 
     <header class="site-header" data-header>
         <div class="shell header-inner">
-            <a class="brand" href="{% home_url %}" aria-label="Johanna L — {% trans 'Home' %}">
+            <a class="brand" href="{% home_url %}" aria-label="Johanna Lackner — {% trans 'Home' %}">
                 <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
                     <path d="M20 3C20 3 7 17.5 7 26a13 13 0 0 0 26 0C33 17.5 20 3 20 3Z" fill="var(--c-terracotta)" opacity=".92" />
                     <path d="M20 12C20 12 12 21 12 26.5a8 8 0 0 0 16 0C28 21 20 12 20 12Z" fill="var(--c-ochre)" opacity=".9" />
                     <path d="M20 20C20 20 16.5 24 16.5 26.6a3.5 3.5 0 0 0 7 0C23.5 24 20 20 20 20Z" fill="var(--c-paper)" opacity=".95" />
                 </svg>
                 <span class="brand-text">
-                    <span class="brand-title">Johanna L</span>
+                    <span class="brand-title">Johanna Lackner</span>
                     <span class="brand-subtitle">{{ site_settings|localized:"tagline" }}</span>
                 </span>
             </a>
@@ -175,7 +175,7 @@
         <div class="shell footer-grid">
             <div class="footer-about">
                 <a class="brand brand--footer" href="{% home_url %}">
-                    <span class="brand-title">Johanna L</span>
+                    <span class="brand-title">Johanna Lackner</span>
                 </a>
                 <p>{{ site_settings|localized:"footer_text" }}</p>
                 <ul class="social">
@@ -217,7 +217,7 @@
         </div>
 
         <div class="shell footer-base">
-            <p>© {% now "Y" %} Johanna L · Braunschweig</p>
+            <p>© {% now "Y" %} Johanna Lackner · Braunschweig</p>
             {% if site_settings.contact_email %}
             <p><a href="mailto:{{ site_settings.contact_email }}">{{ site_settings.contact_email }}</a></p>
             {% endif %}

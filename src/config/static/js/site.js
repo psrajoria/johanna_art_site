@@ -325,6 +325,14 @@
     update();
   }
 
+  /* ---- Layers slider: drag from the sketch to the finished painting ---- */
+  document.querySelectorAll("[data-layers] .layers-range").forEach(function (range) {
+    var stage = range.closest(".layers-stage");
+    function set() { stage.style.setProperty("--pos", range.value + "%"); }
+    range.addEventListener("input", set);
+    set();
+  });
+
   /* ---- Instant navigation: fetch a page when the pointer/finger approaches */
   if (!(navigator.connection && navigator.connection.saveData)) {
     var prefetched = {};

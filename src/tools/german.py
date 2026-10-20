@@ -27,7 +27,7 @@ GERMAN = {
     "Harbour": "Hafen",
     "Blossom": "Blüte",
     "Dusk": "Dämmerung",
-    "Travel-inspired watercolour paintings and sketches by Johanna L — originals, prints and digital downloads, made in Braunschweig.": "Reiseinspirierte Aquarelle und Skizzen von Johanna L — Originale, Drucke und digitale Downloads, entstanden in Braunschweig.",
+    "Travel-inspired watercolour paintings and sketches by Johanna Lackner — originals, prints and digital downloads, made in Braunschweig.": "Reiseinspirierte Aquarelle und Skizzen von Johanna Lackner — Originale, Drucke und digitale Downloads, entstanden in Braunschweig.",
 
     # --- home ---
     "Explore the gallery": "Galerie entdecken",
@@ -73,6 +73,13 @@ GERMAN = {
     "Pages": "Seiten",
     "Enlarge image": "Bild vergrößern",
     "Click to enlarge": "Zum Vergrößern klicken",
+    "Just keep layering": "Just keep layering",
+    "Drag to see how it grew": "Ziehen, um zu sehen, wie es entstanden ist",
+    "The first sketch": "Die erste Skizze",
+    "Sketch to finished painting": "Von der Skizze zum fertigen Bild",
+    "Sketch": "Skizze",
+    "Colours in this painting": "Farben in diesem Bild",
+    "On the palette": "Auf der Palette",
     "Place": "Ort",
     "Medium": "Technik",
     "Original size": "Originalgröße",
@@ -123,7 +130,7 @@ GERMAN = {
     "About this artwork": "Über dieses Werk",
     "See the artwork": "Zum Werk",
     "Keep reading": "Weiterlesen",
-    "Johanna L — from the sketchbook": "Johanna L — aus dem Skizzenbuch",
+    "Johanna Lackner — from the sketchbook": "Johanna Lackner — aus dem Skizzenbuch",
     "Notes on watercolour, travelling and making art.": "Notizen über Aquarell, Reisen und das Malen.",
 
     # --- search, 404 ---
@@ -255,7 +262,7 @@ GERMAN = {
     "Request a new link": "Neuen Link anfordern",
     "Password changed": "Passwort geändert",
     "You can now log in with your new password.": "Du kannst dich jetzt mit deinem neuen Passwort anmelden.",
-    "Someone asked to reset the password for your account on Johanna L's site. If that was you, use this link to choose a new one:": "Jemand hat darum gebeten, das Passwort für dein Konto auf Johanna Ls Seite zurückzusetzen. Wenn du das warst, wähle über diesen Link ein neues:",
+    "Someone asked to reset the password for your account on Johanna Lackner's site. If that was you, use this link to choose a new one:": "Jemand hat darum gebeten, das Passwort für dein Konto auf Johanna Ls Seite zurückzusetzen. Wenn du das warst, wähle über diesen Link ein neues:",
     "If you didn't ask for this, you can safely ignore this email.": "Wenn du das nicht angefordert hast, kannst du diese E-Mail einfach ignorieren.",
 
     # --- contact & commissions ---

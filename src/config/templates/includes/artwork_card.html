@@ -3,7 +3,7 @@
     <a class="art-card-link" href="{% pageurl artwork %}">
         <div class="art-frame">
             <span class="tape" aria-hidden="true"></span>
-            <div class="frame-inner">
+            <div class="frame-inner"{% if artwork.palette_list %} style="--tone: {{ artwork.palette_list.0 }}"{% endif %}>
                 {% if artwork.main_image %}
                 {% image artwork.main_image fill-480x600 format-webp as small %}
                 {% image artwork.main_image fill-900x1125 format-webp as large %}
@@ -21,6 +21,7 @@
                 <span class="badge badge--{{ modifier }}">{{ text }}</span>
                 {% endfor %}
             </div>
+            {% if artwork.palette_list %}<div class="dots" aria-hidden="true">{% for c in artwork.palette_list %}<i style="--c: {{ c }}"></i>{% endfor %}</div>{% endif %}
             <h3 class="art-card-title">{{ artwork.title }}</h3>
             {% if artwork.location_display %}<p class="art-card-meta">{{ artwork.location_display }}</p>{% endif %}
             {% if artwork.from_price %}

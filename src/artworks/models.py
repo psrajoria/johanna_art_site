@@ -149,6 +149,24 @@ class ArtworkPage(Page):
         help_text="One short sentence for gallery cards.",
     )
 
+    sketch_image = models.ForeignKey(
+        "wagtailimages.Image",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        help_text="Optional: a photo of the pencil sketch or first wash, taken from the same "
+        "angle. Visitors can drag a slider from the sketch to the finished painting.",
+    )
+
+    palette = models.CharField(
+        max_length=80,
+        blank=True,
+        editable=False,
+        help_text="Main colours of the painting, found automatically.",
+    )
+    palette_source_id = models.PositiveIntegerField(null=True, editable=False)
+
     story = RichTextField(
         blank=True,
         help_text="The memory, place, process, or story behind this artwork.",
@@ -220,6 +238,7 @@ class ArtworkPage(Page):
         MultiFieldPanel(
             [
                 FieldPanel("main_image"),
+                FieldPanel("sketch_image"),
                 FieldPanel("short_description"),
                 FieldPanel("story"),
             ],
@@ -271,7 +290,38 @@ class ArtworkPage(Page):
             or self
         )
 
+    @property
+    def palette_list(self):
+        return [c for c in self.palette.split(",") if c]
+
+    def _refresh_palette(self):
+        """Pick the painting's main colours (used for swatches and image placeholders)."""
+        if not self.main_image_id or self.palette_source_id == self.main_image_id:
+            return
+        try:
+            from PIL import Image as PILImage
+
+            with self.main_image.file.open("rb") as fh:
+                img = PILImage.open(fh)
+                img.thumbnail((96, 96))
+                img = img.convert("RGB").quantize(colors=6, method=PILImage.Quantize.MEDIANCUT)
+                pal = img.getpalette()[: 6 * 3]
+                counts = sorted(img.getcolors(), reverse=True)
+            colours = []
+            for _count, idx in counts:
+                r, g, b = pal[idx * 3 : idx * 3 + 3]
+                # skip near-white paper and near-black so swatches show the paint
+                if min(r, g, b) > 238 or max(r, g, b) < 24:
+                    continue
+                colours.append("#%02x%02x%02x" % (r, g, b))
+            self.palette = ",".join(colours[:5])
+            self.palette_source_id = self.main_image_id
+        except Exception:
+            # a missing or unreadable file must never block saving the page
+            self.palette = ""
+
     def save(self, *args, **kwargs):
+        self._refresh_palette()
         # Keep the original's status identical across languages, even when a
         # German page is published from an older revision.
         if self.pk and self.locale_id != Locale.get_default().pk:

@@ -238,7 +238,7 @@ PAGES = [
                 heading("4. Right of withdrawal"),
                 para("[Withdrawal information — required by law for consumers in the EU. Digital content and custom-made work need special wording.]"),
                 heading("5. Copyright"),
-                para("All artworks remain © Johanna L. Digital downloads are licensed for personal use only."),
+                para("All artworks remain © Johanna Lackner. Digital downloads are licensed for personal use only."),
             ],
         },
         "de": {
@@ -254,7 +254,7 @@ PAGES = [
                 heading("4. Widerrufsrecht"),
                 para("[Widerrufsbelehrung — für Verbraucher in der EU gesetzlich vorgeschrieben. Digitale Inhalte und Anfertigungen nach Kundenwunsch benötigen besondere Formulierungen.]"),
                 heading("5. Urheberrecht"),
-                para("Alle Werke bleiben © Johanna L. Digitale Downloads sind nur für den privaten Gebrauch lizenziert."),
+                para("Alle Werke bleiben © Johanna Lackner. Digitale Downloads sind nur für den privaten Gebrauch lizenziert."),
             ],
         },
     },
@@ -340,7 +340,7 @@ HOME_DE = {
     "hero_title": "Orte, Erinnerungen und unperfekte",
     "hero_highlight": "Schichten.",
     "hero_text": (
-        "<p>Reiseinspirierte Aquarellskizzen von Johanna L — ruhige Gassen, "
+        "<p>Reiseinspirierte Aquarellskizzen von Johanna Lackner — ruhige Gassen, "
         "weiche Landschaften, Architektur und kleine Momente, festgehalten mit "
         "Bleistift, Farbe und Übung.</p>"
     ),
@@ -396,7 +396,7 @@ class Command(BaseCommand):
         if site and options.get("domain"):
             site.hostname = options["domain"]
             site.port = 443
-            site.site_name = "Johanna L"
+            site.site_name = "Johanna Lackner"
             site.save()
             self.stdout.write(f"  site domain set to {options['domain']}")
 

@@ -1,4 +1,4 @@
-# Johanna L — art website
+# Johanna Lackner — art website
 
 A Wagtail (Django) site for Johanna's watercolour work: gallery, shop (originals, prints,
 digital downloads), commissions, blog — in **English and German**, with a light/dark mode

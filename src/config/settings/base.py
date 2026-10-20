@@ -165,7 +165,7 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 10_000
 
 # --- Wagtail ---
 
-WAGTAIL_SITE_NAME = "Johanna L"
+WAGTAIL_SITE_NAME = "Johanna Lackner"
 
 WAGTAILSEARCH_BACKENDS = {
     "default": {
@@ -198,7 +198,7 @@ WAGTAILIMAGES_FORMAT_CONVERSIONS = {"webp": "webp", "bmp": "jpeg"}
 # EMAIL_* variables in `.env` once the domain mailbox exists; until then
 # dev prints emails to the console.
 
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Johanna L <hello@example.com>")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Johanna Lackner <hello@example.com>")
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 EMAIL_BACKEND = env(
     "EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"

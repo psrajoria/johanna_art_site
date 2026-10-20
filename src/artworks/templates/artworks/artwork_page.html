@@ -14,6 +14,10 @@
 {% endif %}
 {% endblock %}
 
+{% block extra_head %}
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"{{ page.title|escapejs }}","description":"{{ page.short_description|default:page.title|escapejs }}","brand":{"@type":"Person","name":"Johanna Lackner"}{% if page.main_image %}{% image page.main_image width-1200 as ld_img %},"image":"{{ request.scheme }}://{{ request.get_host }}{{ ld_img.url }}"{% endif %}{% if page.from_price %},"offers":{"@type":"Offer","priceCurrency":"EUR","price":"{{ page.from_price|stringformat:'.2f' }}","availability":"{% if page.status == 'sold' %}https://schema.org/SoldOut{% else %}https://schema.org/InStock{% endif %}"}{% endif %}}</script>
+{% endblock %}
+
 {% block content %}
 
 <section class="art-detail">
@@ -33,7 +37,9 @@
                         <img src="{{ main_img.url }}" width="{{ main_img.width }}" height="{{ main_img.height }}" alt="{{ page.title }}" style="transition:opacity .2s">
                     </button>
                     <span class="zoom-hint" aria-hidden="true">{% trans "Click to enlarge" %}</span>
+                    <span class="signature" aria-hidden="true">Johanna Lackner</span>
                 </div>
+
 
                 {% if page.gallery_images.all %}
                 <div class="thumbs">
@@ -50,6 +56,23 @@
                     {% endfor %}
                 </div>
                 {% endif %}
+
+                {% if page.sketch_image %}
+                {% image page.sketch_image width-1100 format-webp as sketch_img %}
+                <figure class="layers card" data-layers>
+                    <figcaption class="layers-head">
+                        <span class="eyebrow">{% trans "Just keep layering" %}</span>
+                        <span class="layers-hint">{% trans "Drag to see how it grew" %}</span>
+                    </figcaption>
+                    <div class="layers-stage" style="aspect-ratio: {{ main_img.width }} / {{ main_img.height }}">
+                        <img src="{{ main_img.url }}" alt="{{ page.title }}" loading="lazy">
+                        <img class="layers-top" src="{{ sketch_img.url }}" alt="{% trans 'The first sketch' %}" loading="lazy">
+                        <span class="layers-handle" aria-hidden="true"></span>
+                        <input class="layers-range" type="range" min="0" max="100" value="50" aria-label="{% trans 'Sketch to finished painting' %}">
+                    </div>
+                    <div class="layers-labels"><span>{% trans "Sketch" %}</span><span>{% trans "Finished" %}</span></div>
+                </figure>
+                {% endif %}
                 {% else %}
                 <div class="art-main"><div class="art-placeholder" style="aspect-ratio:4/5"><span>{% trans "No image yet" %}</span></div></div>
                 {% endif %}
@@ -62,6 +85,13 @@
                 </div>
                 <h1>{{ page.title }}</h1>
                 {% if page.short_description %}<p class="lede">{{ page.short_description }}</p>{% endif %}
+
+                {% if page.palette_list %}
+                <div class="swatches" aria-label="{% trans 'Colours in this painting' %}">
+                    {% for c in page.palette_list %}<span class="swatch" style="--c: {{ c }}; --i: {{ forloop.counter0 }}" title="{{ c }}"></span>{% endfor %}
+                    <span class="swatches-label">{% trans "On the palette" %}</span>
+                </div>
+                {% endif %}
 
                 <dl class="facts card">
                     {% if page.location_display %}<div><dt>{% trans "Place" %}</dt><dd>{{ page.location_display }}</dd></div>{% endif %}

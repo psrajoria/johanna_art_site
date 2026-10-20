@@ -2674,6 +2674,169 @@ img[loading="lazy"].is-loaded {
   border-radius: 4px;
 }
 
+/* ---------- Signature touches: palette, signature, layers slider ------------ */
+
+/* the painting's own colour shows while its image loads */
+.art-frame .frame-inner {
+  background: color-mix(in srgb, var(--tone, var(--c-paper-3)) 55%, var(--c-paper-3));
+}
+
+.dots {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 0.45rem;
+}
+.dots i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.12);
+  transform: scale(0.6);
+  opacity: 0.6;
+  transition: transform 0.35s var(--ease), opacity 0.35s;
+}
+.art-card:hover .dots i {
+  transform: scale(1);
+  opacity: 1;
+}
+.art-card:hover .dots i:nth-child(2) { transition-delay: 40ms; }
+.art-card:hover .dots i:nth-child(3) { transition-delay: 80ms; }
+.art-card:hover .dots i:nth-child(4) { transition-delay: 120ms; }
+.art-card:hover .dots i:nth-child(5) { transition-delay: 160ms; }
+
+.swatches {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1.4rem;
+}
+.swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 46% 54% 48%;
+  background: var(--c);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12), 0 4px 10px -4px var(--c);
+  animation: pop 0.5s var(--ease) both;
+  animation-delay: calc(var(--i) * 80ms + 200ms);
+}
+.swatches-label {
+  margin-left: 0.4rem;
+  font-family: var(--font-hand);
+  font-size: 1.25rem;
+  color: var(--c-ink-soft, var(--c-ink));
+  opacity: 0.8;
+}
+
+.art-main {
+  position: relative;
+}
+.signature {
+  position: absolute;
+  right: 2.1rem;
+  bottom: 0.7rem;
+  font-family: var(--font-hand);
+  font-size: 1.35rem;
+  color: #2b2118;
+  text-shadow: 0 0 8px rgb(255 255 255 / 0.7);
+  opacity: 0.85;
+  transform: rotate(-4deg);
+  pointer-events: none;
+}
+
+.layers {
+  margin-top: 1.4rem;
+  padding: 1rem 1rem 0.8rem;
+}
+.layers-head,
+.layers-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+.layers-hint,
+.layers-labels {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+.layers-stage {
+  position: relative;
+  margin-top: 0.7rem;
+  overflow: hidden;
+  border-radius: 4px;
+  --pos: 50%;
+  touch-action: pan-y;
+}
+.layers-stage img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.layers-stage .layers-top {
+  clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+}
+.layers-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--pos);
+  width: 2px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.25);
+  pointer-events: none;
+}
+.layers-handle::after {
+  content: "↔";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #fff;
+  color: #333;
+  box-shadow: var(--shadow);
+}
+.layers-range {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: ew-resize;
+}
+.layers-range:focus-visible + * {
+  outline: 2px solid var(--c-terracotta);
+}
+
+/* page changes wash in like a loaded brush, instead of a plain cut */
+::view-transition-new(root) {
+  animation: wash-in 0.7s var(--ease) both;
+}
+::view-transition-old(root) {
+  animation: fade-out 0.4s ease both;
+}
+@keyframes wash-in {
+  from {
+    clip-path: circle(0% at 50% 20%);
+  }
+  to {
+    clip-path: circle(150% at 50% 20%);
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
 @view-transition {
   navigation: auto;
 }
