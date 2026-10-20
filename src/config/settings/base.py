@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "shop",
     "contact",
     "analytics",
+    "newsletter",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.contrib.settings",

@@ -184,7 +184,7 @@ class HomePage(Page):
         for item in self.instagram_posts.all():
             if not item.image_id:
                 continue
-            rendition = item.image.get_rendition("fill-480x480 format-webp")
+            rendition = item.image.get_rendition("fill-480x480|format-webp")
             tiles.append({"link": item.link, "caption": item.caption, "url": rendition.url})
         return tiles
 

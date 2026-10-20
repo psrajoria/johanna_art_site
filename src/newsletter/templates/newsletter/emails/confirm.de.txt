@@ -1,0 +1,10 @@
+{% autoescape off %}Hallo,
+
+schön, dass du von meinem Atelier hören möchtest! Bitte bestätige deine E-Mail-Adresse mit diesem Link:
+
+{{ confirm_url }}
+
+Wenn du dich nicht angemeldet hast, ignoriere diese E-Mail einfach, dann passiert nichts.
+
+Johanna Lackner
+{% endautoescape %}

@@ -1,0 +1,33 @@
+{% load wagtailcore_tags %}<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{{ subject }}</title></head>
+<body style="margin:0;padding:0;background:#f4ecdf;font-family:Georgia,'Times New Roman',serif;color:#2a2420;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f4ecdf;padding:24px 12px;">
+  <tr><td align="center">
+    <table role="presentation" width="560" cellspacing="0" cellpadding="0" style="max-width:560px;width:100%;background:#fffdf9;border-radius:10px;overflow:hidden;">
+      <tr><td style="height:8px;background:linear-gradient(90deg,#e8a5a0,#e3a93b,#86a98b,#5b83a8);font-size:0;line-height:0;">&nbsp;</td></tr>
+      <tr><td style="padding:28px 32px 8px;">
+        <div style="font-size:26px;font-weight:bold;">Johanna Lackner</div>
+        <div style="font-size:15px;font-style:italic;color:#c4553b;">Just keep layering</div>
+      </td></tr>
+      <tr><td style="padding:8px 32px 8px;font-size:17px;line-height:1.65;font-family:Georgia,serif;">
+        {{ intro|richtext }}
+      </td></tr>
+      {% if artwork %}
+      <tr><td style="padding:12px 32px 8px;">
+        {% if artwork.image %}<a href="{{ artwork.url }}"><img src="{{ artwork.image }}" alt="{{ artwork.title }}" width="496" style="display:block;width:100%;height:auto;border-radius:6px;border:0;"></a>{% endif %}
+        <div style="font-size:22px;font-weight:bold;margin-top:14px;">{{ artwork.title }}</div>
+        {% if artwork.text %}<div style="font-size:15px;color:#5a4f47;margin-top:4px;">{{ artwork.text }}</div>{% endif %}
+        {% if artwork.palette %}<div style="margin-top:10px;">{% for c in artwork.palette %}<span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:{{ c }};margin-right:5px;"></span>{% endfor %}</div>{% endif %}
+        <p style="margin:18px 0 6px;"><a href="{{ artwork.url }}" style="display:inline-block;background:#2a2420;color:#fbf7f0;text-decoration:none;padding:12px 26px;border-radius:999px;font-family:Arial,sans-serif;font-size:15px;font-weight:bold;">{% if lang == "de" %}Ansehen{% else %}See the painting{% endif %}{% if artwork.price %} · {{ artwork.price }}{% endif %}</a></p>
+      </td></tr>
+      {% endif %}
+      <tr><td style="padding:22px 32px 30px;font-size:12.5px;line-height:1.6;color:#85786d;font-family:Arial,sans-serif;border-top:1px solid #e3d8c5;">
+        {% if lang == "de" %}Du bekommst diese E-Mail, weil du dich für den Newsletter angemeldet hast.{% else %}You receive this because you signed up for the newsletter.{% endif %}<br>
+        <a href="{{ site_url }}" style="color:#85786d;">{{ site_url }}</a> · <a href="{{ unsubscribe_url }}" style="color:#85786d;">{% if lang == "de" %}Abmelden{% else %}Unsubscribe{% endif %}</a>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>

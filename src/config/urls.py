@@ -51,6 +51,7 @@ if settings.DEBUG:
 urlpatterns += i18n_patterns(
     path("search/", search_views.search, name="search"),
     path("contact/", include("contact.urls")),
+    path("newsletter/", include("newsletter.urls")),
     path("shop/", include("shop.urls")),
     path("blog/feed/", LatestPostsFeed(), name="blog_feed"),
     # For anything not caught by a more specific rule above, hand over to

@@ -52,3 +52,18 @@ class InstagramTests(TestCase):
         tiles = HomePage.objects.first().instagram_tiles()
         self.assertEqual(tiles[0]["caption"], "Rain in Lisbon")
         InstagramPost.objects.first().image.delete(save=False)
+
+    def test_hand_picked_posts_show_in_the_strip(self):
+        from wagtail.images.models import Image
+        from wagtail.images.tests.utils import get_test_image_file
+
+        from home.models import HomePageInstagramPost
+
+        home = HomePage.objects.filter(locale__language_code="en").first()
+        image = Image.objects.create(title="Post", file=get_test_image_file())
+        HomePageInstagramPost.objects.create(
+            page=home, image=image, link="https://www.instagram.com/p/xyz/", caption="Morning wash"
+        )
+        response = self.client.get("/")
+        self.assertContains(response, "https://www.instagram.com/p/xyz/")
+        self.assertContains(response, "Morning wash")

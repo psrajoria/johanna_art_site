@@ -44,6 +44,9 @@ msgstr "Adresszusatz (optional)"
 msgid "All"
 msgstr "Alle"
 
+msgid "Almost done!"
+msgstr "Fast geschafft!"
+
 msgid "Already have one?"
 msgstr "Du hast schon eins?"
 
@@ -139,6 +142,9 @@ msgstr "Schau bald wieder vorbei oder sag in der Zwischenzeit einfach Hallo."
 
 msgid "Check your inbox"
 msgstr "Schau in dein Postfach"
+
+msgid "Check your inbox and confirm your email address."
+msgstr "Schau in dein Postfach und bestätige deine E-Mail-Adresse."
 
 msgid "Checking out as a guest."
 msgstr "Du bestellst als Gast."
@@ -383,6 +389,9 @@ msgstr "Ich male, du schaust zu"
 msgid "I want my digital download to be available immediately and understand that I lose my right of withdrawal once the download has begun."
 msgstr "Ich möchte, dass mein digitaler Download sofort bereitgestellt wird, und weiß, dass ich mein Widerrufsrecht verliere, sobald der Download begonnen hat."
 
+msgid "I will miss you. You can sign up again any time."
+msgstr "Ich werde dich vermissen. Du kannst dich jederzeit wieder anmelden."
+
 msgid "Iceland"
 msgstr "Island"
 
@@ -397,6 +406,9 @@ msgstr "Wenn du das nicht angefordert hast, kannst du diese E-Mail einfach ignor
 
 msgid "In progress"
 msgstr "In Arbeit"
+
+msgid "In the real newsletter this link unsubscribes you."
+msgstr "Im echten Newsletter meldet dich dieser Link ab."
 
 msgid "India"
 msgstr "Indien"
@@ -440,8 +452,14 @@ msgstr "Neu im Skizzenbuch"
 msgid "Latvia"
 msgstr "Lettland"
 
+msgid "Leave the newsletter?"
+msgstr "Newsletter verlassen?"
+
 msgid "Legal"
 msgstr "Rechtliches"
+
+msgid "Letters from the studio"
+msgstr "Briefe aus dem Atelier"
 
 msgid "Light"
 msgstr "Hell"
@@ -499,6 +517,9 @@ msgstr "Neu"
 
 msgid "New Zealand"
 msgstr "Neuseeland"
+
+msgid "New work and notes now and then. Unsubscribe any time."
+msgstr "Ab und zu neue Bilder und Notizen. Jederzeit abbestellbar."
 
 msgid "Next"
 msgstr "Weiter"
@@ -649,6 +670,12 @@ msgstr "Bitte bestätige das, um deinen Download zu erhalten."
 
 msgid "Please fix the items in your cart first."
 msgstr "Bitte behebe zuerst die Probleme in deinem Warenkorb."
+
+msgid "Please go back and try again."
+msgstr "Bitte geh zurück und versuche es noch einmal."
+
+msgid "Please try again a little later."
+msgstr "Bitte versuche es etwas später noch einmal."
 
 msgid "Poland"
 msgstr "Polen"
@@ -836,6 +863,9 @@ msgstr "Status"
 msgid "Street and number"
 msgstr "Straße und Hausnummer"
 
+msgid "Subscribe"
+msgstr "Anmelden"
+
 msgid "Subtotal"
 msgstr "Zwischensumme"
 
@@ -866,11 +896,20 @@ msgstr "Danke, dass du an mich gedacht hast — frag gern wieder an, wenn du etw
 msgid "Thank you!"
 msgstr "Vielen Dank!"
 
+msgid "Thank you! New work and notes from the studio will find you."
+msgstr "Danke! Neue Bilder und Notizen aus dem Atelier finden dich."
+
 msgid "Thank you, %(name)s! Your order is saved — it just needs your payment."
 msgstr "Danke, %(name)s! Deine Bestellung ist gespeichert — es fehlt nur noch deine Zahlung."
 
+msgid "Thank you, that is lovely."
+msgstr "Danke, wie schön."
+
 msgid "Thanks, %(name)s — your message has arrived and I'll reply soon."
 msgstr "Danke, %(name)s — deine Nachricht ist angekommen und ich antworte bald."
+
+msgid "That email address does not look right."
+msgstr "Diese E-Mail-Adresse sieht nicht richtig aus."
 
 msgid "That request got smudged."
 msgstr "Diese Anfrage ist verschmiert."
@@ -911,6 +950,9 @@ msgstr "Diese Ecke des Ateliers ist privat."
 msgid "This field is required for delivery."
 msgstr "Dieses Feld wird für die Lieferung benötigt."
 
+msgid "This is only a test email."
+msgstr "Das ist nur eine Test-E-Mail."
+
 msgid "This item is sold out."
 msgstr "Dieser Artikel ist ausverkauft."
 
@@ -934,6 +976,9 @@ msgstr "Diese Anfrage ist abgeschlossen."
 
 msgid "To accept, simply pay and mention"
 msgstr "Zum Annehmen bezahle einfach und nenne"
+
+msgid "Too many tries."
+msgstr "Zu viele Versuche."
 
 msgid "Topic"
 msgstr "Thema"
@@ -971,6 +1016,9 @@ msgstr "Vereinigtes Königreich"
 msgid "United States"
 msgstr "USA"
 
+msgid "Unsubscribe"
+msgstr "Abmelden"
+
 msgid "Update quantities"
 msgstr "Mengen aktualisieren"
 
@@ -1006,6 +1054,18 @@ msgstr "Schreib Johanna"
 
 msgid "Year"
 msgstr "Jahr"
+
+msgid "Yes, unsubscribe me"
+msgstr "Ja, bitte abmelden"
+
+msgid "You are already on the list."
+msgstr "Du bist schon auf der Liste."
+
+msgid "You are subscribed."
+msgstr "Du bist angemeldet."
+
+msgid "You are unsubscribed."
+msgstr "Du bist abgemeldet."
 
 msgid "You can now log in with your new password."
 msgstr "Du kannst dich jetzt mit deinem neuen Passwort anmelden."
@@ -1045,6 +1105,9 @@ msgstr "Deine Angaben werden nur verwendet, um dir zu antworten. Dein Referenzfo
 
 msgid "Your downloads"
 msgstr "Deine Downloads"
+
+msgid "Your email"
+msgstr "Deine E-Mail"
 
 msgid "Your message"
 msgstr "Deine Nachricht"

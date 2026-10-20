@@ -1,0 +1,10 @@
+{% autoescape off %}Hello,
+
+thank you for wanting to hear from the studio! Please confirm your email address with this link:
+
+{{ confirm_url }}
+
+If you did not sign up, just ignore this email and nothing will happen.
+
+Johanna Lackner
+{% endautoescape %}

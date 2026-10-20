@@ -2736,6 +2736,35 @@ img[loading="lazy"].is-loaded {
   border-radius: 4px;
 }
 
+/* ---------- Newsletter -------------------------------------------------------- */
+
+.newsletter {
+  margin: 1.2rem 0 0.4rem;
+  max-width: 24rem;
+}
+.newsletter-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-family: var(--font-hand);
+  font-size: 1.4rem;
+  color: var(--c-on-deep);
+}
+.newsletter-row {
+  display: flex;
+  gap: 0.5rem;
+}
+.newsletter-row .form-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.6rem 0.9rem;
+}
+.newsletter small {
+  display: block;
+  margin-top: 0.4rem;
+  opacity: 0.7;
+  font-size: 0.8rem;
+}
+
 /* ---------- Instagram -------------------------------------------------------- */
 
 .btn-icon {

@@ -1,0 +1,11 @@
+{% load i18n %}
+<form class="newsletter" method="post" action="{% url 'newsletter:subscribe' %}">
+    {% csrf_token %}
+    <label class="newsletter-label" for="nl-email-{{ nl_id|default:'f' }}">{% trans "Letters from the studio" %}</label>
+    <div class="newsletter-row">
+        <input id="nl-email-{{ nl_id|default:'f' }}" class="form-input" type="email" name="email" required placeholder="{% trans 'Your email' %}" autocomplete="email">
+        <input type="text" name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+        <button class="btn btn--sm" type="submit">{% trans "Subscribe" %}</button>
+    </div>
+    <small>{% trans "New work and notes now and then. Unsubscribe any time." %}</small>
+</form>

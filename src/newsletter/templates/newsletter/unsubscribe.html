@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Unsubscribe" %}{% endblock %}
+{% block content %}
+<section class="section error-page">
+    <div class="shell">
+        <h1 class="h2">{% trans "Leave the newsletter?" %}</h1>
+        <p class="lede" style="margin-inline:auto">{{ subscriber.email }}</p>
+        <form method="post" class="btn-row" style="justify-content:center">
+            {% csrf_token %}
+            <button class="btn" type="submit">{% trans "Yes, unsubscribe me" %}</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

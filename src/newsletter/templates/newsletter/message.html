@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n site_tags %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<section class="section error-page">
+    <div class="shell">
+        <div class="error-art" aria-hidden="true">
+            <svg class="splash" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
+                <path class="splash-a" d="M70 150c-10-60 50-110 120-100s150 20 160 90-40 120-120 120S80 220 70 150Z"/>
+                <path class="splash-b" d="M120 120c20-40 90-60 130-30s50 80 10 110-110 20-130-20 -30-30-10-60Z"/>
+                <circle class="drop d1" cx="330" cy="70" r="9"/>
+            </svg>
+            <div class="code" style="font-size:clamp(3rem,10vw,5rem)">✉</div>
+        </div>
+        <h1 class="h2">{{ title }}</h1>
+        <p class="lede" style="margin-inline:auto">{{ text }}</p>
+        <p class="btn-row" style="justify-content:center">
+            <a class="btn" href="{% home_url %}">{% trans "Back to the start" %} <span class="arrow" aria-hidden="true">→</span></a>
+        </p>
+    </div>
+</section>
+{% endblock %}
