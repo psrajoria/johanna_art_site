@@ -509,6 +509,9 @@ msgstr "Link zu einer Vorlage (optional)"
 msgid "Lithuania"
 msgstr "Litauen"
 
+msgid "Loads from YouTube when you press play."
+msgstr "Wird erst von YouTube geladen, wenn du auf Play drückst."
+
 msgid "Log in"
 msgstr "Anmelden"
 
@@ -703,6 +706,9 @@ msgstr "Ort"
 
 msgid "Place order"
 msgstr "Verbindlich bestellen"
+
+msgid "Play video"
+msgstr "Video abspielen"
 
 msgid "Please accept the terms to place your order."
 msgstr "Bitte akzeptiere die AGB, um zu bestellen."

@@ -67,3 +67,29 @@ class InstagramTests(TestCase):
         response = self.client.get("/")
         self.assertContains(response, "https://www.instagram.com/p/xyz/")
         self.assertContains(response, "Morning wash")
+
+
+class VideoBlockTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        call_command("seed_site", verbosity=0)
+
+    def test_youtube_block_waits_for_a_click_and_uses_the_privacy_domain(self):
+        import json
+
+        from wagtail.images.models import Image
+        from wagtail.images.tests.utils import get_test_image_file
+
+        from home.models import StandardPage
+
+        image = Image.objects.create(title="Poster", file=get_test_image_file())
+        about = StandardPage.objects.filter(locale__language_code="en").first()
+        about.body = json.dumps([{"type": "video", "value": {
+            "poster": image.pk, "video_file": None,
+            "youtube_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "caption": "Time-lapse"}}])
+        about.save_revision().publish()
+        about.refresh_from_db()
+        html = self.client.get(about.url).content.decode()
+        self.assertIn('data-youtube="dQw4w9WgXcQ"', html)
+        self.assertIn("Time-lapse", html)
+        self.assertNotIn("<iframe", html)  # nothing is loaded from YouTube until the visitor presses play

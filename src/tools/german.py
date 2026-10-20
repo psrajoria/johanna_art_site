@@ -74,6 +74,8 @@ GERMAN = {
     "Enlarge image": "Bild vergrößern",
     "Click to enlarge": "Zum Vergrößern klicken",
     "Just keep layering": "Just keep layering",
+    "Play video": "Video abspielen",
+    "Loads from YouTube when you press play.": "Wird erst von YouTube geladen, wenn du auf Play drückst.",
     "Kind words": "Liebe Worte",
     "From people who took a painting home.": "Von Menschen, die ein Bild mit nach Hause genommen haben.",
     "How did it go?": "Wie war es?",

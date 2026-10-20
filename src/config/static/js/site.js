@@ -382,6 +382,21 @@
     });
   });
 
+  /* ---- Videos from YouTube load only when asked for -------------------- */
+  document.querySelectorAll("[data-youtube]").forEach(function (box) {
+    var button = box.querySelector(".video-play");
+    if (!button) return;
+    button.addEventListener("click", function () {
+      var frame = document.createElement("iframe");
+      frame.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(box.getAttribute("data-youtube")) + "?autoplay=1&rel=0";
+      frame.allow = "autoplay; encrypted-media; picture-in-picture";
+      frame.allowFullscreen = true;
+      frame.title = box.querySelector("img").alt || "Video";
+      box.innerHTML = "";
+      box.appendChild(frame);
+    });
+  });
+
   /* ---- Hearts: remembered on this device, counted anonymously ---------- */
   function report(name, page, label) {
     try {

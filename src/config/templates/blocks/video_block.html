@@ -1,0 +1,18 @@
+{% load wagtailimages_tags i18n %}
+{% image value.poster width-1400 format-webp as poster %}
+<figure class="video-block">
+    {% if value.video_file %}
+    <video controls playsinline preload="none" poster="{{ poster.url }}">
+        <source src="{{ value.video_file.url }}" type="video/mp4">
+    </video>
+    {% elif youtube_id %}
+    <div class="video-embed" data-youtube="{{ youtube_id }}">
+        <img src="{{ poster.url }}" width="{{ poster.width }}" height="{{ poster.height }}" alt="{{ value.caption }}" loading="lazy">
+        <button type="button" class="video-play" aria-label="{% trans 'Play video' %}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+        </button>
+        <small class="video-note">{% trans "Loads from YouTube when you press play." %}</small>
+    </div>
+    {% endif %}
+    {% if value.caption %}<figcaption>{{ value.caption }}</figcaption>{% endif %}
+</figure>

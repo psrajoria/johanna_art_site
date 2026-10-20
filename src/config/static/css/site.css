@@ -2736,6 +2736,75 @@ img[loading="lazy"].is-loaded {
   border-radius: 4px;
 }
 
+/* ---------- Video ---------------------------------------------------------------- */
+
+.video-block {
+  margin: 2rem 0;
+}
+.video-block video,
+.video-embed {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  background: var(--c-paper-3);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.video-embed {
+  position: relative;
+}
+.video-embed img,
+.video-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: cover;
+}
+.video-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: 50%;
+  background: var(--c-terracotta);
+  color: #fff;
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+  transition: transform 0.35s var(--ease);
+}
+.video-play:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+.video-play svg {
+  width: 34px;
+  height: 34px;
+  fill: currentColor;
+}
+.video-note {
+  position: absolute;
+  left: 0.8rem;
+  bottom: 0.6rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: rgb(0 0 0 / 0.55);
+  color: #fff;
+}
+.video-block figcaption {
+  margin-top: 0.6rem;
+  font-family: var(--font-hand);
+  font-size: 1.3rem;
+  text-align: center;
+  color: var(--c-ink-2);
+}
+
 /* ---------- Kind words ---------------------------------------------------------- */
 
 .testimonial-grid {

@@ -1,6 +1,9 @@
 from django.utils.translation import gettext_lazy as _
 
+import re
+
 from wagtail import blocks
+from wagtail.documents.blocks import DocumentChooserBlock
 from wagtail.images.blocks import ImageChooserBlock
 
 
@@ -18,6 +21,37 @@ class ImageWithCaptionBlock(blocks.StructBlock):
         icon = "image"
         label = _("Image")
         template = "blocks/image_block.html"
+
+
+YOUTUBE_ID = re.compile(r"(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|shorts/))([\w-]{11})")
+
+
+class VideoBlock(blocks.StructBlock):
+    """A time-lapse or studio clip: an uploaded video file, or a YouTube link that only loads on click."""
+
+    poster = ImageChooserBlock(label=_("Cover image"))
+    video_file = DocumentChooserBlock(
+        required=False,
+        label=_("Video file (MP4)"),
+        help_text=_("Upload an .mp4 under Documents and choose it here. Keep it short (under 50 MB)."),
+    )
+    youtube_url = blocks.URLBlock(
+        required=False,
+        label=_("or YouTube link"),
+        help_text=_("Only used when no video file is chosen. Visitors only contact YouTube when they press play."),
+    )
+    caption = blocks.CharBlock(required=False)
+
+    def get_context(self, value, parent_context=None):
+        context = super().get_context(value, parent_context)
+        match = YOUTUBE_ID.search(value.get("youtube_url") or "")
+        context["youtube_id"] = match.group(1) if match else ""
+        return context
+
+    class Meta:
+        icon = "media"
+        label = _("Video")
+        template = "blocks/video_block.html"
 
 
 class QuoteBlock(blocks.StructBlock):
@@ -106,6 +140,7 @@ def body_blocks():
         ("image", ImageWithCaptionBlock()),
         ("quote", QuoteBlock()),
         ("button", ButtonBlock()),
+        ("video", VideoBlock()),
     ]
 
 
