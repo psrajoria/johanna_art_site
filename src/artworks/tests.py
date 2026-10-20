@@ -22,6 +22,11 @@ class PlacesTests(TestCase):
 
 
 class ArtworkPageFeatureTests(TestCase):
+    def setUp(self):
+        from django.utils import translation
+
+        translation.activate("en")
+
     @classmethod
     def setUpTestData(cls):
         call_command("seed_site", verbosity=0)

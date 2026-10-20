@@ -1,12 +1,16 @@
 from django.core import mail
 from django.core.management import call_command
 from django.test import TestCase
+from django.utils import translation
 
 from newsletter.models import Campaign, Subscriber
 from shop.tests import make_artwork
 
 
 class NewsletterTests(TestCase):
+    def setUp(self):
+        translation.activate("en")
+
     @classmethod
     def setUpTestData(cls):
         call_command("seed_site", verbosity=0)

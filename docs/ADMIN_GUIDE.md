@@ -160,6 +160,75 @@ remembered on their device. You don't need to do anything.
 
 ---
 
+## More things the site can do
+
+### See who visits: **Insights**
+Left menu, **Insights** (and a small box on your dashboard). It shows visitors per day,
+which artworks are looked at most, which are **loved** (visitors can tap the ♥), what gets
+added to the cart, where people come from (Instagram, Google, typed in) and phone vs computer.
+Nothing personal is stored: no cookies, no IP addresses, and your own visits are not counted.
+
+### Instagram (@from.j2l)
+- Her profile is linked in the footer and in a **Follow** strip on the homepage.
+- **Pick posts by hand:** Pages, Home, section *Instagram strip*. Add a photo from a post and
+  paste the post's link. Up to 9.
+- **Automatic:** once her Instagram is a Creator or Business account, paste the access token
+  in Settings, Site settings, and new posts appear by themselves (your site helper sets this up).
+
+### Newsletter
+- A sign-up box is in the footer. People confirm by email first (required by law).
+- **Newsletter, Newsletters, Add:** write a few warm words, optionally choose an artwork, and
+  type your own email under *Send a test to*. Save, check your inbox. When happy, tick
+  **Send to all subscribers now** and save. It can only be sent once.
+- **Subscribers** lists everyone and has a **Download** button (CSV or Excel).
+
+### Discount codes and gift cards
+**Shop, Discount codes & gift cards, Add.** Choose *percent off*, *fixed amount*, *free
+shipping* or *gift card* (the balance is used up over several orders). Optional: minimum order,
+last day, how many times it may be used. Customers type the code in their cart.
+A cancelled order gives the code (or gift card balance) back.
+
+### Waiting list
+When a print is sold out or an original is reserved, visitors can leave their email to be told
+when it is available again. They get an email automatically as soon as you restock or release
+it. **Shop, Waiting list** shows who is waiting.
+
+### Invoices, packing slips and exports
+- Fill in **Settings, Shop settings, Business details** once (name, address, tax number).
+- Open a **paid** order: under *Documents* click **Invoice (PDF)** or **Packing slip (PDF)**.
+  Invoice numbers count up by themselves (R-2026-0001, 0002 ...). Customers also get a download
+  link on their order page.
+- **Orders** and **Messages & commissions** have a **Download** button (CSV/Excel) for your
+  tax advisor.
+
+### Commissions: progress photos, deposit, rough price
+- In a commission, scroll to **Progress photos**, add a photo and a few words. The customer sees
+  it on their private page and (if ticked) gets an email.
+- **Deposit asked (€)**: the quote email then says "this much now, the rest when it is finished".
+- On the contact form, visitors choose a size and see a **rough price**. Change the base price and
+  price per 100 cm² in Settings, Shop settings. Set both to 0 to hide the estimate.
+
+### Collections, kind words, studio videos
+- **Collections** (left menu): create a series such as *Summer in Lisbon*, with its own colour wash,
+  then pick it on each artwork. Visitors can filter the gallery by collection.
+- **Kind words:** after an order ships, customers can leave a review on their order page. It stays
+  hidden until you tick **Show on the site** (Shop, Kind words). You can also add one yourself.
+- **Videos:** in any page, add a **Video** block: upload an .mp4 (Documents) or paste a YouTube link.
+  YouTube only loads when a visitor presses play.
+
+### Things visitors can do that you don't need to manage
+- **See it on your wall:** visitors upload a photo of their wall (it never leaves their device) and
+  see the painting at true size. It appears when an artwork has its size filled in.
+- **Sketchbook map:** the homepage shows the places of your artworks automatically. If a place is
+  missing, tell your site helper.
+- **Light/dark button** in the header, plus colour palettes.
+
+### Morning email
+Every morning at about 7 you get a short email: orders to ship, new messages, commissions in
+progress, running-low stock and yesterday's visitors.
+
+---
+
 ## If something goes wrong
 
 - *"I made a mistake on a page"* → open the page, **History** shows older versions

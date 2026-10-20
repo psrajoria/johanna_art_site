@@ -202,14 +202,17 @@
   }
 
   /* ---- Lazy images fade in -------------------------------------------- */
-  document.querySelectorAll('img[loading="lazy"]').forEach(function (img) {
-    function done() { img.classList.add("is-loaded"); }
-    if (img.complete) done();
-    else {
-      img.addEventListener("load", done, { once: true });
-      img.addEventListener("error", done, { once: true });   // never leave a broken image invisible
-    }
-  });
+  function watchImages(root) {
+    (root || document).querySelectorAll('img[loading="lazy"]:not(.is-loaded)').forEach(function (img) {
+      function done() { img.classList.add("is-loaded"); }
+      if (img.complete) done();
+      else {
+        img.addEventListener("load", done, { once: true });
+        img.addEventListener("error", done, { once: true });   // never leave a broken image invisible
+      }
+    });
+  }
+  watchImages();
 
   /* ---- Hero card follows the pointer ---------------------------------- */
   var heroArt = document.querySelector(".hero-art");
@@ -508,21 +511,22 @@
 
   var likes = [];
   try { likes = JSON.parse(localStorage.getItem("jl-likes") || "[]"); } catch (e) {}
-  document.querySelectorAll("[data-like]").forEach(function (btn) {
-    var id = btn.getAttribute("data-like");
-    function paint() { btn.setAttribute("aria-pressed", String(likes.indexOf(id) > -1)); }
-    paint();
-    btn.addEventListener("click", function (e) {
-      e.preventDefault();
-      var i = likes.indexOf(id);
-      if (i > -1) { likes.splice(i, 1); report("unlike", id); }
-      else { likes.push(id); report("like", id); }
-      try { localStorage.setItem("jl-likes", JSON.stringify(likes)); } catch (err) {}
-      // every heart for the same artwork on this page stays in step
-      document.querySelectorAll('[data-like="' + id + '"]').forEach(function (b) {
-        b.setAttribute("aria-pressed", String(likes.indexOf(id) > -1));
-      });
+  function paintHearts(root) {
+    (root || document).querySelectorAll("[data-like]").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(likes.indexOf(btn.getAttribute("data-like")) > -1));
     });
+  }
+  paintHearts();
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-like]");
+    if (!btn) return;
+    e.preventDefault();
+    var id = btn.getAttribute("data-like");
+    var i = likes.indexOf(id);
+    if (i > -1) { likes.splice(i, 1); report("unlike", id); }
+    else { likes.push(id); report("like", id); }
+    try { localStorage.setItem("jl-likes", JSON.stringify(likes)); } catch (err) {}
+    paintHearts();   // every heart for the same artwork stays in step
   });
 
   /* anything marked data-track reports a click (e.g. the Instagram links) */
@@ -530,6 +534,40 @@
     var el = e.target.closest("[data-track]");
     if (el) report(el.getAttribute("data-track"), "", el.getAttribute("data-track-label") || "");
   });
+
+  /* ---- Gallery filters and pages update without reloading -------------- */
+  var gallery = document.querySelector("[data-gallery]");
+  if (gallery && window.fetch && window.DOMParser) {
+    var loadGallery = function (url, push) {
+      gallery.classList.add("is-loading");
+      fetch(url, { headers: { "X-Requested-With": "fetch" }, credentials: "same-origin" })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+        .then(function (html) {
+          var next = new DOMParser().parseFromString(html, "text/html").querySelector("[data-gallery]");
+          if (!next) throw new Error("no gallery");
+          gallery.innerHTML = next.innerHTML;
+          gallery.querySelectorAll("[data-reveal]").forEach(function (el, i) {
+            el.style.setProperty("--d", i % 6);
+            el.classList.add("is-visible");
+          });
+          watchImages(gallery);
+          paintHearts(gallery);
+          if (push) history.pushState({ gallery: true }, "", url);
+          var top = gallery.getBoundingClientRect().top + window.scrollY - 90;
+          if (top < window.scrollY) window.scrollTo({ top: Math.max(top, 0), behavior: reduceMotion ? "auto" : "smooth" });
+        })
+        .catch(function () { window.location.href = url; })
+        .then(function () { gallery.classList.remove("is-loading"); });
+    };
+    gallery.addEventListener("click", function (e) {
+      var link = e.target.closest("a.chip, .pagination a, a.link-arrow");
+      if (!link || e.metaKey || e.ctrlKey || e.shiftKey || link.target) return;
+      if (link.origin !== location.origin || link.pathname !== location.pathname) return;
+      e.preventDefault();
+      loadGallery(link.href, true);
+    });
+    window.addEventListener("popstate", function () { loadGallery(location.href, false); });
+  }
 
   /* ---- Instant navigation: fetch a page when the pointer/finger approaches */
   if (!(navigator.connection && navigator.connection.saveData)) {

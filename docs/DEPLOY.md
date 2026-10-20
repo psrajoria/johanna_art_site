@@ -100,6 +100,18 @@ docker compose up -d
 ```
 (The volume name is `<folder>_data`; check with `docker volume ls`.)
 
+### Daily jobs (nothing to set up)
+The `scheduler` container in `docker-compose.yml` runs once a day: the morning email to Johanna,
+the Instagram refresh (only if a token is set), and clean-up of old visit statistics. If you do
+not want it, remove the `scheduler` service.
+
+### Instagram automatic feed (optional, about 10 minutes)
+1. Johanna switches her Instagram to a **Creator** or **Business** account (free, in the app).
+2. At developers.facebook.com create an app, add the *Instagram API with Instagram Login* product,
+   and generate a long-lived access token for her account.
+3. Paste the token in Admin, Settings, Site settings, *Instagram access token*.
+The scheduler renews the token before it expires and downloads her newest posts.
+
 ## 7. Updating the site later
 
 ```bash

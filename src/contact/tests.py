@@ -5,6 +5,7 @@ from django.core.cache import cache
 from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import translation
 from wagtail.images.models import Image
 from wagtail.images.tests.utils import get_test_image_file
 
@@ -27,6 +28,7 @@ class ContactTestCase(TestCase):
         call_command("seed_site", verbosity=0)
 
     def setUp(self):
+        translation.activate("en")
         cache.clear()
 
     def commission(self, **fields):

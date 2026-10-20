@@ -20,6 +20,10 @@ and five colour palettes. Johanna manages everything from the Wagtail admin; no 
   workflow, private status page for the customer
 - **Blog** — posts, tags, RSS
 - **Admin dashboard** — what needs attention, plus launch warnings
+- **Insights** — privacy-friendly visit statistics, hearts, what gets added to carts
+- **Marketing** — newsletter (double opt-in), Instagram strip, discount codes and gift cards, waiting list
+- **Paperwork** — PDF invoices and packing slips, CSV/Excel exports, morning digest email
+- **Her touch** — sketch-to-finished slider, colour dots, wall preview, sketchbook map, collections, kind words
 - **i18n** — English at `/`, German at `/de/`; page translations edited side by side
 - **Appearance** — Light/Dark/Auto + 5 palettes, remembered per visitor
 - **Privacy-friendly** — self-hosted fonts, no tracking cookies

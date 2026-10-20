@@ -2665,12 +2665,31 @@ select.form-input {
   transform: none;
 }
 
-img[loading="lazy"] {
+/* images fade in once loaded; without JavaScript they are simply visible */
+.js img[loading="lazy"] {
   opacity: 0;
   transition: opacity 0.8s ease;
 }
-img[loading="lazy"].is-loaded {
+.js img[loading="lazy"].is-loaded {
   opacity: 1;
+}
+
+/* paintings bloom open like a wet wash spreading across the paper */
+.js .art-frame img[loading="lazy"],
+.js .photo-card img[loading="lazy"] {
+  clip-path: circle(0% at 50% 58%);
+  transition: opacity 0.7s ease, clip-path 1.3s var(--ease);
+}
+.js .art-frame img[loading="lazy"].is-loaded,
+.js .photo-card img[loading="lazy"].is-loaded {
+  clip-path: circle(78% at 50% 50%);
+}
+[data-gallery] {
+  transition: opacity 0.25s;
+}
+[data-gallery].is-loading {
+  opacity: 0.45;
+  pointer-events: none;
 }
 
 /* below-the-fold sections are rendered only when they get close */
@@ -2777,6 +2796,10 @@ img[loading="lazy"].is-loaded {
   text-decoration: none;
   animation: pop 0.5s var(--ease) both;
   animation-delay: calc(var(--i) * 90ms + 300ms);
+}
+.map-pin--left {
+  flex-direction: row-reverse;
+  transform: translate(calc(-100% + 7px), -50%);
 }
 .map-dot {
   flex: none;
@@ -3540,9 +3563,10 @@ html[data-theme="dark"] .mode-toggle .i-moon {
     scroll-behavior: auto !important;
   }
   .js [data-reveal],
-  img[loading="lazy"] {
+  .js img[loading="lazy"] {
     opacity: 1;
     transform: none;
+    clip-path: none !important;
   }
   .brush path {
     stroke-dashoffset: 0;

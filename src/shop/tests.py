@@ -9,6 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.management import call_command
 from django.test import TestCase, override_settings
+from django.utils import translation
 from django.utils import timezone
 from django.urls import reverse
 from wagtail.images.tests.utils import get_test_image_file
@@ -63,6 +64,9 @@ CHECKOUT = {
 
 @override_settings(PRIVATE_MEDIA_ROOT=PRIVATE_ROOT)
 class ShopTestCase(TestCase):
+    def setUp(self):
+        translation.activate("en")  # an earlier test may have left German switched on
+
     @classmethod
     def setUpTestData(cls):
         call_command("seed_site", verbosity=0)

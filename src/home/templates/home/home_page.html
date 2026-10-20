@@ -153,11 +153,10 @@
                     {% for i in "123456789" %}<line x1="{% widthratio forloop.counter 10 sketch_map.width %}" y1="0" x2="{% widthratio forloop.counter 10 sketch_map.width %}" y2="{{ sketch_map.height }}"/>{% endfor %}
                     {% for i in "1234" %}<line x1="0" y1="{% widthratio forloop.counter 5 sketch_map.height %}" x2="{{ sketch_map.width }}" y2="{% widthratio forloop.counter 5 sketch_map.height %}"/>{% endfor %}
                 </g>
-                {% for pin in sketch_map.pins %}<circle cx="{{ pin.x }}" cy="{{ pin.y }}" r="{% if pin.count > 2 %}74{% else %}56{% endif %}" fill="url(#wash{{ forloop.counter }})"/>{% endfor %}
-                <polyline class="map-route" points="{{ sketch_map.route }}" pathLength="1"/>
+                {% for pin in sketch_map.pins %}<circle cx="{{ pin.x }}" cy="{{ pin.y }}" r="{% if pin.count > 2 %}96{% else %}74{% endif %}" fill="url(#wash{{ forloop.counter }})"/><circle cx="{{ pin.x|add:'22' }}" cy="{{ pin.y|add:'-14' }}" r="48" fill="url(#wash{{ forloop.counter }})" opacity=".7"/>{% endfor %}
             </svg>
             {% for pin in sketch_map.pins %}
-            <a class="map-pin" href="{{ pin.url }}" style="left:{{ pin.left }}%;top:{{ pin.top }}%;--pin:{{ pin.colour }};--i:{{ forloop.counter0 }}">
+            <a class="map-pin{% if pin.flip %} map-pin--left{% endif %}" href="{{ pin.url }}" style="left:{{ pin.left }}%;top:{{ pin.top }}%;--pin:{{ pin.colour }};--i:{{ forloop.counter0 }}">
                 <span class="map-dot"></span>
                 <span class="map-label">{{ pin.place }}{% if pin.count > 1 %} <small>· {{ pin.count }}</small>{% endif %}</span>
             </a>

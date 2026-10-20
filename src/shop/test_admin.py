@@ -171,6 +171,8 @@ class InquiryTests(AdminTestCase):
                 "status": "quoted", "inquiry_type": "commission", "artwork": "",
                 "quote_amount": "180.00", "quote_message": "Happy to!", "carrier": "",
                 "tracking_number": "", "internal_notes": "",
+                "updates-TOTAL_FORMS": "0", "updates-INITIAL_FORMS": "0",
+                "updates-MIN_NUM_FORMS": "0", "updates-MAX_NUM_FORMS": "1000",
             })
         self.assertEqual(response.status_code, 302, response.content.decode()[:200] if response.status_code != 302 else "")
         self.assertEqual(len(mail.outbox), 1)

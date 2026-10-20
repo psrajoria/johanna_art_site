@@ -9,6 +9,11 @@ from home.models import HomePage, InstagramPost, SiteSettings
 
 
 class InstagramTests(TestCase):
+    def setUp(self):
+        from django.utils import translation
+
+        translation.activate("en")
+
     @classmethod
     def setUpTestData(cls):
         call_command("seed_site", verbosity=0)
@@ -70,6 +75,11 @@ class InstagramTests(TestCase):
 
 
 class VideoBlockTests(TestCase):
+    def setUp(self):
+        from django.utils import translation
+
+        translation.activate("en")
+
     @classmethod
     def setUpTestData(cls):
         call_command("seed_site", verbosity=0)

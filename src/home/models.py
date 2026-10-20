@@ -201,9 +201,14 @@ class HomePage(Page):
             pin["colour"] = pin["colour"] or "#c4553b"
             if gallery_page:
                 pin["url"] = f"{gallery_page.url}?place={quote(pin['place'])}"
+        # keep neighbouring labels from covering each other: flip one of them to the left
+        for i, pin in enumerate(pins):
+            pin["flip"] = any(
+                abs(pin["x"] - other["x"]) < 120 and abs(pin["y"] - other["y"]) < 28 and not other["flip"]
+                for other in pins[:i]
+            )
         return {
             "pins": pins,
-            "route": " ".join(f"{p['x']},{p['y']}" for p in pins),
             "width": int(width),
             "height": int(height),
         }

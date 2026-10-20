@@ -34,6 +34,21 @@ Status: ✅ done · 🟡 partly · ⬜ not started · 🔒 blocked until we get 
 
 ---
 
+## 2a. Added in the second round ✅
+
+Privacy-friendly **Insights** (visits, hearts, carts, referrers) · **Instagram** strip and footer
+link, hand-picked or automatic · **Newsletter** with double opt-in · **Discount codes, free-shipping
+codes and gift cards** · **Waiting list** for sold-out work · **PDF invoices and packing slips**
+with sequential numbers · **CSV/Excel exports** · **Morning digest email** and daily scheduler ·
+**Commission tools** (progress photos, deposit, visual size picker with rough price) ·
+**Collections** · **Customer reviews** with approval · **Video block** (own file or click-to-load
+YouTube) · **Wall preview** · **Sketchbook map** · gallery filters without page reloads ·
+watercolour bloom image reveal · styled error pages · one-click light/dark button.
+
+Still open: real automatic payments (needs her PayPal/Stripe account and keys), real handwriting,
+palette and photos (see section 1), selling gift cards as a product (gift card codes can be created
+by hand today).
+
 ## 2. What is built ✅
 
 | Area | Details |

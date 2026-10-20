@@ -13,6 +13,11 @@ UA = {"HTTP_USER_AGENT": "Mozilla/5.0 (Windows NT 10.0) Chrome/120"}
 
 
 class AnalyticsTests(TestCase):
+    def setUp(self):
+        from django.utils import translation
+
+        translation.activate("en")
+
     @classmethod
     def setUpTestData(cls):
         call_command("seed_site", verbosity=0)
@@ -57,6 +62,11 @@ class AnalyticsTests(TestCase):
 
 
 class DigestTests(TestCase):
+    def setUp(self):
+        from django.utils import translation
+
+        translation.activate("en")
+
     @classmethod
     def setUpTestData(cls):
         call_command("seed_site", verbosity=0)
