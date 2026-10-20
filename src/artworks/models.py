@@ -159,6 +159,14 @@ class ArtworkPage(Page):
         "angle. Visitors can drag a slider from the sketch to the finished painting.",
     )
 
+    price_visible = models.BooleanField(
+        "show price and allow buying",
+        default=True,
+        help_text="Untick to keep the price private: visitors then see 'Price on request' "
+        "and can message you instead. Buying is switched off while this is unticked. "
+        "(Set this on the English page; the German page follows it.)",
+    )
+
     palette = models.CharField(
         max_length=80,
         blank=True,
@@ -248,6 +256,7 @@ class ArtworkPage(Page):
             [
                 FieldPanel("category"),
                 FieldPanel("status"),
+                FieldPanel("price_visible"),
                 FieldPanel("featured"),
             ],
             heading="Gallery settings",
@@ -289,6 +298,10 @@ class ArtworkPage(Page):
             ).first()
             or self
         )
+
+    @property
+    def prices_shown(self):
+        return self.commerce_page.price_visible
 
     @property
     def palette_list(self):
@@ -354,6 +367,8 @@ class ArtworkPage(Page):
 
     @cached_property
     def purchasable_offers(self):
+        if not self.prices_shown:
+            return []
         return [o for o in self.active_offers if o.is_purchasable(self.status)]
 
     @property
@@ -385,6 +400,9 @@ class ArtworkPage(Page):
                 if self.status == self.STATUS_NOT_FOR_SALE
                 else (self.status, self.get_status_display())
             )
+
+        if self.active_offers and not self.prices_shown:
+            badges.append(("extra", _("Price on request")))
 
         for kind, text in (
             (Offer.KIND_PRINT, _("Prints")),
@@ -557,7 +575,7 @@ class Offer(Orderable):
         return label or self.get_kind_display()
 
     def is_purchasable(self, artwork_status):
-        if not self.is_active:
+        if not self.is_active or not self.artwork.price_visible:
             return False
         if self.kind == self.KIND_ORIGINAL:
             return artwork_status == ArtworkPage.STATUS_AVAILABLE

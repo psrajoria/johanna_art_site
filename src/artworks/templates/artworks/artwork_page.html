@@ -100,7 +100,13 @@
                     {% if page.year %}<div><dt>{% trans "Year" %}</dt><dd>{{ page.year }}</dd></div>{% endif %}
                 </dl>
 
-                {% if offers %}
+                {% if offers and not page.prices_shown %}
+                <div class="offers card price-request">
+                    <h2 class="offers-title">{% trans "Price on request" %}</h2>
+                    <p>{% trans "Johanna shares the price personally. Send a short message and you will get an answer soon." %}</p>
+                    <a class="btn btn--sm" href="{% url 'contact:inquiry' %}?artwork={{ page.id }}">{% trans "Ask for the price" %}</a>
+                </div>
+                {% elif offers %}
                 <div class="offers">
                     <h2 class="offers-title">{% trans "Ways to take it home" %}</h2>
                     {% for offer in offers %}

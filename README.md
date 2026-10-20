@@ -7,6 +7,7 @@ and five colour palettes. Johanna manages everything from the Wagtail admin; no 
 | Doc | For |
 |---|---|
 | [`docs/ADMIN_GUIDE.md`](docs/ADMIN_GUIDE.md) | Johanna — how to run the site day to day |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md) | What we need, what's built, what's next |
 | [`docs/DEPLOY.md`](docs/DEPLOY.md) | Putting it online, backups, updates, local development |
 
 ## What's inside

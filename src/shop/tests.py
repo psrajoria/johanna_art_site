@@ -310,6 +310,20 @@ class CheckoutViewTests(ShopTestCase):
         self.assertEqual(Order.objects.get().language, "de")
 
 
+class HiddenPriceTests(ShopTestCase):
+    def test_hidden_price_blocks_buying_and_hides_prices(self):
+        ArtworkPage.objects.filter(pk=self.artwork.pk).update(price_visible=False)
+        page = ArtworkPage.objects.get(pk=self.artwork.pk)
+        self.assertEqual(page.purchasable_offers, [])
+        self.assertIsNone(page.from_price)
+        self.client.post(reverse("shop:cart_add", args=[self.print_a4.pk]))
+        self.assertNotContains(self.client.get(reverse("shop:cart")), "Test Artwork")
+        page_html = self.client.get(page.url).content.decode()
+        self.assertIn("Price on request", page_html)
+        self.assertNotIn("Add to cart", page_html)
+        self.assertNotIn("24.00", page_html)
+
+
 class AccountTests(ShopTestCase):
     def test_registering_claims_orders_placed_as_guest(self):
         self.client.post(reverse("shop:cart_add", args=[self.print_a4.pk]))

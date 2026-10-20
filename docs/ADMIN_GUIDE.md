@@ -47,6 +47,14 @@ Yellow ⚠️ boxes there tell you about things still to finish before launch.
 
 **Tip:** you can *Save draft* and publish later. Visitors only see published pages.
 
+### Hide the price, or show the sketch
+- **Gallery settings → "show price and allow buying"**: untick it and the price disappears
+  everywhere. Visitors see *Price on request* and a button to message you instead.
+  Buying is switched off while it is unticked. Tick it again any time.
+- **Sketch image** (in *Artwork story*): add a photo of your pencil sketch or first wash,
+  taken from the same angle. Visitors get a slider to drag from sketch to finished painting.
+- The **colour dots** under each painting are found automatically — nothing to do.
+
 ### Extra images
 Use *Extra images / process images* to add detail shots or work-in-progress photos.
 

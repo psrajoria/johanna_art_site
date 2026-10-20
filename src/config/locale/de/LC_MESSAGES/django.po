@@ -68,6 +68,9 @@ msgstr "Frage stellen"
 msgid "Ask about an artwork"
 msgstr "Frage zu einem Werk"
 
+msgid "Ask for the price"
+msgstr "Preis anfragen"
+
 msgid "Atelier"
 msgstr "Atelier"
 
@@ -410,6 +413,9 @@ msgstr "Japan"
 msgid "Johanna Lackner — from the sketchbook"
 msgstr "Johanna Lackner — aus dem Skizzenbuch"
 
+msgid "Johanna shares the price personally. Send a short message and you will get an answer soon."
+msgstr "Johanna nennt den Preis persönlich. Schick eine kurze Nachricht und du bekommst bald eine Antwort."
+
 msgid "Just keep layering"
 msgstr "Just keep layering"
 
@@ -646,6 +652,9 @@ msgstr "Zurück"
 
 msgid "Price and timeline, no obligation."
 msgstr "Preis und Zeitplan, unverbindlich."
+
+msgid "Price on request"
+msgstr "Preis auf Anfrage"
 
 msgid "Print"
 msgstr "Druck"
