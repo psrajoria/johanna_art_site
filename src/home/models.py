@@ -173,6 +173,41 @@ class HomePage(Page):
         ),
     ]
 
+    def sketch_map(self, artworks, gallery_page):
+        """Pins for the 'where the sketchbook has been' map (None when fewer than two places are known)."""
+        from urllib.parse import quote
+
+        from artworks.places import layout, locate
+
+        places = {}
+        for art in artworks.exclude(place="").order_by("year", "first_published_at"):
+            coords = locate(art.place)
+            if not coords:
+                continue
+            key = art.place.strip().lower()
+            entry = places.setdefault(
+                key, {"place": art.place.strip(), "coords": coords, "count": 0, "colour": "", "url": art.url}
+            )
+            entry["count"] += 1
+            if not entry["colour"] and art.palette_list:
+                entry["colour"] = art.palette_list[0]
+        pins = list(places.values())
+        if len(pins) < 2:
+            return None
+        width, height = 1000.0, 560.0
+        for pin, (x, y) in zip(pins, layout([p["coords"] for p in pins], width, height)):
+            pin["x"], pin["y"] = round(x, 1), round(y, 1)
+            pin["left"], pin["top"] = round(x / width * 100, 2), round(y / height * 100, 2)
+            pin["colour"] = pin["colour"] or "#c4553b"
+            if gallery_page:
+                pin["url"] = f"{gallery_page.url}?place={quote(pin['place'])}"
+        return {
+            "pins": pins,
+            "route": " ".join(f"{p['x']},{p['y']}" for p in pins),
+            "width": int(width),
+            "height": int(height),
+        }
+
     def instagram_tiles(self):
         """Posts for the homepage strip: automatic ones if connected, else her manual picks."""
         tiles = []
@@ -220,6 +255,7 @@ class HomePage(Page):
         context["hero_artwork"] = hero_artwork
         context["places"] = places[:14]
         context["instagram_tiles"] = self.instagram_tiles()
+        context["sketch_map"] = self.sketch_map(artworks, context["gallery_page"])
         from shop.models import Testimonial
 
         language = request.LANGUAGE_CODE if hasattr(request, "LANGUAGE_CODE") else "en"

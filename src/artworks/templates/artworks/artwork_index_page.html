@@ -26,6 +26,10 @@
             <a class="link-arrow" href="{% pageurl page %}">{% trans "See everything" %} <span class="arrow">→</span></a>
         </div>
         {% endif %}
+        {% if selected_place %}
+        <p class="place-note">{% blocktrans %}Painted in {{ selected_place }}{% endblocktrans %}
+            <a class="link-arrow" href="{% pageurl page %}">{% trans "See everything" %} <span class="arrow">→</span></a></p>
+        {% endif %}
         <div class="filter-bar">
             {% if collections %}
             <div class="chips">

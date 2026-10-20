@@ -2736,6 +2736,178 @@ img[loading="lazy"].is-loaded {
   border-radius: 4px;
 }
 
+/* ---------- Sketchbook map ------------------------------------------------------ */
+
+.sketch-map {
+  position: relative;
+  aspect-ratio: 1000 / 560;
+  margin-top: 2rem;
+  border-radius: 10px;
+  background: var(--c-card);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.sketch-map svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.map-grid line {
+  stroke: var(--c-line);
+  stroke-width: 1;
+  stroke-dasharray: 2 7;
+}
+.map-route {
+  fill: none;
+  stroke: var(--c-terracotta);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 0.012 0.012;
+  opacity: 0.55;
+}
+.map-pin {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transform: translate(-7px, -50%);
+  text-decoration: none;
+  animation: pop 0.5s var(--ease) both;
+  animation-delay: calc(var(--i) * 90ms + 300ms);
+}
+.map-dot {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--pin);
+  box-shadow: 0 0 0 3px var(--c-card), 0 2px 6px rgb(0 0 0 / 0.3);
+  transition: transform 0.3s var(--ease);
+}
+.map-label {
+  padding: 0.1rem 0.5rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--c-card) 85%, transparent);
+  font-family: var(--font-hand);
+  font-size: clamp(1rem, 2.2vw, 1.4rem);
+  line-height: 1.2;
+  color: var(--c-ink);
+  white-space: nowrap;
+}
+.map-label small {
+  font-family: var(--font-body);
+  font-size: 0.7em;
+  color: var(--c-ink-3);
+}
+.map-pin:hover .map-dot,
+.map-pin:focus-visible .map-dot {
+  transform: scale(1.5);
+}
+.place-note {
+  margin: 0 0 1rem;
+  font-family: var(--font-hand);
+  font-size: 1.5rem;
+}
+
+/* ---------- Wall preview ------------------------------------------------------- */
+
+.wall-open {
+  margin-top: 1rem;
+}
+.wall {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  overflow-y: auto;
+  background: rgb(20 14 10 / 0.78);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: fade 0.3s both;
+}
+.wall[hidden] {
+  display: none;
+}
+.wall-panel {
+  position: relative;
+  width: min(760px, 100%);
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border-radius: 18px;
+  background: var(--c-paper);
+  box-shadow: var(--shadow-lg);
+  animation: zoom-in 0.45s var(--ease) both;
+}
+.wall-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.9rem;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: none;
+  color: var(--c-ink);
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.wall-pick {
+  cursor: pointer;
+}
+.wall-stage {
+  position: relative;
+  margin-top: 1rem;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--c-paper-3);
+  touch-action: none;
+  user-select: none;
+}
+.wall-photo {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.wall-art {
+  position: absolute;
+  cursor: grab;
+  background: #fff;
+  box-shadow: 0 10px 24px rgb(0 0 0 / 0.35), 0 0 0 3px #fff;
+}
+.wall-art:active {
+  cursor: grabbing;
+}
+.wall-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+.wall-controls {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+.wall-controls label {
+  display: grid;
+  gap: 0.3rem;
+  font-weight: 600;
+}
+.wall-range {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-weight: 400;
+}
+.wall-range input {
+  flex: 1;
+}
+
 /* ---------- Video ---------------------------------------------------------------- */
 
 .video-block {

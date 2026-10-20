@@ -397,6 +397,105 @@
     });
   });
 
+  /* ---- Wall preview: the painting at true size on the visitor's own wall - */
+  var wall = document.querySelector("[data-wall]");
+  var wallOpen = document.querySelector("[data-wall-open]");
+  if (wall && wallOpen) {
+    var stage = wall.querySelector("[data-wall-stage]");
+    var photo = wall.querySelector("[data-wall-photo]");
+    var art = wall.querySelector("[data-wall-art]");
+    var artImg = wall.querySelector("[data-wall-art-img]");
+    var controls = wall.querySelector("[data-wall-controls]");
+    var sizeSel = wall.querySelector("[data-wall-size]");
+    var widthIn = wall.querySelector("[data-wall-width]");
+    var widthOut = wall.querySelector("[data-wall-width-out]");
+    var artW = parseFloat(wallOpen.getAttribute("data-w")), artH = parseFloat(wallOpen.getAttribute("data-h"));
+    var pos = { x: 0.5, y: 0.4 };
+    var reported = false;
+
+    function artSizeCm() {
+      var v = sizeSel.value;
+      if (v === "orig") return { w: artW, h: artH };
+      var longSide = parseFloat(v), ratio = artW / artH;
+      return ratio >= 1 ? { w: longSide, h: longSide / ratio } : { w: longSide * ratio, h: longSide };
+    }
+    function layout() {
+      var size = artSizeCm();
+      var pxPerCm = stage.clientWidth / parseFloat(widthIn.value);
+      var w = size.w * pxPerCm, h = size.h * pxPerCm;
+      art.style.width = w + "px";
+      art.style.height = h + "px";
+      art.style.left = (pos.x * stage.clientWidth - w / 2) + "px";
+      art.style.top = (pos.y * stage.clientHeight - h / 2) + "px";
+      widthOut.textContent = widthIn.value + " cm";
+    }
+    function openWall() {
+      artImg.src = wallOpen.getAttribute("data-art");
+      wall.hidden = false;
+      doc.style.overflow = "hidden";
+    }
+    function closeWall() {
+      wall.hidden = true;
+      doc.style.overflow = "";
+      wallOpen.focus();
+    }
+    wallOpen.addEventListener("click", openWall);
+    wall.addEventListener("click", function (e) {
+      if (e.target === wall || e.target.closest("[data-wall-close]")) closeWall();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !wall.hidden) closeWall();
+    });
+
+    wall.querySelector("[data-wall-file]").addEventListener("change", function (e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (photo.src) URL.revokeObjectURL(photo.src);
+      photo.onload = function () {
+        stage.hidden = false;
+        controls.hidden = false;
+        layout();
+      };
+      photo.src = URL.createObjectURL(file);   // stays in the browser, never uploaded
+      if (!reported) { reported = true; report("wall_preview", wallOpen.getAttribute("data-page")); }
+    });
+    sizeSel.addEventListener("change", layout);
+    widthIn.addEventListener("input", layout);
+    window.addEventListener("resize", function () { if (!wall.hidden && !stage.hidden) layout(); });
+
+    var drag = null;
+    art.addEventListener("pointerdown", function (e) {
+      drag = { dx: e.clientX - art.offsetLeft, dy: e.clientY - art.offsetTop };
+      art.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    art.addEventListener("pointermove", function (e) {
+      if (!drag) return;
+      var w = art.offsetWidth, h = art.offsetHeight;
+      pos.x = (e.clientX - drag.dx + w / 2) / stage.clientWidth;
+      pos.y = (e.clientY - drag.dy + h / 2) / stage.clientHeight;
+      layout();
+    });
+    art.addEventListener("pointerup", function () { drag = null; });
+
+    wall.querySelector("[data-wall-save]").addEventListener("click", function () {
+      var canvas = document.createElement("canvas");
+      var scale = photo.naturalWidth / stage.clientWidth;
+      canvas.width = photo.naturalWidth;
+      canvas.height = photo.naturalHeight;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(photo, 0, 0);
+      ctx.shadowColor = "rgba(0,0,0,.35)";
+      ctx.shadowBlur = 24 * scale;
+      ctx.shadowOffsetY = 8 * scale;
+      ctx.drawImage(artImg, art.offsetLeft * scale, art.offsetTop * scale, art.offsetWidth * scale, art.offsetHeight * scale);
+      var link = document.createElement("a");
+      link.download = "on-my-wall.jpg";
+      link.href = canvas.toDataURL("image/jpeg", 0.9);
+      link.click();
+    });
+  }
+
   /* ---- Hearts: remembered on this device, counted anonymously ---------- */
   function report(name, page, label) {
     try {

@@ -95,6 +95,10 @@ class ArtworkIndexPage(Page):
         if selected_collection:
             artworks = artworks.filter(collection=selected_collection)
 
+        selected_place = request.GET.get("place", "").strip()[:80]
+        if selected_place:
+            artworks = artworks.filter(place__iexact=selected_place)
+
         selected_category = request.GET.get("category")
         selected_status = request.GET.get("status")
         selected_buy = request.GET.get("buy")
@@ -141,6 +145,7 @@ class ArtworkIndexPage(Page):
             c for c in Collection.objects.filter(artworks__live=True).distinct()
         ]
         context["selected_collection"] = selected_collection
+        context["selected_place"] = selected_place
         context["artworks"] = page_obj
         context["total_count"] = paginator.count
         context["category_choices"] = ArtworkPage.CATEGORY_CHOICES

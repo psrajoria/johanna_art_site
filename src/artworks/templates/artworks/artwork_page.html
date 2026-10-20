@@ -162,6 +162,14 @@
                 </div>
                 {% endif %}
 
+                {% if page.main_image and page.width_cm and page.height_cm %}
+                <button type="button" class="btn btn--ghost btn--sm wall-open" data-wall-open data-page="{{ page.id }}"
+                        data-art="{{ full_img.url }}" data-w="{{ page.width_cm|stringformat:'s' }}" data-h="{{ page.height_cm|stringformat:'s' }}">
+                    <span class="btn-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="1.5"/><path d="M7 22h10M12 18v4"/></svg></span>
+                    {% trans "See it on your wall" %}
+                </button>
+                {% endif %}
+
                 <div class="btn-row" style="margin-top:1rem">
                     <a class="btn btn--ghost btn--sm" href="{% url 'contact:inquiry' %}?artwork={{ page.id }}&amp;type=print">{% trans "Want another size?" %}</a>
                     <a class="btn btn--ghost btn--sm" href="{% url 'contact:inquiry' %}?artwork={{ page.id }}">{% trans "Ask a question" %}</a>
@@ -230,4 +238,38 @@
 </section>
 {% endif %}
 
+
+{% if page.main_image and page.width_cm and page.height_cm %}
+<div class="wall" data-wall hidden role="dialog" aria-modal="true" aria-label="{% trans 'See it on your wall' %}">
+    <div class="wall-panel">
+        <button type="button" class="wall-close" data-wall-close aria-label="{% trans 'Close' %}">×</button>
+        <h2 class="h3">{% trans "See it on your wall" %}</h2>
+        <p class="muted">{% trans "Choose a photo of your wall. It stays on your device and is never uploaded." %}</p>
+        <label class="btn btn--sm wall-pick">
+            {% trans "Choose a photo" %}
+            <input type="file" accept="image/*" data-wall-file hidden>
+        </label>
+        <div class="wall-stage" data-wall-stage hidden>
+            <img class="wall-photo" alt="" data-wall-photo>
+            <div class="wall-art" data-wall-art><img alt="{{ page.title }}" data-wall-art-img></div>
+        </div>
+        <div class="wall-controls" data-wall-controls hidden>
+            <label>{% trans "Size" %}
+                <select data-wall-size class="form-input">
+                    <option value="orig">{% trans "Original" %} ({{ page.size_display }})</option>
+                    <option value="29.7">A4</option>
+                    <option value="42">A3</option>
+                    <option value="59.4">A2</option>
+                    <option value="70">50 × 70 cm</option>
+                </select>
+            </label>
+            <label>{% trans "The wall in your photo is about … wide" %}
+                <span class="wall-range"><input type="range" min="100" max="600" step="10" value="250" data-wall-width><output data-wall-width-out>250 cm</output></span>
+            </label>
+            <p class="muted">{% trans "Drag the painting to move it." %}</p>
+            <button type="button" class="btn btn--ghost btn--sm" data-wall-save>{% trans "Save this picture" %}</button>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

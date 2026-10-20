@@ -164,6 +164,12 @@ msgstr "Zur Kasse"
 msgid "Choose a new password"
 msgstr "Neues Passwort wählen"
 
+msgid "Choose a photo"
+msgstr "Foto auswählen"
+
+msgid "Choose a photo of your wall. It stays on your device and is never uploaded."
+msgstr "Wähle ein Foto deiner Wand. Es bleibt auf deinem Gerät und wird nie hochgeladen."
+
 msgid "City"
 msgstr "Stadt"
 
@@ -277,6 +283,9 @@ msgstr "Rechnung herunterladen (PDF)"
 
 msgid "Download limit reached"
 msgstr "Download-Limit erreicht"
+
+msgid "Drag the painting to move it."
+msgstr "Zieh das Bild, um es zu verschieben."
 
 msgid "Drag to see how it grew"
 msgstr "Ziehen, um zu sehen, wie es entstanden ist"
@@ -653,6 +662,9 @@ msgstr "Bestellung aufgegeben"
 msgid "Order summary"
 msgstr "Bestellübersicht"
 
+msgid "Original"
+msgstr "Original"
+
 msgid "Original available"
 msgstr "Original verfügbar"
 
@@ -679,6 +691,9 @@ msgstr "Seiten"
 
 msgid "Paid"
 msgstr "Bezahlt"
+
+msgid "Painted in %(selected_place)s"
+msgstr "Gemalt in %(selected_place)s"
 
 msgid "Parcel (originals, framed, large)"
 msgstr "Paket (Originale, gerahmt, groß)"
@@ -836,6 +851,9 @@ msgstr "Passwort speichern"
 msgid "Save this artwork"
 msgstr "Dieses Bild merken"
 
+msgid "Save this picture"
+msgstr "Dieses Bild speichern"
+
 msgid "Say hello"
 msgstr "Sag Hallo"
 
@@ -844,6 +862,9 @@ msgstr "Suche"
 
 msgid "See everything"
 msgstr "Alles ansehen"
+
+msgid "See it on your wall"
+msgstr "Auf deiner Wand ansehen"
 
 msgid "See the artwork"
 msgstr "Zum Werk"
@@ -1019,6 +1040,12 @@ msgstr "Die Erinnerung hinter diesem Werk"
 msgid "The real paper, the real pigment — signed and shipped carefully."
 msgstr "Echtes Papier, echtes Pigment — signiert und sorgfältig verschickt."
 
+msgid "The sketchbook map"
+msgstr "Die Skizzenbuch-Karte"
+
+msgid "The wall in your photo is about … wide"
+msgstr "Die Wand auf deinem Foto ist etwa … breit"
+
 msgid "There is already an account with this email. Please log in."
 msgstr "Mit dieser E-Mail gibt es bereits ein Konto. Bitte melde dich an."
 
@@ -1141,6 +1168,9 @@ msgstr "Willkommen! Dein Konto ist bereit."
 
 msgid "What is this about?"
 msgstr "Worum geht es?"
+
+msgid "Where the paintings were made."
+msgstr "Wo die Bilder entstanden sind."
 
 msgid "Where to next"
 msgstr "Wohin als Nächstes"
