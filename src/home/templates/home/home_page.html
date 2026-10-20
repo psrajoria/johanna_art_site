@@ -49,7 +49,7 @@
                 <span class="tape" aria-hidden="true"></span>
                 <div class="frame-inner">
                     {% image page.hero_image fill-760x950 format-webp as hero_img %}
-                    <img src="{{ hero_img.url }}" width="{{ hero_img.width }}" height="{{ hero_img.height }}" alt="{{ page.hero_image.title }}">
+                    <img src="{{ hero_img.url }}" width="{{ hero_img.width }}" height="{{ hero_img.height }}" alt="{{ page.hero_image.title }}" fetchpriority="high" decoding="async">
                 </div>
             </div>
             {% elif hero_artwork and hero_artwork.main_image %}
@@ -57,7 +57,7 @@
                 <span class="tape" aria-hidden="true"></span>
                 <div class="frame-inner">
                     {% image hero_artwork.main_image fill-760x950 format-webp as hero_img %}
-                    <img src="{{ hero_img.url }}" width="{{ hero_img.width }}" height="{{ hero_img.height }}" alt="{{ hero_artwork.title }}">
+                    <img src="{{ hero_img.url }}" width="{{ hero_img.width }}" height="{{ hero_img.height }}" alt="{{ hero_artwork.title }}" fetchpriority="high" decoding="async">
                 </div>
                 <div class="hero-caption">
                     <span>{{ hero_artwork.title }}</span>

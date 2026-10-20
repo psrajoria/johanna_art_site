@@ -111,12 +111,19 @@
       var open = nav.classList.toggle("is-open");
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
     });
+    function closeMenu(refocus) {
+      nav.classList.remove("is-open");
+      toggle.setAttribute("aria-expanded", "false");
+      if (refocus) toggle.focus();
+    }
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && nav.classList.contains("is-open")) {
-        nav.classList.remove("is-open");
-        toggle.setAttribute("aria-expanded", "false");
-        toggle.focus();
-      }
+      if (e.key === "Escape" && nav.classList.contains("is-open")) closeMenu(true);
+    });
+    document.addEventListener("click", function (e) {
+      if (nav.classList.contains("is-open") && !e.target.closest("#site-nav, .menu-toggle")) closeMenu(false);
+    });
+    nav.addEventListener("click", function (e) {
+      if (e.target.closest("a")) closeMenu(false);
     });
   }
 
@@ -175,51 +182,97 @@
   document.querySelectorAll('img[loading="lazy"]').forEach(function (img) {
     function done() { img.classList.add("is-loaded"); }
     if (img.complete) done();
-    else img.addEventListener("load", done, { once: true });
+    else {
+      img.addEventListener("load", done, { once: true });
+      img.addEventListener("error", done, { once: true });   // never leave a broken image invisible
+    }
   });
 
   /* ---- Hero card follows the pointer ---------------------------------- */
   var heroArt = document.querySelector(".hero-art");
   var heroCard = document.querySelector(".hero-card");
   if (heroArt && heroCard && !reduceMotion && window.matchMedia("(hover: hover)").matches) {
+    var tiltFrame = 0;
     heroArt.addEventListener("pointermove", function (e) {
-      var r = heroArt.getBoundingClientRect();
-      var x = (e.clientX - r.left) / r.width - 0.5;
-      var y = (e.clientY - r.top) / r.height - 0.5;
-      heroCard.style.transform =
-        "rotate(-2deg) rotateY(" + (x * 10).toFixed(2) + "deg) rotateX(" + (-y * 8).toFixed(2) + "deg)";
-    });
+      if (tiltFrame) return;
+      var cx = e.clientX, cy = e.clientY;
+      tiltFrame = requestAnimationFrame(function () {
+        tiltFrame = 0;
+        var r = heroArt.getBoundingClientRect();
+        var x = (cx - r.left) / r.width - 0.5;
+        var y = (cy - r.top) / r.height - 0.5;
+        heroCard.style.transform =
+          "rotate(-2deg) rotateY(" + (x * 10).toFixed(2) + "deg) rotateX(" + (-y * 8).toFixed(2) + "deg)";
+      });
+    }, { passive: true });
     heroArt.addEventListener("pointerleave", function () {
       heroCard.style.transform = "";
     });
   }
 
-  /* ---- Lightbox -------------------------------------------------------- */
+  /* ---- Lightbox: arrows, swipe, focus kept inside, page scroll locked -- */
   var lightbox = document.querySelector(".lightbox");
   if (lightbox) {
     var lbImg = lightbox.querySelector("img");
     var lastFocus = null;
+    var items = [];
+    var index = 0;
+
+    function collect() {
+      items = Array.prototype.slice.call(document.querySelectorAll("[data-lightbox]"));
+    }
+    function show(i) {
+      if (!items.length) return;
+      index = (i + items.length) % items.length;
+      var t = items[index];
+      lbImg.src = t.getAttribute("data-lightbox");
+      lbImg.alt = t.getAttribute("data-alt") || "";
+      // warm the neighbour so the next step feels instant
+      var next = items[(index + 1) % items.length].getAttribute("data-lightbox");
+      if (next) new Image().src = next;
+    }
+    function openLightbox(trigger) {
+      collect();
+      lastFocus = trigger;
+      lightbox.hidden = false;
+      doc.style.overflow = "hidden";
+      show(Math.max(items.indexOf(trigger), 0));
+      lightbox.querySelector(".lightbox-close").focus();
+    }
     function closeLightbox() {
       lightbox.hidden = true;
       lbImg.removeAttribute("src");
+      doc.style.overflow = "";
       if (lastFocus) lastFocus.focus();
     }
     document.addEventListener("click", function (e) {
       var trigger = e.target.closest("[data-lightbox]");
       if (trigger) {
         e.preventDefault();
-        lastFocus = trigger;
-        lbImg.src = trigger.getAttribute("data-lightbox");
-        lbImg.alt = trigger.getAttribute("data-alt") || "";
-        lightbox.hidden = false;
-        lightbox.querySelector(".lightbox-close").focus();
-      } else if (e.target === lightbox || e.target.closest(".lightbox-close")) {
+        openLightbox(trigger);
+      } else if (!lightbox.hidden && (e.target === lightbox || e.target.closest(".lightbox-close"))) {
         closeLightbox();
       }
     });
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && !lightbox.hidden) closeLightbox();
+      if (lightbox.hidden) return;
+      if (e.key === "Escape") closeLightbox();
+      else if (e.key === "ArrowRight") show(index + 1);
+      else if (e.key === "ArrowLeft") show(index - 1);
+      else if (e.key === "Tab") {
+        // only the close button is interactive: keep focus on it
+        e.preventDefault();
+        lightbox.querySelector(".lightbox-close").focus();
+      }
     });
+    var touchX = null;
+    lightbox.addEventListener("touchstart", function (e) { touchX = e.touches[0].clientX; }, { passive: true });
+    lightbox.addEventListener("touchend", function (e) {
+      if (touchX === null) return;
+      var dx = e.changedTouches[0].clientX - touchX;
+      touchX = null;
+      if (Math.abs(dx) > 50) show(index + (dx < 0 ? 1 : -1));
+    }, { passive: true });
   }
 
   /* ---- Artwork gallery thumbnails swap the main image ------------------ */
@@ -270,6 +323,24 @@
     }
     countrySelect.addEventListener("change", update);
     update();
+  }
+
+  /* ---- Instant navigation: fetch a page when the pointer/finger approaches */
+  if (!(navigator.connection && navigator.connection.saveData)) {
+    var prefetched = {};
+    var prefetch = function (e) {
+      var a = e.target.closest && e.target.closest("a[href]");
+      if (!a || a.origin !== location.origin || a.target || a.hasAttribute("download")) return;
+      if (/^\/(admin|documents|cart|checkout)/.test(a.pathname) || a.hash && a.pathname === location.pathname) return;
+      if (prefetched[a.href] || a.href === location.href) return;
+      prefetched[a.href] = true;
+      var l = document.createElement("link");
+      l.rel = "prefetch";
+      l.href = a.href;
+      document.head.appendChild(l);
+    };
+    document.addEventListener("pointerenter", prefetch, { capture: true, passive: true });
+    document.addEventListener("touchstart", prefetch, { passive: true });
   }
 
   /* ---- Toasts can be dismissed with a click ---------------------------- */

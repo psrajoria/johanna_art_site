@@ -232,7 +232,6 @@ body::after {
   width: 60vmax;
   height: 60vmax;
   border-radius: 50%;
-  filter: blur(80px);
   opacity: 0.35;
   pointer-events: none;
 }
@@ -1058,8 +1057,8 @@ p {
 .blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(60px);
   opacity: 0.55;
+  will-change: transform;
   animation: drift 22s ease-in-out infinite;
 }
 .blob--1 {
@@ -2610,6 +2609,69 @@ img[loading="lazy"] {
 }
 img[loading="lazy"].is-loaded {
   opacity: 1;
+}
+
+/* below-the-fold sections are rendered only when they get close */
+.site-footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 400px;
+}
+
+/* decorative motion costs battery on phones: keep it for larger screens */
+@media (max-width: 700px), (hover: none) {
+  .blob,
+  .hero-card {
+    animation: none;
+  }
+}
+
+
+/* ---------- Polish: watercolour edge, button sheen, softer hovers ----------- */
+
+.section--tint {
+  position: relative;
+}
+.section--tint::before,
+.section--tint::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 28px;
+  background: inherit;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 28' preserveAspectRatio='none'><path d='M0 28 C150 4 300 26 450 14 S750 2 900 16 1100 24 1200 8 V28Z'/></svg>") center / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 28' preserveAspectRatio='none'><path d='M0 28 C150 4 300 26 450 14 S750 2 900 16 1100 24 1200 8 V28Z'/></svg>") center / 100% 100% no-repeat;
+  pointer-events: none;
+}
+.section--tint::before {
+  top: -27px;
+}
+.section--tint::after {
+  bottom: -27px;
+  transform: scaleY(-1);
+}
+
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+.btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.28) 50%, transparent 65%);
+  transform: translateX(-120%);
+  transition: transform 0.7s var(--ease);
+  pointer-events: none;
+}
+.btn:hover::after {
+  transform: translateX(120%);
+}
+
+:focus-visible {
+  outline: 2px solid var(--c-terracotta);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 @view-transition {
